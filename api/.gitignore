@@ -1,0 +1,11 @@
+# 忽略虛擬環境
+venv/
+__pycache__/
+
+# 忽略 dotenv 檔案
+.env
+
+# 忽略 Firebase 金鑰
+transfer-student-platform-firebase-adminsdk-fbsvc-faca01e665-*.json
+
+secrets/

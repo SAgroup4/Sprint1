@@ -1,0 +1,48 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.layout-main {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+.content-area {
+  flex: 1;
+  padding: 2rem;
+  background-color: #ffffff;
+  overflow-y: auto;
+}
+
+/* 響應式布局 */
+@media (max-width: 768px) {
+  .layout-main {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .content-area {
+    padding: 1rem;
+  }
+
+  .header {
+    padding: 1rem;
+  }
+
+  .header-search {
+    margin: 0 1rem;
+  }
+
+  .header-logo h1 {
+    font-size: 1.2rem;
+  }
+}

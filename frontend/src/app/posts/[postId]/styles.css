@@ -1,0 +1,158 @@
+.post-detail-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.post-header {
+  display: flex;
+  align-items: center; /* 垂直置中 */
+  gap: 16px; /* 按鈕與標題之間的間距 */
+  margin-bottom: 18px;
+  text-align: start;
+}
+
+.back-button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #357abd;
+}
+
+.post-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0;
+  color: #1c4874;
+}
+
+.post-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 16px;
+}
+
+.post-content {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.6;
+  white-space: pre-wrap; /* 保留換行 */
+  margin-bottom: 16px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 16px 0;
+}
+
+.comments-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+  color: #1c4874;
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.comment-item {
+  background-color: #ffffff;
+  padding: 8px;
+}
+
+.comment-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.comment-author {
+  font-weight: bold;
+  color: #003366;
+}
+
+.comment-content {
+  font-size: 1rem;
+  color: #333;
+}
+
+.add-comment {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.comment-input {
+  width: 100%;
+  height: 80px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  resize: none;
+  background-color: #ffffff;
+  color: #222;
+
+}
+
+.submit-comment-button {
+  align-self: flex-end;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-comment-button:hover {
+  background-color: #357abd;
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.author-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.message-button {
+  background-color: transparent; /* 設為透明 */
+  color: #4a90e2; /* 設定文字顏色 */
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: color 0.3s ease; /* 增加文字顏色的過渡效果 */
+}
+
+.message-button:hover {
+  background-color: #357abd;
+}
