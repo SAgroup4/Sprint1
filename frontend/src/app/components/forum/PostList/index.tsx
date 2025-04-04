@@ -50,15 +50,36 @@ const PostList: React.FC = () => {
       const response = await fetch('http://localhost:8000/posts');
       if (!response.ok) throw new Error('獲取文章失敗');
       const data = await response.json();
-      const formattedPosts = data.map((post: any) => ({
-        id: post.post_id,
-        title: post.title,
-        content: post.content,
-        author: post.user_id,
-        avatar: '/default-avatar.png',
-        timestamp: post.timestamp ? new Date(post.timestamp._seconds * 1000).toLocaleString() : '剛剛',
-        replies: post.comments_count || 0,
-      }));
+      const formattedPosts = data.map((post: any) => {
+        // 處理時間戳
+        let formattedTime = '剛剛';
+        if (post.timestamp) {
+          const date = post.timestamp._seconds 
+            ? new Date(post.timestamp._seconds * 1000)  // Firestore 時間戳格式
+            : new Date(post.timestamp);                 // 一般 ISO 字串格式
+  
+          if (!isNaN(date.getTime())) {
+            formattedTime = date.toLocaleString('zh-TW', {
+              timeZone: 'Asia/Taipei',
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+          }
+        }
+  
+        return {
+          id: post.post_id,
+          title: post.title,
+          content: post.content,
+          author: post.user_id,
+          avatar: '/default-avatar.png',
+          timestamp: formattedTime,
+          replies: post.comments_count || 0,
+        };
+      });
       setPosts(formattedPosts);
     } catch (error) {
       console.error('獲取文章列表失敗:', error);

@@ -90,6 +90,26 @@ const PostDetail = () => {
 
   if (!post) return <p>載入文章中...</p>;
 
+  const formatTimestamp = (timestamp: any) => {
+    if (!timestamp) return '時間不明';
+    
+    // 檢查時間戳的格式並相應處理
+    const date = timestamp._seconds 
+      ? new Date(timestamp._seconds * 1000)  // Firestore 時間戳格式
+      : new Date(timestamp);                 // 一般 ISO 字串格式
+
+    if (isNaN(date.getTime())) return '時間格式錯誤';
+
+    return date.toLocaleString('zh-TW', {
+      timeZone: 'Asia/Taipei',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <div className="post-detail-container">
       <div className="post-header">
@@ -104,7 +124,7 @@ const PostDetail = () => {
           <span className="post-author">{post.user_id}</span>
           <button className="message-button">私訊</button>
         </div>
-        <span className="post-timestamp">{post.timestamp || '時間不明'}</span>
+        <span className="post-timestamp">{formatTimestamp(post.timestamp)}</span>
       </div>
       <div className="post-content">{post.content}</div>
       <hr className="divider" />
@@ -118,7 +138,7 @@ const PostDetail = () => {
                 <img src="/default-avatar.png" alt="頭貼" className="author-avatar" />
                 <span className="comment-author">{comment.user_id}</span>
               </div>
-              <span className="comment-timestamp">{comment.timestamp || '時間不明'}</span>
+              <span className="comment-timestamp">{formatTimestamp(comment.timestamp)}</span>
             </div>
             <div className="comment-content">{comment.content}</div>
           </div>
