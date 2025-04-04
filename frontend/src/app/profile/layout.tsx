@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import RootLayout from "../components/layout/Layout";
-
+import { AuthProvider } from '@/context/AuthProvider';
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -26,7 +26,7 @@ export default function Layout({
   return (
     <html lang="zh-TW">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <RootLayout>{children}</RootLayout>
+        <RootLayout><AuthProvider>{children}  </AuthProvider></RootLayout>
       </body>
     </html>
   );
