@@ -1,0 +1,89 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #4a90e2;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-logo h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.header-search {
+  flex: 1;
+  max-width: 600px;
+  margin: 0 2rem;
+}
+
+.header-search form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: rgb(255, 255, 255);
+}
+
+.search-button {
+  padding: 0.5rem 1rem;
+  background-color: #357abd;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.search-button:hover {
+  background-color: #2868a0;
+}
+
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* 私訊按鈕和頭像間距 */
+}
+
+.message-button {
+  background-color: white;
+  color: #4a90e2;
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.message-button:hover {
+  background-color: #e6e6e6;
+}
+
+.user-avatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo-image {
+  width: 40px;
+  height: auto;
+}

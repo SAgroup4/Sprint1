@@ -1,0 +1,156 @@
+/* style.css */
+.message-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .contact-list {
+    width: 220px;
+    padding: 20px;
+    background-color: #ddf2fd;
+    color: white; /* 文字顏色改為白色 */
+    border-right: 1px solid #ddd;
+  }
+  
+  .contact-list h3 {
+    color: #0000FF; /* 藍色標題文字 */
+  }
+  
+  .contact-list ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .contact-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    color: rgb(0, 0, 0); /* 設定聯絡人名稱為白色文字 */
+  }
+  
+  .contact-item.selected {
+    background-color: #d3e9ff;
+    color: #000000; /* 選中的文字顯示為黑色 */
+  }
+  
+  .contact-item img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .contact-item span {
+    font-weight: normal;
+  }
+  
+  .contact-item.selected span {
+    font-weight: bold;
+    color: #0084ff; /* 選中的名字顯示為藍色 */
+  }
+  
+  .chat-container {
+    flex: 1;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    background-color: #cbe0f0; /* 設定灰色背景 */
+    border-radius: 10px; /* 邊角圓滑 */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); /* 添加陰影 */
+  }
+  
+  .chat-header {
+    color: #0084ff;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px 10px 0 0; /* 顯示為堆疊效果，頂部白色 */
+    margin-bottom: 10px; /* 讓聊天區域有間隔 */
+  }
+  
+  .message-box {
+    border: 1px solid #ddd;
+    padding: 10px;
+    height: 500px;
+    overflow-y: scroll;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    background-color: #f1f1f1; /* 設定聊天區域背景為白色 */
+    color: black; /* 文字顏色為黑色 */
+    border-radius: 10px; /* 讓訊息框圓角 */
+  }
+  
+  .message-item {
+    margin-bottom: 10px;
+  }
+  
+  .message-item.right {
+    text-align: right;
+  }
+  
+  .message-item.left {
+    text-align: left;
+  }
+  
+  .message-content {
+    display: inline-block;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+  }
+  
+  .message-content.sent {
+    background-color: #4CAF50;
+    color: #fff;
+  }
+  
+  .message-content.received {
+    background-color: #ddd;
+    color: #000;
+  }
+  
+  .input-area {
+    display: flex;
+    align-items: center; /* 使輸入框和發送按鈕在同一行 */
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .input-area input {
+    padding: 10px;
+    margin-right: 10px; /* 讓輸入框和發送按鈕有間距 */
+    border: 1px solid #ddd;
+    flex: 1; /* 讓輸入框填滿剩餘空間 */
+    background-color: #e0e0e0; 
+    color: rgb(1, 1, 1); /* 輸入文字顏色為白色 */
+  }
+  
+  .input-area button {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  .message-container {
+    position: relative; /* 為了浮水印定位 */
+    display: flex;
+    height: 100vh;
+    z-index: 1;
+    background-color: #f5f5f5;
+  }
+  
+  /* 浮水印樣式 */
+  .watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-10%, -50%);
+    opacity: 0.05;
+    z-index: 0;
+    pointer-events: none;
+  }
+  
