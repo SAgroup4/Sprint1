@@ -3,7 +3,7 @@ venv/
 __pycache__/
 
 # 忽略 dotenv 檔案
-.env
+.env*
 
 # 忽略 Firebase 金鑰
 firebase-key.json

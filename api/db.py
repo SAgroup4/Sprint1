@@ -7,9 +7,19 @@
 #####################################################
 
 # 【套件導入區域】
+#####################################################
+# db.py - Firebase資料庫連接設定檔
+# 功能：
+# 1. 連接 Firebase 雲端資料庫
+# 2. 從 .env 直接讀取 JSON 金鑰本體初始化
+# 3. 提供 db 連線物件供其他檔案使用
+#####################################################
+
+# 【套件導入區域】
 import firebase_admin
 from firebase_admin import credentials, firestore
 import os
+import json
 from dotenv import load_dotenv
 
 # 【環境設定區域】
@@ -18,16 +28,14 @@ if not load_dotenv():
 
 # 【Firebase 初始化區域】
 if not firebase_admin._apps:
-    # 直接指定 Firebase 金鑰的路徑
-    cred_path = os.path.abspath("firebase-key.json")  # 使用絕對路徑
+    firebase_key_json = os.getenv("FIREBASE_KEY")
 
-    # 確認金鑰檔案是否存在
-    if not os.path.exists(cred_path):
-        raise FileNotFoundError(f"Firebase 金鑰文件不存在於路徑：{cred_path}，請確認檔案位置是否正確")
+    if not firebase_key_json:
+        raise Exception("找不到 FIREBASE_KEY，請確認 .env 是否正確設置")
 
     try:
-        # 初始化 Firebase
-        cred = credentials.Certificate(cred_path)
+        firebase_key_dict = json.loads(firebase_key_json)
+        cred = credentials.Certificate(firebase_key_dict)
         firebase_admin.initialize_app(cred)
     except Exception as e:
         raise Exception(f"Firebase 初始化失敗，錯誤訊息：{str(e)}")
