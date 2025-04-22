@@ -8,7 +8,7 @@
 
 # 【套件導入區域】
 import firebase_admin
-from firebase_admin import credentials, firestore, initialize_app
+from firebase_admin import credentials, firestore
 import os
 from dotenv import load_dotenv
 
@@ -18,15 +18,15 @@ if not load_dotenv():
 
 # 【Firebase 初始化區域】
 if not firebase_admin._apps:
-    cred_path = os.getenv("FIREBASE_KEY_PATH")
+    # 直接指定 Firebase 金鑰的路徑
+    cred_path = os.path.abspath("firebase-key.json")  # 使用絕對路徑
 
-    if not cred_path:
-        raise ValueError("環境變數 FIREBASE_KEY_PATH 未設置，請在 .env 檔案中設定正確的金鑰檔案路徑")
-
+    # 確認金鑰檔案是否存在
     if not os.path.exists(cred_path):
         raise FileNotFoundError(f"Firebase 金鑰文件不存在於路徑：{cred_path}，請確認檔案位置是否正確")
 
     try:
+        # 初始化 Firebase
         cred = credentials.Certificate(cred_path)
         firebase_admin.initialize_app(cred)
     except Exception as e:
@@ -37,7 +37,6 @@ try:
     db = firestore.client()
 except Exception as e:
     raise Exception(f"Firestore 客戶端創建失敗，錯誤訊息：{str(e)}")
-
 
 # 【連線測試區域（僅在直接執行此檔案時執行）】
 if __name__ == "__main__":

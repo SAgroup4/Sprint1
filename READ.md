@@ -63,7 +63,7 @@ cd frontend
 npm install
 npm run dev
 ```
-
+pip install firebase-admin
 ### 2. 後端
 ```bash
 cd api

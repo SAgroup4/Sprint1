@@ -4,10 +4,8 @@
 
 import { useState, KeyboardEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { Typography, Box, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import { Typography, Box, Button,  } from '@mui/material';
 import {
-  StyledContainer,
-  StyledBox,
   LoginContainer,
   LoginBox,
   LoginTextField,
@@ -15,7 +13,6 @@ import {
   BackgroundCircles,
   BackgroundAnimation,
   FormContainer,
-  StyledDialog
 } from './loginStyles';
 
 interface FormData {
@@ -26,22 +23,20 @@ interface FormData {
 const Login = () => {
   const router = useRouter();
   const [formData, setFormData] = useState<FormData>({ email: '', password: '' });
-  const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = async (isAccessible: boolean) => {
-    console.log("🟡 handleLogin 執行中...", formData);
+  const handleLogin = async () => {
     const { email, password } = formData;
-
+  
     if (!email || !password) {
-      setError('請輸入帳號和密碼');
+      alert('請輸入帳號和密碼');
       return;
     }
-
+  
     setLoading(true);
     setError('');
-
+  
     try {
       const res = await fetch('http://localhost:8000/login', {
         method: 'POST',
@@ -50,24 +45,19 @@ const Login = () => {
         },
         body: JSON.stringify({ email, password })
       });
-
+  
       const result = await res.json();
-
+  
       if (res.ok) {
         localStorage.setItem('token', result.access_token);
         localStorage.setItem('userEmail', email);
-
-        if (isAccessible) {
-          router.push('/general');
-        } else {
-          setOpenDialog(true);
-        }
+        router.push('/general'); //  登入成功後直接跳轉
       } else {
-        setError(result.detail || '登入失敗，請檢查帳號密碼');
+        alert(result.detail || '登入失敗，請檢查帳號密碼');
       }
     } catch (error) {
       console.error(error);
-      setError('伺服器錯誤，請稍後再試');
+      alert('伺服器錯誤，請稍後再試');
     } finally {
       setLoading(false);
     }
@@ -75,13 +65,10 @@ const Login = () => {
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
-      handleLogin(false);
+      handleLogin();
     }
   };
 
-  const handleConfirm = () => {
-    router.push('/general');
-  };
 
   return (
     <BackgroundAnimation>
@@ -133,30 +120,13 @@ const Login = () => {
               </Box>
 
               <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-                <LoginButton fullWidth type="button" onClick={() => handleLogin(false)}>
+                <LoginButton fullWidth type="button" onClick={handleLogin}>
                   登入系統
                   <span className="dot"></span>
-                </LoginButton>
-                <LoginButton fullWidth className="outlined" type="button" onClick={() => handleLogin(true)}>
-                  登入無障礙版
-                  <span className="dot"></span>
-                </LoginButton>
+                 </LoginButton>
               </Box>
 
-              <StyledDialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                <DialogTitle sx={{ textAlign: 'center', fontSize: '20px', fontWeight: 'bold', pb: 1 }}>
-                  確定登入一般版本
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText sx={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center' }}>
-                    確定登入一般版本，若您為視障生請選擇「登入無障礙版」？
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions sx={{ justifyContent: 'center', gap: 2, pb: 3, pt: 2 }}>
-                  <LoginButton onClick={handleConfirm}>確定</LoginButton>
-                  <LoginButton className="outlined" onClick={() => setOpenDialog(false)}>取消</LoginButton>
-                </DialogActions>
-              </StyledDialog>
+
 
               <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
                 <Button color="primary" sx={{ textDecoration: 'underline', color: 'var(--primary)' }}>

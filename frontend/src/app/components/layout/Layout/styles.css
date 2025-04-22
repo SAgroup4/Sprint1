@@ -2,9 +2,31 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  position: relative; /* 確保子元素的絕對定位基於 .layout */
+}
+
+.header {
+  position: fixed; /* 固定在畫面頂部 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* 確保 header 在最上層 */
+}
+
+.sidebar {
+  position: fixed; /* 固定在畫面左側 */
+  top: 70px;
+  left: 0;
+  height: 100%; /* 滿高 */
+  width: 250px; /* 側邊欄寬度 */
+  z-index: 999; /* 確保 sidebar 在 header 下方但高於 content */
+  background-color: #f4f4f4; /* 側邊欄背景色 */
+  border-right: 1px solid #e0e0e0;
 }
 
 .layout-main {
+  margin-left: 250px; /* 為 sidebar 騰出空間 */
+  margin-top: 60px; /* 為 header 騰出空間 */
   display: flex;
   flex: 1;
   position: relative;

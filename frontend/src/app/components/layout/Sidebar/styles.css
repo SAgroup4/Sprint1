@@ -13,13 +13,12 @@
 }
 
 .sidebar-title {
-  font-size: 1.5rem; /* 增大字體 */
+  font-size: 20px !important; /* 增大字體 */
   color: #003366; /* 深藍色字體 */
   text-align: center; /* 文字置中 */
   margin: 0 0; /* 上下留白 */
   padding: 0.5rem 0; /* 內部留白 */
   border-bottom: 2px solid #4a90e2; /* 藍色底線 */
-  font-weight: bold; /* 加粗字體 */
   display: flex; /* 使用 flex 排版 */
   align-items: center; /* 垂直置中 */
   justify-content: center; /* 水平置中 */

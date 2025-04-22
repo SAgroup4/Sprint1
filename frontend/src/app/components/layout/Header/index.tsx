@@ -1,26 +1,19 @@
 'use client';
 import Image from 'next/image';
-
 import React from 'react';
 import './styles.css';
-import logo from './輔大logo.png'; // 假設 logo.png 位於 public 資料夾
+import logo from './logo.png'; // 假設 logo.png 位於 public 資料夾
+import brandname from './brandname.png'; 
+import userphoto from './user.jpg'; 
+import { useAuth } from '@/context/AuthProvider'; // 引入 AuthProvider 的 useAuth
+import { IoIosText } from "react-icons/io";
+import { FaBell } from "react-icons/fa";
 
 
-/**
- * Header組件 - 網站頂部導航欄
- * 
- * 功能：
- * 1. 顯示網站標題
- * 2. 提供搜索功能
- * 3. 顯示用戶頭像和相關操作
- * 
- * @component
- */
+
 const Header: React.FC = () => {
-  /**
-   * 處理搜索提交事件
-   * @param {React.FormEvent<HTMLFormElement>} e - 表單提交事件對象
-   */
+  const { user, logout } = useAuth(); // 從 AuthProvider 獲取 user 和 logout 函式
+
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO: 實現搜索邏輯
@@ -29,8 +22,22 @@ const Header: React.FC = () => {
   return (
     <header className="header">
       <div className="header-logo">
-      <Image src={logo} alt="輔仁大學 Logo" className="logo-image" width={50} height={50} />
-      <h1>輔仁大學學生交流平台</h1>
+        <Image
+          src={logo}
+          alt="輔仁大學 Logo"
+          className="logo-image clickable" // 新增 clickable 類別
+          width={40}
+          height={40}
+          onClick={() => (window.location.href = '/general')} // 新增導向 /general
+        />
+        <Image
+          src={brandname}
+          alt="輔學同行"
+          className="brandname clickable" // 新增 clickable 類別
+          width={170}
+          height={40}
+          onClick={() => (window.location.href = '/general')} // 新增導向 /general
+        />
       </div>
       
       <div className="header-search">
@@ -46,12 +53,25 @@ const Header: React.FC = () => {
         </form>
       </div>
 
-      <div className="header-user">
-        <div className="user-avatar">
-          {/* TODO: 替換為實際的用戶頭像 */}
-          <img src="/default-avatar.png" alt="用戶頭像" />
+
+      {user ? ( // 如果 user 存在，顯示頭像
+        <div className="header-user">
+          <div className="userbutton" onClick={() => (window.location.href = '/general')}>
+            <FaBell />
+          </div>
+          <div className="userbutton" onClick={() => (window.location.href = '/general')}>
+            <IoIosText />
+          </div>
+          <div className="login-button">
+            <Image src={userphoto} alt="用戶頭像"  width={23} height={23}  
+            onClick={() => (window.location.href = '/Profile')}/>
+          </div>
         </div>
-      </div>
+      ) : ( // 如果 user 不存在，顯示登入按鈕
+        <button className="login-button" onClick={() => window.location.href = '/login'}>
+          登入
+        </button>
+      )}
     </header>
   );
 };

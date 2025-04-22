@@ -1,16 +1,9 @@
 'use client'; // 設為 Client Component，確保可以使用交互
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import './styles.css';
-
-/**
- * 討論區分類類型
- */
-interface Category {
-  id: string;
-  title: string;
-}
+import { BiAlignLeft } from "react-icons/bi";
 
 /**
  * Sidebar 組件 - 網站左側導航欄
@@ -18,26 +11,47 @@ interface Category {
  * 功能：
  * 1. 顯示討論區分類列表
  * 2. 提供分類導航功能
+ * 3. 顯示學校相關網站連結
  */
 const Sidebar: React.FC = () => {
-  // 討論區分類數據
-  const categories: Category[] = [
+  /**
+   * 討論區分類數據
+   */
+  const categories = [
     { id: 'general', title: '一般討論區' },
-    { id: 'transfer', title: '轉學生討論區' },
-    { id: 'professional', title: '專業討論群組' },
-    { id: 'language', title: '語言交換區' }
+    {
+      id: 'transfer',
+      title: '轉學生討論區',
+      children: [
+        { id: 'transfer-guide', title: '轉學生指南' },
+        { id: 'transfer-discussion', title: '轉學生討論區' },
+      ],
+    },
+    { id: 'professional', title: '技能交換區' },
+    { id: 'language', title: '外籍語言交換區' },
   ];
 
-  // 使用 Next.js 的路由
+  /**
+   * 學校相關網站數據
+   */
+  const schoolLinks = [
+    { title: '學生資訊入口網', url: 'https://portal.fju.edu.tw' },
+    { title: '學生資訊平台', url: 'https://student.fju.edu.tw' },
+    { title: '輔仁大學行事曆', url: 'https://calendar.fju.edu.tw' },
+    { title: '輔仁大學圖書館', url: 'https://www.lib.fju.edu.tw' },
+    { title: '輔大全球資訊網', url: 'https://www.fju.edu.tw' },
+  ];
+
   const router = useRouter();
   const pathname = usePathname();
 
-  // 處理分類點擊事件
+  // 狀態：控制「轉學生討論區」的展開/收起
+  const [isTransferOpen, setIsTransferOpen] = useState(false);
+
   const handleCategoryClick = (categoryId: string) => {
-    router.push(`/${categoryId}`); // 改為 `/forum/${categoryId}`
+    router.push(`/${categoryId}`);
   };
 
-  // 判斷當前分類是否為活動狀態
   const isActive = (categoryId: string) => {
     return pathname === `/${categoryId}` || 
            (pathname === '/' && categoryId === 'general');
@@ -46,16 +60,45 @@ const Sidebar: React.FC = () => {
   return (
     <aside className="sidebar">
       <nav className="sidebar-nav">
-        <h2 className="sidebar-title">討論區分類</h2>
+        <h4 className="sidebar-title">討論區分類</h4>
         <ul className="category-list">
           {categories.map((category) => (
-            <li key={category.id} className="category-item">
-              <button
-                onClick={() => handleCategoryClick(category.id)}
-                className={`category-button ${isActive(category.id) ? 'active' : ''}`}
-              >
-                {category.title}
-              </button>
+            <li
+              key={category.id}
+              className="category-item"
+              onMouseEnter={() => category.id === 'transfer' && setIsTransferOpen(true)}
+              onMouseLeave={() => category.id === 'transfer' && setIsTransferOpen(false)}
+            >
+              {category.children ? (
+                <>
+                  <button className="category-button">
+                    {category.title} {isTransferOpen ? '▲' : '▼'}
+                  </button>
+                  <ul
+                    className={`subcategory-list ${
+                      isTransferOpen ? 'open' : 'closed'
+                    }`}
+                  >
+                    {category.children.map((child) => (
+                      <li key={child.id} className="subcategory-item">
+                        <button
+                          onClick={() => handleCategoryClick(child.id)}
+                          className={`subcategory-button ${isActive(child.id) ? 'active' : ''}`}
+                        >
+                          {child.title}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <button
+                  onClick={() => handleCategoryClick(category.id)}
+                  className={`category-button ${isActive(category.id) ? 'active' : ''}`}
+                >
+                  {category.title}
+                </button>
+              )}
             </li>
           ))}
         </ul>
