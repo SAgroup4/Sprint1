@@ -24,6 +24,7 @@ async def create_post(post: Post):
             "content": post.content,
             "timestamp": firestore.firestore.SERVER_TIMESTAMP,
             "comments_count": 0  # 初始設為 0
+            
         })
         
         print("Add結果：", result)  # 打印返回結果檢查
@@ -49,6 +50,7 @@ async def get_posts():
             "content": post.get("content"),
             "timestamp": post.get("timestamp"),
             "comments_count": post.get("comments_count")
+
         } for post in posts_ref]
         print(f"成功獲取 {len(posts)} 篇文章")
         return posts

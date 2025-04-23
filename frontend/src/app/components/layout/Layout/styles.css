@@ -33,11 +33,27 @@
 }
 
 .content-area {
+  position: relative;
+  z-index: 0;
   flex: 1;
   padding: 2rem;
-  background-color: #ffffff;
+  min-height: 100vh;
   overflow-y: auto;
+  background-color: white; /* 讓文字區清楚 */
 }
+
+.content-area::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url('/bg.png'); /* 放你的背景圖 */
+  background-size: contain;
+  background-position: auto;
+  background-repeat: repeat-x;
+  opacity: 0.5; /* ✅ 越低越透明 */
+  z-index: -1;
+}
+
 
 /* 響應式布局 */
 @media (max-width: 768px) {
