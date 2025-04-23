@@ -3,13 +3,11 @@
 // import React from 'react';
 // import './styles.css';
 // import logo from './logo.png'; // 假設 logo.png 位於 public 資料夾
-// import brandname from './brandname.png'; 
-// import userphoto from './user.jpg'; 
+// import brandname from './brandname.png';
+// import userphoto from './user.jpg';
 // import { useAuth } from '@/context/AuthProvider'; // 引入 AuthProvider 的 useAuth
 // import { IoIosText } from "react-icons/io";
 // import { FaBell } from "react-icons/fa";
-
-
 
 // const Header: React.FC = () => {
 //   const { user, logout } = useAuth(); // 從 AuthProvider 獲取 user 和 logout 函式
@@ -39,7 +37,7 @@
 //           onClick={() => (window.location.href = '/general')} // 新增導向 /general
 //         />
 //       </div>
-      
+
 //       <div className="header-search">
 //         <form onSubmit={handleSearch}>
 //           <input
@@ -53,7 +51,6 @@
 //         </form>
 //       </div>
 
-
 //       {user ? ( // 如果 user 存在，顯示頭像
 //         <div className="header-user">
 //           <div className="userbutton" onClick={() => (window.location.href = '/general')}>
@@ -63,7 +60,7 @@
 //             <IoIosText />
 //           </div>
 //           <div className="login-button">
-//             <Image src={userphoto} alt="用戶頭像"  width={23} height={23}  
+//             <Image src={userphoto} alt="用戶頭像"  width={23} height={23}
 //             onClick={() => (window.location.href = '/Profile')}/>
 //           </div>
 //         </div>
@@ -78,18 +75,16 @@
 
 // export default Header;
 
+"use client";
 
-
-'use client';
-
-import Image from 'next/image';
-import Link from 'next/link';
-import React, { useState, useRef, useEffect } from 'react';
-import './styles.css';
-import logo from './logo.png';
-import brandname from './brandname.png';
-import userphoto from './user.jpg';
-import { useAuth } from '@/context/AuthProvider';
+import Image from "next/image";
+import Link from "next/link";
+import React, { useState, useRef, useEffect } from "react";
+import "./styles.css";
+import logo from "./logo.png";
+import brandname from "./brandname.png";
+import userphoto from "./user.jpg";
+import { useAuth } from "@/context/AuthProvider";
 import { IoIosText } from "react-icons/io";
 import { FaBell } from "react-icons/fa";
 import { IoMdArrowDropdown } from "react-icons/io";
@@ -98,10 +93,9 @@ const Header: React.FC = () => {
   const { user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { user } = useAuth();
 
   // 取得 userId（這裡用 email 前綴，你也可以改成 user.id）
-  const userId = user ? user.email.split('@')[0] : '';
+  const userId = user ? user.email.split("@")[0] : "";
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -110,12 +104,15 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setDropdownOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
@@ -126,21 +123,17 @@ const Header: React.FC = () => {
           src={logo}
           alt="輔仁大學 Logo"
           className="logo-image clickable"
-          className="logo-image clickable"
           width={40}
           height={40}
-          onClick={() => (window.location.href = '/general')}
-          onClick={() => (window.location.href = '/general')}
+          onClick={() => (window.location.href = "/general")}
         />
         <Image
           src={brandname}
           alt="輔學同行"
           className="brandname clickable"
-          className="brandname clickable"
           width={170}
           height={40}
-          onClick={() => (window.location.href = '/general')}
-          onClick={() => (window.location.href = '/general')}
+          onClick={() => (window.location.href = "/general")}
         />
       </div>
 
@@ -152,17 +145,25 @@ const Header: React.FC = () => {
             placeholder="搜尋討論話題..."
             className="search-input"
           />
-          <button type="submit" className="search-button">搜尋</button>
+          <button type="submit" className="search-button">
+            搜尋
+          </button>
         </form>
       </div>
 
       {/* 右側使用者操作區塊 */}
       {user ? (
         <div className="header-user">
-          <div className="userbutton" onClick={() => (window.location.href = '/general')}>
+          <div
+            className="userbutton"
+            onClick={() => (window.location.href = "/general")}
+          >
             <FaBell />
           </div>
-          <div className="userbutton" onClick={() => (window.location.href = '/general')}>
+          <div
+            className="userbutton"
+            onClick={() => (window.location.href = "/general")}
+          >
             <IoIosText />
           </div>
 
@@ -184,36 +185,24 @@ const Header: React.FC = () => {
 
             {dropdownOpen && (
               <div className="dropdown-menu">
-                <button
-                  onClick={() => window.location.href = '/Profile'}
-                >
+                <Link
+                  href={`/profile/${userId}`}>
+                <button>
                   個人主頁
                 </button>
-                <button
-                  onClick={logout}
-                >
-                  登出
-                </button>
+                </Link>
+
+                <button onClick={logout}>登出</button>
               </div>
             )}
           </div>
           {/* 用 Link 導向 /profile/[userId] */}
-          <Link
-            href={`/profile/${userId}`}
-            className="login-button"
-            title="前往我的個人主頁"
-          >
-            <Image
-              src={userphoto}
-              alt="用戶頭像"
-              width={23}
-              height={23}
-              style={{ borderRadius: '9999px', cursor: 'pointer' }}
-            />
-          </Link>
         </div>
       ) : (
-        <button className="login-button" onClick={() => window.location.href = '/login'}>
+        <button
+          className="login-button"
+          onClick={() => (window.location.href = "/login")}
+        >
           登入
         </button>
       )}
