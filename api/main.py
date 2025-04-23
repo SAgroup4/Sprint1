@@ -10,6 +10,8 @@ from routes import verify    # 處理郵件驗證的路由
 from routes import login     # 處理登入相關的路由
 from routes import posts     # 處理文章相關的路由
 from routes import comments # 留言的路由
+from routes import users     # 使用者相關的路由
+
 # 創建FastAPI應用實例
 app = FastAPI()
 
@@ -35,3 +37,4 @@ app.include_router(verify.router)    # 加入驗證相關的路由
 app.include_router(login.router)     # 加入登入相關的路由
 app.include_router(posts.post_router) # 加入文章相關的路由
 app.include_router(comments.comment_router)
+app.include_router(users.user_router) # 加入使用者相關的路由

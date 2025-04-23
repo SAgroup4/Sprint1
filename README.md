@@ -84,4 +84,3 @@ uvicorn main:app --reload #可不加--reload會跑比較快
 請大家在`.gitignore` 記得確認有忽略 `.env` 檔案 以及 `db.py`檔案，組員個別使用自己的 `.env`和 `db.py`。
 
 
-
