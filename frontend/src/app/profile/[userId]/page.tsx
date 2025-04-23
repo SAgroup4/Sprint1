@@ -104,7 +104,7 @@ export default function ProfilePage() {
               修改個人資料
             </button>
             <button
-              onClick={() => router.push(`/change-password/${userId}`)}
+              onClick={() => router.push(`/password`)}
               style={{
                 backgroundColor: '#d9534f',
                 color: 'white',
