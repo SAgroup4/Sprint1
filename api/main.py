@@ -12,7 +12,7 @@ from routes import posts     # 處理文章相關的路由
 from routes import comments # 留言的路由
 from routes import users     # 使用者相關的路由
 from routes import password     # 使用者相關的路由
-
+from routes import chat
 # 創建FastAPI應用實例
 app = FastAPI()
 
@@ -40,3 +40,4 @@ app.include_router(posts.post_router) # 加入文章相關的路由
 app.include_router(comments.comment_router)
 app.include_router(users.user_router) # 加入使用者相關的路由
 app.include_router(password.router) # 加入使用者相關的路由
+app.include_router(chat.router)

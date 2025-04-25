@@ -1,57 +1,32 @@
-#####################################################
-# db.py - Firebase資料庫連接設定檔
-# 這個文件的主要功能是：
-# 1. 連接到 Firebase 雲端資料庫服務
-# 2. 設置必要的認證和初始化
-# 3. 提供一個可以在其他文件中使用的資料庫連接實例
-#####################################################
+# db.py
 
-# 【套件導入區域】
-#####################################################
-# db.py - Firebase資料庫連接設定檔
-# 功能：
-# 1. 連接 Firebase 雲端資料庫
-# 2. 從 .env 直接讀取 JSON 金鑰本體初始化
-# 3. 提供 db 連線物件供其他檔案使用
-#####################################################
-
-# 【套件導入區域】
+import os
 import firebase_admin
 from firebase_admin import credentials, firestore
-import os
-import json
 from dotenv import load_dotenv
+import json
 
-# 【環境設定區域】
-if not load_dotenv():
-    raise Exception("無法載入 .env 文件，請確認文件存在且格式正確")
+# 讀取 .env 環境變數
+load_dotenv()
 
-# 【Firebase 初始化區域】
+# 組成 Firebase 金鑰所需的 dict（.json 格式）
+firebase_config = {
+    "type": os.getenv("FIREBASE_TYPE"),
+    "project_id": os.getenv("FIREBASE_PROJECT_ID"),
+    "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
+    "private_key": os.getenv("FIREBASE_PRIVATE_KEY").replace("\\n", "\n"),
+    "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
+    "client_id": os.getenv("FIREBASE_CLIENT_ID"),
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": f"https://www.googleapis.com/robot/v1/metadata/x509/{os.getenv('FIREBASE_CLIENT_EMAIL')}"
+}
+
+# 初始化 Firebase App（避免重複初始化）
 if not firebase_admin._apps:
-    firebase_key_json = os.getenv("FIREBASE_KEY")
+    cred = credentials.Certificate(firebase_config)
+    firebase_admin.initialize_app(cred)
 
-    if not firebase_key_json:
-        raise Exception("找不到 FIREBASE_KEY，請確認 .env 是否正確設置")
-
-    try:
-        firebase_key_dict = json.loads(firebase_key_json)
-        cred = credentials.Certificate(firebase_key_dict)
-        firebase_admin.initialize_app(cred)
-    except Exception as e:
-        raise Exception(f"Firebase 初始化失敗，錯誤訊息：{str(e)}")
-
-# 【資料庫客戶端建立區域】
-try:
-    db = firestore.client()
-except Exception as e:
-    raise Exception(f"Firestore 客戶端創建失敗，錯誤訊息：{str(e)}")
-
-# 【連線測試區域（僅在直接執行此檔案時執行）】
-if __name__ == "__main__":
-    try:
-        doc_ref = db.collection("test").document("connection_check")
-        doc_ref.set({"status": "connected"})
-        doc = doc_ref.get()
-        print("Firestore 連線成功，內容為：", doc.to_dict())
-    except Exception as e:
-        print("Firestore 連線失敗，錯誤訊息：", str(e))
+# 建立 Firestore 的 client 實例
+db = firestore.client()

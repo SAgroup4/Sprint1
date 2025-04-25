@@ -4,13 +4,17 @@
 import smtplib
 # 引入EmailMessage類別，用於建立郵件內容
 from email.message import EmailMessage
+from dotenv import load_dotenv
+import json
+import os
 
+load_dotenv()
 # Brevo（郵件發送服務商）提供的SMTP伺服器設定
 # 這些是連接到Brevo郵件伺服器所需的基本資訊
 SMTP_SERVER = "smtp-relay.brevo.com"  # SMTP伺服器地址
 SMTP_PORT = 587                       # SMTP伺服器端口，587是TLS加密連接的標準端口
-SMTP_LOGIN = "8903a2002@smtp-brevo.com"  # Brevo帳號
-SMTP_PASSWORD = "RTJg0HjS2dB5n7rF"      # Brevo密碼
+SMTP_LOGIN =  os.getenv("SMTP_LOGIN")  # Brevo帳號
+SMTP_PASSWORD =  os.getenv("SMTP_PASSWORD")    # Brevo密碼
 
 # 發送驗證郵件的函數
 # 參數說明：
