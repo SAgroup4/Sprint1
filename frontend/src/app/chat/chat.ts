@@ -4,6 +4,7 @@ export interface ChatMessage {
     senderName: string;
     content: string;
     timestamp: string;
+    status: 'sent' | 'delivered' | 'read'; // 添加 status 属性
   }
   
   export interface ChatRoom {

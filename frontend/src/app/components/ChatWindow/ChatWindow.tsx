@@ -1,15 +1,33 @@
+// ChatWindow.tsx
 'use client';
 import { Box, Typography, TextField, IconButton, Paper } from '@mui/material';
 import { useRef, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
-import type { ChatRoom, ChatMessage } from '@/app/chat/chat';
-import type { TypographyProps } from '@mui/material';
+import { SendOutlined, CheckCircleOutline } from '@mui/icons-material';
+
+interface ChatRoom {
+  id: string;
+  name: string;
+  avatar?: string;
+  unread: number;
+  lastMessage: string;
+  lastUpdatedAt?: string;
+}
+
+interface ChatMessage {
+  id: string;
+  senderId: string;
+  senderName: string;
+  content: string;
+  timestamp: string;
+  status: 'sent' | 'delivered' | 'read';
+}
 
 const ChatWindowContainer = styled(Box)(({ theme }) => ({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
-  backgroundColor: '#fff',
+  background: 'linear-gradient(145deg, #ffffff, #f8f9fa)',
   borderRadius: theme.shape.borderRadius,
   boxShadow: '0 2px 12px rgba(0, 0, 0, 0.08)',
   overflow: 'hidden',
@@ -45,30 +63,21 @@ const MessageBubble = styled(Paper, {
   marginBottom: theme.spacing(1),
   maxWidth: '70%',
   width: 'fit-content',
-  backgroundColor: isOwn ? theme.palette.primary.main : '#fff',
-  color: isOwn ? theme.palette.primary.contrastText : 'inherit',
+  color: isOwn ? '#fff' : '#1a2b6b',
   alignSelf: isOwn ? 'flex-end' : 'flex-start',
-  borderRadius: isOwn ? theme.spacing(2, 2, 0, 2) : theme.spacing(2, 2, 2, 0),
-  boxShadow: '0 1px 4px rgba(0, 0, 0, 0.12)',
-  position: 'relative',
-  '&::after': isOwn ? {
-    content: '""',
-    position: 'absolute',
-    bottom: 0,
-    right: '-8px',
-    width: '16px',
-    height: '16px',
-    backgroundColor: theme.palette.primary.main,
-    clipPath: 'polygon(0 0, 0% 100%, 100% 100%)',
-  } : {
-    content: '""',
-    position: 'absolute',
-    bottom: 0,
-    left: '-8px',
-    width: '16px',
-    height: '16px',
-    backgroundColor: '#fff',
-    clipPath: 'polygon(100% 0, 0% 100%, 100% 100%)',
+  borderRadius: isOwn ? '1.5rem 1.5rem 0.25rem 1.5rem' : '1.5rem 1.5rem 1.5rem 0.25rem',
+  background: isOwn
+    ? 'linear-gradient(145deg, #3a7bd5, #2b5cbe)'
+    : '#fff',
+  boxShadow: isOwn
+    ? '0 5px 15px rgba(43, 92, 190, 0.2)'
+    : '0 5px 15px rgba(0, 118, 255, 0.05)',
+  transition: 'all 0.2s ease',
+  '&:hover': {
+    transform: 'translateY(-2px)',
+    boxShadow: isOwn
+      ? '0 7px 20px rgba(43, 92, 190, 0.3)'
+      : '0 7px 20px rgba(0, 118, 255, 0.1)',
   },
 }));
 
@@ -79,6 +88,7 @@ const ChatInputContainer = styled(Box)(({ theme }) => ({
   gap: theme.spacing(1),
   backgroundColor: '#fff',
   boxShadow: '0 -2px 10px rgba(0, 0, 0, 0.03)',
+  transition: 'all 0.3s ease',
 }));
 
 const MessageInfo = styled(Typography)({
@@ -88,13 +98,21 @@ const MessageInfo = styled(Typography)({
   fontStyle: 'italic',
 });
 
+const formatTimestamp = (timestamp: string) => {
+  const date = new Date(timestamp);
+  const localDate = new Date(date.getTime() + 8 * 60 * 60 * 1000); // UTC+8
+  return `${localDate.getFullYear()}-${pad(localDate.getMonth() + 1)}-${pad(localDate.getDate())} ${pad(localDate.getHours())}:${pad(localDate.getMinutes())}`;
+};
+
+const pad = (num: number) => num.toString().padStart(2, '0');
+
 interface ChatWindowProps {
   selectedChat: ChatRoom | null;
   currentUserId: string;
   newMessage: string;
   onMessageChange: (msg: string) => void;
   onSendMessage: () => void;
-  messages: ChatMessage[]; // ✅ 新增
+  messages: ChatMessage[];
 }
 
 export default function ChatWindow({
@@ -103,8 +121,22 @@ export default function ChatWindow({
   newMessage,
   onMessageChange,
   onSendMessage,
-  messages, // ✅ 解構
+  messages,
 }: ChatWindowProps) {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      const container = messagesEndRef.current.parentElement?.parentElement;
+      if (container) {
+        container.scrollTo({
+          top: container.scrollHeight,
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [messages]);
+
   if (!selectedChat) {
     return (
       <ChatWindowContainer>
@@ -115,12 +147,6 @@ export default function ChatWindow({
     );
   }
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
   return (
     <ChatWindowContainer>
       <ChatHeader>
@@ -128,10 +154,9 @@ export default function ChatWindow({
           {selectedChat.name}
         </Typography>
       </ChatHeader>
-
       <ChatMessages>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          {Array.isArray(messages) && messages.map((message) => (
+          {messages.map((message) => (
             <Box
               key={message.id}
               sx={{
@@ -144,27 +169,50 @@ export default function ChatWindow({
                 <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
                   {message.senderName}
                 </Typography>
-                <Typography sx={{ lineHeight: 1.5, wordBreak: 'break-word' }}>
+                <Typography sx={{ lineHeight: 1.5, wordBreak: 'break-word', whiteSpace: 'pre-line' }}>
                   {message.content}
                 </Typography>
-                <MessageInfo>{message.timestamp}</MessageInfo>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <MessageInfo>{formatTimestamp(message.timestamp)}</MessageInfo>
+                </Box>
               </MessageBubble>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  mt: 0.5,
+                  pr: 1,
+                  visibility: message.senderId === currentUserId ? 'visible' : 'hidden',
+                }}
+              >
+                {message.status === 'sent' && (
+                  <CheckCircleOutline fontSize="small" sx={{ fontSize: '14px', color: 'text.secondary' }} />
+                )}
+                {message.status === 'read' && (
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '12px' }}>
+                    已讀
+                  </Typography>
+                )}
+              </Box>
             </Box>
           ))}
           <div ref={messagesEndRef} />
         </Box>
       </ChatMessages>
-
       <ChatInputContainer>
         <TextField
           fullWidth
           placeholder="輸入訊息..."
           variant="outlined"
           size="small"
+          multiline
           value={newMessage}
           onChange={(e) => onMessageChange(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') onSendMessage();
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              onSendMessage();
+            }
           }}
           sx={{
             '& .MuiOutlinedInput-root': {
@@ -175,24 +223,24 @@ export default function ChatWindow({
               },
               '&.Mui-focused': {
                 backgroundColor: '#fff',
-              }
-            }
+              },
+            },
           }}
         />
-        <IconButton 
-          color="primary" 
-          sx={{ 
-            p: '10px', 
-            backgroundColor: theme => theme.palette.primary.main, 
+        <IconButton
+          color="primary"
+          sx={{
+            p: '10px',
+            backgroundColor: (theme) => theme.palette.primary.main,
             color: '#fff',
             '&:hover': {
-              backgroundColor: theme => theme.palette.primary.dark,
+              backgroundColor: (theme) => theme.palette.primary.dark,
             },
             transition: 'all 0.2s ease',
-          }} 
+          }}
           onClick={onSendMessage}
         >
-          <span style={{ fontSize: '1.2rem' }} role="img" aria-label="send">✈️</span>
+          <SendOutlined />
         </IconButton>
       </ChatInputContainer>
     </ChatWindowContainer>

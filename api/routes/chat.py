@@ -103,7 +103,8 @@ async def get_messages(room_id: str, user=Depends(get_current_user)):
             "senderId": data["senderId"],
             "senderName": data["senderName"],
             "content": data["content"],
-            "timestamp": data["timestamp"]
+            "timestamp": data["timestamp"],
+            "status": data.get("status", "sent")  
         })
     return messages
 
@@ -117,7 +118,8 @@ async def send_message(room_id: str, msg: MessageIn, user=Depends(get_current_us
         "senderName": msg.senderName,
         "content": msg.content,
         "timestamp": now.isoformat(),
-        "type": "text"
+        "type": "text",
+        "status": "sent"  
     }
 
     db.collection("chatrooms").document(room_id).collection("messages").document(message_id).set(message_data)
@@ -150,3 +152,26 @@ async def search_or_create_chat(student_id: str, user=Depends(get_current_user))
             "createdAt": now
         })
     return {"chatroom_id": chatroom_id}
+
+
+@router.patch("/chatrooms/{chatroom_id}/messages/{message_id}")
+async def update_message_status(
+    chatroom_id: str,
+    message_id: str,
+    status: str,
+    user=Depends(get_current_user)
+):
+    """
+    更新消息狀態
+    """
+    if status not in ["delivered", "read"]:
+        raise HTTPException(status_code=400, detail="Invalid status")
+    
+    try:
+        # 更新消息狀態
+        message_ref = db.collection("chatrooms").document(chatroom_id).collection("messages").document(message_id)
+        message_ref.update({"status": status})
+        
+        return {"message": "Status updated successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
