@@ -13,6 +13,8 @@ from routes import comments # 留言的路由
 from routes import users     # 使用者相關的路由
 from routes import password  # 密碼相關的路由
 from routes import user_creation  # 新增的使用者註冊資料相關的路由
+from routes import profile_change  # 新增的使用者註冊資料相關的路由
+
 
 # 創建FastAPI應用實例
 app = FastAPI()
@@ -42,3 +44,4 @@ app.include_router(comments.comment_router) # 加入留言相關的路由
 app.include_router(users.user_router) # 加入使用者相關的路由
 app.include_router(password.router) # 加入密碼相關的路由
 app.include_router(user_creation.user_creation_router) # 加入使用者註冊資料相關的路由
+app.include_router(profile_change.profile_change_router) # 加入使用者註冊資料相關的路由

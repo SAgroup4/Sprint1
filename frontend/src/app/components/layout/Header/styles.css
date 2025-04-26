@@ -1,6 +1,11 @@
 .header {
+  position: fixed; /* 固定在頁面頂部 */
+  top: 0;
+  left: 0;
+  width: 100%; /* 確保 Header 寬度覆蓋整個頁面 */
+  z-index: 1000; /* 確保 Header 在其他內容之上 */
   display: flex;
-  justify-content: flex-start; /* 讓內容靠左對齊 */
+  justify-content: flex-start;
   align-items: center;
   padding: 0.6rem 2rem;
   background-color: #4a90e2;

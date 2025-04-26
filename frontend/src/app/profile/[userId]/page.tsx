@@ -90,7 +90,7 @@ export default function ProfilePage() {
           {/* 修改按鈕區 */}
           <div style={{ display: 'flex', gap: '12px' }}>
             <button
-              onClick={() => router.push(`/edit/${userId}`)}
+              onClick={() => router.push(`/profile_change/${userId}`)}
               style={{
                 backgroundColor: '#2166c',
                 color: 'white',
