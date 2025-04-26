@@ -28,30 +28,39 @@ const Login = () => {
 
   const handleLogin = async () => {
     const { email, password } = formData;
-  
+
     if (!email || !password) {
       alert('請輸入帳號和密碼');
       return;
     }
-  
+
     setLoading(true);
     setError('');
-  
+
     try {
       const res = await fetch('http://localhost:8000/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
       });
-  
+
       const result = await res.json();
-  
+
       if (res.ok) {
-        localStorage.setItem('token', result.access_token);
+        const { access_token, isProfileComplete } = result;
+        const userId = email.split('@')[0]; // 假設 userId 是 email 的前綴
+
+        localStorage.setItem('token', access_token);
         localStorage.setItem('userEmail', email);
-        router.push('/general'); //  登入成功後直接跳轉
+
+        // 根據 isProfileComplete 狀態導向不同頁面
+        if (!isProfileComplete) {
+          router.push(`/user_creation/${userId}`);
+        } else {
+          router.push('/general');
+        }
       } else {
         alert(result.detail || '登入失敗，請檢查帳號密碼');
       }

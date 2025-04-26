@@ -1,0 +1,156 @@
+.form-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom right, #e6f0ff, #cce0ff);
+  padding: 32px 16px;
+}
+
+.form {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 32px;
+  max-width: 480px;
+  width: 100%;
+}
+
+.form-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1a3e6e;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.form-group input[type="text"] {
+  background-color: #f0f8ff; /* 淺藍色背景 */
+  color: #1a1a1a; /* 深灰色文字，對比更佳 */
+  border: 1px solid #007bff; /* 藍色邊框 */
+  padding: 12px;
+  width: 100%;
+  border-radius: 25px;
+  margin-top: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+  transition: all 0.3s ease; /* 增加過渡效果 */
+}
+
+.form-group input[type="text"]:focus {
+  background-color: #e6f7ff !important; /* 更亮的淺藍色背景 */
+  border-color: #0056b3 !important; /* 深藍色邊框 */
+  outline: none; /* 移除默認的瀏覽器外框 */
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* 添加藍色陰影效果 */
+}
+
+.form-group input[type="text"]::placeholder {
+  color: #aaa; /* 提示文字顏色 */
+}
+
+.checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* 自動調整列數 */
+  gap: 12px; /* 選項之間的間距 */
+}
+
+.radio-group {
+  display: flex;
+  gap: 12px; /* 選項之間的間距 */
+}
+
+.radio-label,
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 25px; /* 橢圓形 */
+  background-color: #f0f8ff; /* 淺藍色背景 */
+  transition: background-color 0.3s ease;
+}
+
+.radio-label:hover,
+.checkbox-label:hover {
+  background-color: #e0f0ff; /* 滑鼠懸停時更深的淺藍色 */
+}
+
+.radio-label input,
+.checkbox-label input {
+  display: none;
+}
+
+.custom-radio,
+.custom-checkbox {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ccc;
+  border-radius: 50%; /* 預設圓形 */
+  margin-right: 8px;
+  margin-top: 2px; /* 向下移動 */
+  display: inline-block;
+  position: relative;
+  background-color: white;
+}
+
+.custom-checkbox {
+  border-radius: 4px; /* 方形 */
+}
+
+input:checked + .custom-radio,
+input:checked + .custom-checkbox {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+input:checked + .custom-checkbox::after {
+  content: '✔'; /* 小打勾符號 */
+  color: white;
+  font-size: 12px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+input:checked + .custom-radio::after {
+  content: '✔'; /* 小打勾符號 */
+  color: white;
+  font-size: 12px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.submit-button {
+  background-color: #4a90e2;
+  color: white;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #357ab8;
+}
+
