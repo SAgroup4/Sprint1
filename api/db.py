@@ -7,35 +7,32 @@
 #####################################################
 
 # 【套件導入區域】
-#####################################################
-# db.py - Firebase資料庫連接設定檔
-# 功能：
-# 1. 連接 Firebase 雲端資料庫
-# 2. 從 .env 直接讀取 JSON 金鑰本體初始化
-# 3. 提供 db 連線物件供其他檔案使用
-#####################################################
-
-# 【套件導入區域】
+import os
+from dotenv import load_dotenv
 import firebase_admin
 from firebase_admin import credentials, firestore
-import os
-import json
-from dotenv import load_dotenv
 
 # 【環境設定區域】
-if not load_dotenv():
-    raise Exception("無法載入 .env 文件，請確認文件存在且格式正確")
+load_dotenv()  # 若你的 .env 在 env 資料夾
 
 # 【Firebase 初始化區域】
 if not firebase_admin._apps:
-    firebase_key_json = os.getenv("FIREBASE_KEY")
-
-    if not firebase_key_json:
-        raise Exception("找不到 FIREBASE_KEY，請確認 .env 是否正確設置")
-
     try:
-        firebase_key_dict = json.loads(firebase_key_json)
-        cred = credentials.Certificate(firebase_key_dict)
+        cred_dict = {
+            "type": os.getenv("FIREBASE_TYPE"),
+            "project_id": os.getenv("FIREBASE_PROJECT_ID"),
+            "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
+            "private_key": os.getenv("FIREBASE_PRIVATE_KEY").replace('\\n', '\n'),
+            "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
+            "client_id": os.getenv("FIREBASE_CLIENT_ID"),
+            "auth_uri": os.getenv("FIREBASE_AUTH_URI"),
+            "token_uri": os.getenv("FIREBASE_TOKEN_URI"),
+            "auth_provider_x509_cert_url": os.getenv("FIREBASE_AUTH_PROVIDER_X509_CERT_URL"),
+            "client_x509_cert_url": os.getenv("FIREBASE_CLIENT_X509_CERT_URL"),
+            "universe_domain": os.getenv("FIREBASE_UNIVERSE_DOMAIN")
+        }
+
+        cred = credentials.Certificate(cred_dict)
         firebase_admin.initialize_app(cred)
     except Exception as e:
         raise Exception(f"Firebase 初始化失敗，錯誤訊息：{str(e)}")
