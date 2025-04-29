@@ -6,8 +6,8 @@ filter_router = APIRouter()
 
 @filter_router.get("/posts/filter")
 async def filter_posts(
-    order: str = Query("newest", pattern="^(newest|oldest)$"),  # 篩選排序方式
-    skills: str = Query(None)  # 篩選標籤
+    order: str = Query("newest", regex="^(newest|oldest)$"), # 篩選排序方式
+    # skills: str = Query(None)  # 篩選標籤
 ):
     """
     篩選文章列表，依據日期排序及技能標籤。
@@ -23,9 +23,9 @@ async def filter_posts(
         posts_ref = db.collection("post").order_by("timestamp", direction=direction)
 
         # 如果有傳入技能標籤，則進行標籤篩選
-        if skills:
-            skill_list = skills.split(",")  # 將技能標籤字串轉成列表
-            posts_ref = posts_ref.where("skill", "array_contains_any", skill_list)  # 篩選符合技能標籤的文章
+        # if skills:
+        #     skill_list = skills.split(",")  # 將技能標籤字串轉成列表
+        #     posts_ref = posts_ref.where("skill", "array_contains_any", skill_list)  # 篩選符合技能標籤的文章
 
         posts_ref = posts_ref.stream()
 
@@ -37,11 +37,11 @@ async def filter_posts(
             "content": post.get("content"),
             "timestamp": post.get("timestamp"),
             "comments_count": post.get("comments_count"),
-            "skill": post.get("skill", [])  # 確保 skill 欄位存在
+            # "skill": post.get("skill") or []  # 確保 skill 欄位存在
         } for post in posts_ref]
 
         print(f"排序方式: {order}")
-        print(f"篩選標籤: {skills}")
+        # print(f"篩選標籤: {skills}")
         print(f"文章數量: {len(posts)}")
 
         # 如果沒有找到符合條件的文章，返回提示

@@ -71,11 +71,57 @@ const PostList: React.FC = () => {
     );
   };
 
-  const fetchPosts = async () => {
+  // const fetchPosts = async () => {
+  //   try {
+  //     // const response = await fetch("http://localhost:8000/posts");//如果後面加/filter會找不到文章
+  //     // const response = await fetch("http://localhost:8000/posts/filter?order=newest&skills=none");
+  //     const response = await fetch("http://localhost:8000/posts/filter?order=newest&skills=Python,Java");
+      
+  //     if (!response.ok) throw new Error("獲取文章失敗");
+  //     const data = await response.json();
+  //     const formattedPosts = data.map((post: any) => {
+  //       let formattedTime = "剛剛";
+  //       if (post.timestamp) {
+  //         const date = post.timestamp._seconds
+  //           ? new Date(post.timestamp._seconds * 1000)
+  //           : new Date(post.timestamp);
+  //         if (!isNaN(date.getTime())) {
+  //           formattedTime = date.toLocaleString("zh-TW", {
+  //             timeZone: "Asia/Taipei",
+  //             year: "numeric",
+  //             month: "2-digit",
+  //             day: "2-digit",
+  //             hour: "2-digit",
+  //             minute: "2-digit",
+  //           });
+  //         }
+  //       }
+  //       return {
+  //         id: post.post_id,
+  //         title: post.title,
+  //         content: post.content,
+  //         author: post.user_id,
+  //         avatar: "/avatar.png",
+  //         timestamp: formattedTime,
+  //         replies: post.comments_count || 0,
+  //         skills: post.skill || [], 
+  //       };
+  //     });
+  //     setPosts(formattedPosts);
+  //     console.log("獲取文章成功:", formattedPosts);
+  //   } catch (error) {
+  //     console.error("獲取文章列表失敗:", error);
+  //   }
+  // };
+  const fetchFilteredPosts = async () => {
     try {
-      const response = await fetch("http://localhost:8000/posts");//如果後面加/filter會找不到文章
+      const skillParams = selectedSkills.length > 0 ? `&skills=${selectedSkills.join(",")}` : "";
+      const response = await fetch(`http://localhost:8000/posts/filter?order=${dateOrder}${skillParams}`);
       if (!response.ok) throw new Error("獲取文章失敗");
-      const data = await response.json();
+  
+      const result = await response.json();
+      const data = result.posts;
+  
       const formattedPosts = data.map((post: any) => {
         let formattedTime = "剛剛";
         if (post.timestamp) {
@@ -101,18 +147,28 @@ const PostList: React.FC = () => {
           avatar: "/avatar.png",
           timestamp: formattedTime,
           replies: post.comments_count || 0,
-          skills: post.skill || [], 
+          skills: post.skill || [],
         };
       });
+  
       setPosts(formattedPosts);
+      console.log("獲取篩選後文章成功:", formattedPosts);
     } catch (error) {
-      console.error("獲取文章列表失敗:", error);
+      console.error("獲取篩選後文章失敗:", error);
     }
   };
+  
+  
+
+  // React.useEffect(() => {
+  //   fetchFilteredPosts();
+  //   console.log(dateOrder);
+  // }, []);
 
   React.useEffect(() => {
-    fetchPosts();
-  }, []);
+    fetchFilteredPosts();
+  }, [dateOrder, selectedSkills]);
+  
 
   const handleOpenModal = () => {
     if (!user) {

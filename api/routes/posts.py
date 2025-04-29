@@ -57,18 +57,18 @@ async def get_posts():
         print(f"獲取文章列表時發生錯誤: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error fetching posts: {str(e)}")
     
-@post_router.get("/posts/{post_id}")
-async def get_post(post_id: str):
-    post_ref = db.collection("post").document(post_id)
-    doc = post_ref.get()
-    if not doc.exists:
-        raise HTTPException(status_code=404, detail="找不到文章")
+# @post_router.get("/posts/{post_id}")
+# async def get_post(post_id: str):
+#     post_ref = db.collection("post").document(post_id)
+#     doc = post_ref.get()
+#     if not doc.exists:
+#         raise HTTPException(status_code=404, detail="找不到文章")
 
-    data = doc.to_dict()
-    return {
-        "id": post_id,
-        "title": data.get("title"),
-        "content": data.get("content"),
-        "user_id": data.get("user_id"),
-        "timestamp": data.get("timestamp"),
-    }
+#     data = doc.to_dict()
+#     return {
+#         "id": post_id,
+#         "title": data.get("title"),
+#         "content": data.get("content"),
+#         "user_id": data.get("user_id"),
+#         "timestamp": data.get("timestamp"),
+#     }
