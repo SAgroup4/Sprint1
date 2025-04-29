@@ -15,7 +15,7 @@ interface Post {
   avatar: string;
   timestamp: string;
   replies: number;
-  tags?: string[];
+  skills?: string[]; // 改為 skill
 }
 
 const Post: React.FC<{ post: Post; onClick: (post: Post) => void }> = ({
@@ -37,13 +37,13 @@ const Post: React.FC<{ post: Post; onClick: (post: Post) => void }> = ({
       </div>
       <div className="post-footer">
         <hr />
-        <div className="post-tags">
-          {post.tags?.map((tag) => (
+        <div className="post-skills">
+          {post.skills?.map((skill) => (
             <span
-              key={tag}
-              className={`tag ${tag === "轉學生" ? "tag-gold" : ""}`}
+              key={skill}
+              className={`skill ${skill === "轉學生" ? "skill-gold" : ""}`}
             >
-              #{tag}
+              #{skill}
             </span>
           ))}
         </div>
@@ -55,25 +55,25 @@ const Post: React.FC<{ post: Post; onClick: (post: Post) => void }> = ({
 
 const PostList: React.FC = () => {
   const router = useRouter();
-  const {user} = useAuth();
+  const { user } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [showDateFilter, setShowDateFilter] = useState(false);
-  const [showTagFilter, setShowTagFilter] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [showSkillFilter, setShowSkillFilter] = useState(false); //  skill 篩選
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]); 
   const [dateOrder, setDateOrder] = useState<'newest' | 'oldest'>('newest');
 
-  const toggleTag = (tag: string) => {
-    setSelectedTags(prev =>
-      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+  const toggleSkill = (skill: string) => {
+    setSelectedSkills(prev =>
+      prev.includes(skill) ? prev.filter(s => s !== skill) : [...prev, skill]
     );
   };
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch("http://localhost:8000/posts");
+      const response = await fetch("http://localhost:8000/posts");//如果後面加/filter會找不到文章
       if (!response.ok) throw new Error("獲取文章失敗");
       const data = await response.json();
       const formattedPosts = data.map((post: any) => {
@@ -101,9 +101,8 @@ const PostList: React.FC = () => {
           avatar: "/avatar.png",
           timestamp: formattedTime,
           replies: post.comments_count || 0,
-          tags: post.tag || [], // ✅ 對應 Firebase 裡的 tag 陣列
+          skills: post.skill || [], 
         };
-        
       });
       setPosts(formattedPosts);
     } catch (error) {
@@ -136,9 +135,9 @@ const PostList: React.FC = () => {
 
   const filteredPosts = useMemo(() => {
     let filtered = [...posts];
-    if (selectedTags.length > 0) {
+    if (selectedSkills.length > 0) {
       filtered = filtered.filter(post =>
-        post.tags?.some(tag => selectedTags.includes(tag))
+        post.skills?.some(skill => selectedSkills.includes(skill)) // 篩選 skill標籤
       );
     }
     if (dateOrder === 'newest') {
@@ -147,7 +146,7 @@ const PostList: React.FC = () => {
       filtered.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
     }
     return filtered;
-  }, [posts, selectedTags, dateOrder]);
+  }, [posts, selectedSkills, dateOrder]);
 
   return (
     <div>
@@ -162,10 +161,10 @@ const PostList: React.FC = () => {
               className="filter-group"
               onClick={() => {
                 setShowDateFilter(prev => !prev);
-                setShowTagFilter(false);
+                setShowSkillFilter(false);
               }}
             >
-              依日期排序 {showDateFilter ? <IoIosArrowDropup /> : <IoIosArrowDropdown />}
+              依日期排序 {showDateFilter ? <IoIosArrowDropup /> : <IoIosArrowDropdown />} 
               {showDateFilter && (
                 <div className="dropdown">
                   <label>
@@ -193,21 +192,21 @@ const PostList: React.FC = () => {
             <div
               className="filter-group"
               onClick={() => {
-                setShowTagFilter(prev => !prev);
+                setShowSkillFilter(prev => !prev);
                 setShowDateFilter(false);
               }}
             >
-              依標籤搜尋 {showTagFilter ? <IoIosArrowDropup /> : <IoIosArrowDropdown />}
-              {showTagFilter && (
+              依技能搜尋 {showSkillFilter ? <IoIosArrowDropup /> : <IoIosArrowDropdown />}
+              {showSkillFilter && (
                 <div className="dropdown">
-                  {['Python', 'Java', '英文'].map(tag => (
-                    <label key={tag}>
+                  {['Python', 'Java', '英文','網頁開發','日文','韓文','跑步','籃球','桌球','閒聊','吃飯','其他'].map(skill => (
+                    <label key={skill}>
                       <input
                         type="checkbox"
-                        checked={selectedTags.includes(tag)}
-                        onChange={() => toggleTag(tag)}
+                        checked={selectedSkills.includes(skill)}
+                        onChange={() => toggleSkill(skill)}
                       />
-                      {tag}
+                      {skill}
                     </label>
                   ))}
                 </div>
