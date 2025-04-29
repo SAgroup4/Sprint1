@@ -1,0 +1,102 @@
+.change-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 130vh;
+  background: linear-gradient(135deg, #f0faff, #e0f2fe);
+}
+
+.change-box {
+  background: #fff;
+  padding: 40px 32px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 420px;
+  animation: fadeIn 0.5s ease;
+  display: flex; /* 新增 */
+  flex-direction: column; /* 確保子元素垂直排列 */
+  align-items: center; /* 水平置中子元素 */
+}
+
+.change-box .centered-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 2px solid rgb(177, 203, 231);
+  margin-bottom: 20px; /* 增加與其他元素的間距 */
+}
+
+.change-box .title {
+  text-align: center;
+  font-size: 30px;
+  color: #0d47a1;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.change-box label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+  text-align: left;
+}
+
+.change-box input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #90caf9;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  transition: 0.2s;
+}
+
+.change-box input:focus {
+  border-color: #1976d2;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.change-box button {
+  width: 100%;
+  padding: 12px;
+  background-color: #1976d2;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.change-box button:hover {
+  background-color: #1565c0;
+}
+
+.message {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: green;
+}
+
+.error {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: red;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
