@@ -17,7 +17,6 @@ post_router = APIRouter()
 @post_router.post("/posts")
 async def create_post(post: Post):
     try:
-        # db.collection("post").add(...) 返回的是一個 tuple，應該取第一個元素，即 DocumentReference
         result = db.collection("post").add({
             "user_id": post.user_id,
             "title": post.title,
