@@ -31,10 +31,17 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
-
+.db.py
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 忽略資料庫設定
+api/db.py
+
+# 忽略 Python 虛擬環境
+api/venv/
+.venv/

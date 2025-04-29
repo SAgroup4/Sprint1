@@ -1,0 +1,131 @@
+/* transfer.css */
+
+/* 頁面整體背景與內距 */
+.transfer-page {
+    background: #f0f6ff;
+    min-height: 100vh;
+    padding: 40px;
+  }
+  
+  /* 內文區塊容器 */
+  .transfer-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  /* 標題樣式 */
+  .transfer-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #1a3e6e;
+    margin-bottom: 24px;
+  }
+  
+  .transfer-subtitle {
+    font-size: 24px;
+    color: #4e91e0;
+    margin-bottom: 20px;
+  }
+  
+  .transfer-link {
+    font-size: 18px;
+    color: #1a3e6e;
+    margin-bottom: 20px;
+    text-decoration: underline;
+  }
+  
+  /* 導覽卡片樣式 */
+  .transfer-card {
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+  }
+  
+  .card-green {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .card-yellow {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  .card-red {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  /* 區塊三：課程分類 */
+  .course-section {
+    margin-top: 60px;
+    padding: 40px;
+    background-color: #f8fafc;
+    border-radius: 12px;
+  }
+  
+  .course-section h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1a3e6e;
+    text-align: left; /* 標題 */
+    margin-bottom: 16px;
+  }
+  
+  .course-section p {
+    text-align: left;
+    font-size: 18px;
+    color: #4a5568;
+    margin-bottom: 32px;
+  }
+  
+  /* 表格樣式 */
+  .course-table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+  }
+  
+  .course-table th {
+    background-color: #4e91e0;
+    color: white;
+    padding: 12px 16px;
+    text-align: left;
+  }
+  
+  .course-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #2d3748;
+  }
+  
+  .course-table tr:nth-child(even) {
+    background-color: #f1f5f9;
+  }
+  
+  /* 課程細項分欄 */
+  .course-detail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+  }
+  
+  .course-column {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .course-column h3 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1a3e6e;
+    margin-bottom: 12px;
+  }
+  
+  .course-column ul {
+    padding-left: 20px;
+    line-height: 1.8;
+    color: #4a5568;
+  }
+  

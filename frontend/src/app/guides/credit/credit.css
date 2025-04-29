@@ -1,0 +1,105 @@
+.transfer-page {
+  background: #f0f6ff;
+  min-height: 100vh;
+}
+
+.transfer-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+.course-section {
+  background-color: #f8fafc;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.course-section h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1a3e6e;
+  margin-top: 32px;
+  margin-bottom: 16px;
+}
+
+.rule-list {
+  padding-left: 20px;
+  line-height: 1.8;
+  color: #4a5568;
+  font-size: 16px;
+}
+
+.sub-list {
+  padding-left: 20px;
+  list-style-type: circle;
+}
+
+h1 {
+  text-align: center;
+}
+
+.flow-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flow-item {
+  background-color: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  padding: 16px 24px;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.flow-arrow {
+  font-size: 24px;
+  color: #1a3e6e;
+  margin: 8px 0;
+}
+
+.flow-split {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.flow-split-item {
+  background-color: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  padding: 16px;
+  flex: 1;
+  min-width: 250px;
+  max-width: 280px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.rule-title {
+  margin-top: 24px;
+  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #1a3e6e;
+}
+
+.rule-list ul {
+  list-style: disc;
+  padding-left: 24px;
+  color: #4a5568;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.rule-list li {
+  margin-bottom: 8px;
+}
