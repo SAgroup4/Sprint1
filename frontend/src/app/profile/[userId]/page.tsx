@@ -11,11 +11,13 @@ interface Post {
 
 interface UserInfo {
   department: string;
-  grade: string;
-  skill: string;
-  language: string;
+  //grade: string;
+  tags: string[];        // 注意 tags 現在是陣列
+  is_transfer: boolean;  // 轉學生：boolean
   gender: string;
 }
+
+
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -92,7 +94,7 @@ export default function ProfilePage() {
             <button
               onClick={() => router.push(`/profile_change/${userId}`)}
               style={{
-                backgroundColor: '#2166c',
+                backgroundColor: '#75809c',
                 color: 'white',
                 border: 'none',
                 borderRadius: '6px',
@@ -145,42 +147,75 @@ export default function ProfilePage() {
           <div>
             <h2 style={{ fontSize: '22px', fontWeight: 'bold', color: '#1a3e6e' }}>{userId}</h2>
             <p style={{ color: '#3c6090', marginTop: '4px' }}>
-              {userInfo?.department || '尚未填寫'} {userInfo?.grade || ''}
+              {userInfo?.department || '尚未填寫'}
+               {/* {userInfo?.grade || ''} */}
             </p>
             <p style={{ color: '#3c6090', marginTop: '4px' }}>
               性別：{userInfo?.gender || '尚未填寫'}
             </p>
+            <p style={{ color: '#3c6090', marginTop: '4px' }}>
+             {userInfo?.is_transfer ? '轉學生' :'非轉學生'}
+            </p>
+
             {/* 技能標籤 */}
-            <p style={{ color: '#3c6090', marginTop: '8px', fontWeight: 'bold' }}>技能：</p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {(Array.isArray(userInfo?.skill) ? userInfo?.skill : [userInfo?.skill]).map((item, index) => (
-                <span key={index} style={{
-                  backgroundColor: '#4a90e2',
-                  color: 'white',
-                  padding: '4px 10px',
-                  borderRadius: '16px',
-                  fontSize: '14px'
-                }}>
-                  {item}
-                </span>
-              ))}
+            <div style={{ marginTop: '16px' }}>
+              <p style={{ color: '#3c6090', fontWeight: 'bold', marginBottom: '12px', fontSize: '18px' }}>
+                技能與語言：
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                {userInfo?.tags?.length ? (() => {
+                  // 先分類
+                  const skills: string[] = [];
+                  const languages: string[] = [];
+                  const others: string[] = [];
+
+                  userInfo.tags.forEach((item) => {
+                    if (item.includes('英文') || item.includes('日文') || item.includes('韓文') || item.includes('中文')) {
+                      languages.push(item);
+                    } else if (item.includes('跑步') || item.includes('籃球') || item.includes('桌球') || item.includes('閒聊') || item.includes('吃飯') || item.includes('其他')) {
+                      others.push(item);
+                    } else {
+                      skills.push(item);
+                    }
+                  });
+
+                  // 把分類好的合併成一個陣列，順序是 技能 > 語言 > 其他
+                  const orderedTags = [...skills, ...languages, ...others];
+
+                  // 再 map 出來渲染
+                  return orderedTags.map((item, index) => {
+                    let backgroundColor = '#5941a9'; // 預設技能藍
+                    if (languages.includes(item)) {
+                      backgroundColor = '#e08d79'; // 語言粉紅
+                    } else if (others.includes(item)) {
+                      backgroundColor = '#877666'; // 其他
+                    }
+
+                    return (
+                      <span key={index} style={{
+                        backgroundColor: backgroundColor,
+                        color: 'white',
+                        padding: '6px 14px',
+                        borderRadius: '20px',
+                        fontSize: '15px',
+                        fontWeight: 'bold',
+                        letterSpacing: '0.5px',
+                        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)'
+                      }}>
+                        {item}
+                      </span>
+                    );
+                  });
+                })() : (
+                  <p style={{ color: '#888' }}>尚未選擇任何技能與語言</p>
+                )}
+              </div>
             </div>
 
-            {/* 語言標籤 */}
-            <p style={{ color: '#3c6090', marginTop: '12px', fontWeight: 'bold' }}>語言：</p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {(Array.isArray(userInfo?.language) ? userInfo?.language : [userInfo?.language]).map((item, index) => (
-                <span key={index} style={{
-                  backgroundColor: '#50b5a1',
-                  color: 'white',
-                  padding: '4px 10px',
-                  borderRadius: '16px',
-                  fontSize: '14px'
-                }}>
-                  {item}
-                </span>
-              ))}
-            </div>                      
+
+
+
+                   
           </div>
         </div>
 

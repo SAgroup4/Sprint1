@@ -1,6 +1,6 @@
 # routes/users.py
 from fastapi import APIRouter, HTTPException
-from db import db  # 你自己在 db.py 設定的 Firestore 連線
+from db import db
 
 user_router = APIRouter()
 
@@ -15,12 +15,18 @@ async def get_user_info(user_id: str):
 
         user_data = user_doc.to_dict()
 
-        # 僅回傳需要的欄位
+        # 把 tags 的物件轉成陣列，只拿有 true 的項目
+        tags_object = user_data.get("tags", {})
+        print("原本拿到的tags物件：", tags_object)  # ← 加這行
+        tags_list = [tag for tag, selected in tags_object.items() if selected]
+        print("轉成的tags陣列：", tags_list)  # ← 再加這行
+
+
         filtered_data = {
             "department": user_data.get("department", ""),
             "grade": user_data.get("grade", ""),
-            "skill": user_data.get("skill", ""),
-            "language": user_data.get("language", ""),
+            "tags": tags_list,
+            "is_transfer": bool(user_data.get("trans", 0)),  # 用 trans 欄位
             "gender": user_data.get("gender", "")
         }
 
