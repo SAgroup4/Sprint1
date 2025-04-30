@@ -79,13 +79,13 @@ const Header: React.FC = () => {
         <div className="header-user">
           <div
             className="userbutton"
-            onClick={() => (window.location.href = "/general")}
+            onClick={() => (window.location.href = "/chat")}
           >
             <FaBell />
           </div>
           <div
             className="userbutton"
-            onClick={() => (window.location.href = "/general")}
+            onClick={() => (window.location.href = "/chat")}
           >
             <IoIosText />
           </div>
