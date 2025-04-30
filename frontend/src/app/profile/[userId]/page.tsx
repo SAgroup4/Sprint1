@@ -10,6 +10,7 @@ interface Post {
 }
 
 interface UserInfo {
+  name: string;
   department: string;
   grade: string;
   gender: string;
@@ -165,7 +166,11 @@ export default function ProfilePage() {
           }}
         />
         <div>
-          <h2 style={{ fontSize: '22px', fontWeight: 'bold', color: '#1a3e6e' }}>{userId}</h2>
+          
+        <h2 style={{ fontSize: '22px', fontWeight: 'bold', color: '#1a3e6e' }}>
+          {(userInfo?.name || '尚未填寫') + '　' + userId}
+        </h2>
+
           <p style={{ color: '#3c6090', marginTop: '4px' }}>
             {userInfo?.department || '尚未填寫'}　{userInfo?.grade || ''}
           </p>

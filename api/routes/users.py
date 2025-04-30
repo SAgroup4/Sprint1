@@ -17,6 +17,7 @@ async def get_user_info(user_id: str):
 
         # 新版結構：直接傳回 skilltags、languagetags、leasuretags 三個物件
         filtered_data = {
+            "name": user_data.get("name", ""),
             "department": user_data.get("department", ""),
             "grade": user_data.get("grade", ""),
             "gender": user_data.get("gender", ""),
