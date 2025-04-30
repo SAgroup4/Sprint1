@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import "./styles.css";
+import styles from "./styles.module.css"; // 使用 CSS 模組
 import { IoIosArrowBack } from "react-icons/io";
 
 interface Comment {
@@ -114,53 +114,63 @@ const PostDetail = () => {
   };
 
   return (
-    <div className="post-detail-container">
-      <div className="post-header">
-        <IoIosArrowBack className="back-button" onClick={() => router.back()} />
-        <h5 className="post-word">內文</h5>
-        <span className="post-date">{formatTimestamp(post.timestamp)}</span>
+    <div className={styles.postDetailContainer}>
+      <div className={styles.postHeader}>
+        <IoIosArrowBack
+          className={styles.backButton}
+          onClick={() => router.back()}
+        />
+        <h5 className={styles.postWord}>內文</h5>
+        <span className={styles.postDate}>{formatTimestamp(post.timestamp)}</span>
       </div>
-      <hr className="divider" />
+      <hr className={styles.divider} />
 
-      <div className="post-meta">
-        <div className="author-info">
-          <img src="/avatar.png" alt="頭貼" className="author-avatar" />
-          <span className="post-author">{post.user_id}</span>
-          <button className="message-button">私訊</button>
+      <div className={styles.postMeta}>
+        <div className={styles.authorInfo}>
+          <img src="/avatar.png" alt="頭貼" className={styles.authorAvatar} />
+          <span className={styles.postAuthor}>{post.user_id}</span>
+          <button className={styles.messageButton}>私訊</button>
         </div>
       </div>
 
-      <h1 className="post-word">{post.title}</h1>
-      <div className="post-content">{post.content}</div>
-      <hr className="divider" />
-      <h2 className="comments-title">全部留言</h2>
+      <h1 className={styles.postWord}>{post.title}</h1>
+      <div className={styles.postContent}>{post.content}</div>
+      <hr className={styles.divider} />
+      <h2 className={styles.commentsTitle}>全部留言</h2>
 
-      <div className="comments-list">
+      <div className={styles.commentsList}>
         {comments.map((comment) => (
-          <div key={comment.comment_id} className="comment-item">
-            <div className="comment-meta">
-              <div className="author-info">
-                <img src="/avatar.png" alt="頭貼" className="author-avatar" />
-                <span className="comment-author">{comment.user_id}</span>
+          <div key={comment.comment_id} className={styles.commentItem}>
+            <div className={styles.commentMeta}>
+              <div className={styles.authorInfo}>
+                <img
+                  src="/avatar.png"
+                  alt="頭貼"
+                  className={styles.authorAvatar}
+                />
+                <span className={styles.commentAuthor}>{comment.user_id}</span>
               </div>
-              <span className="comment-timestamp">
+              <span className={styles.commentTimestamp}>
                 {formatTimestamp(comment.timestamp)}
               </span>
             </div>
-            <div className="comment-content">{comment.content}</div>
+            <div className={styles.commentContent}>{comment.content}</div>
           </div>
         ))}
       </div>
 
       {/* 新增評論 */}
-      <div className="add-comment">
+      <div className={styles.addComment}>
         <textarea
-          className="comment-input"
+          className={styles.commentInput}
           placeholder="輸入你的評論..."
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
         />
-        <button className="submit-comment-button" onClick={handleAddComment}>
+        <button
+          className={styles.submitCommentButton}
+          onClick={handleAddComment}
+        >
           提交評論
         </button>
       </div>

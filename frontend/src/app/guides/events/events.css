@@ -1,0 +1,41 @@
+.transfer-page {
+    background: #f0f6ff;
+    min-height: 100vh;
+  }
+  
+  .transfer-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px;
+  }
+  
+  .course-section {
+    background-color: #f8fafc;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+  }
+  
+  .course-section h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1a3e6e;
+    margin-bottom: 20px;
+  }
+  
+  .rule-list {
+    padding-left: 20px;
+    color: #4a5568;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  
+  .rule-title {
+    margin-top: 24px;
+    margin-bottom: 12px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #1a3e6e;
+  }
+  
