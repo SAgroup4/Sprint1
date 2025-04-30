@@ -7,7 +7,10 @@ from db import db
 class UserProfileUpdate(BaseModel):
     department: str
     gender: str
+    grade: str
+    name: str
     skills: list[str]
+    languages: list[str]
     isTransferStudent: bool
 
 # 定義路由器
@@ -25,14 +28,30 @@ async def update_user_profile(user_id: str, profile: UserProfileUpdate):
         if not user_doc.exists:
             raise HTTPException(status_code=404, detail="找不到該使用者資料")
 
-        # 獲取現有的 tags 資料
-        existing_tags = user_doc.to_dict().get("tags", {})
+        # 獲取現有的 skilltags 和 languagetags 資料
+        existing_skills_tags = user_doc.to_dict().get("skilltags", {})
+        existing_languages_tags = user_doc.to_dict().get("languagetags", {})
+
+        # 更新技能標籤：只將提交的技能標籤設為 true，保留其他標籤的原始值
+        updated_skills_tags = {
+            key: (True if key in profile.skills else value)
+            for key, value in existing_skills_tags.items()
+        }
+
+        # 更新語言標籤：只將提交的語言標籤設為 true，保留其他標籤的原始值
+        updated_languages_tags = {
+            key: (True if key in profile.languages else value)
+            for key, value in existing_languages_tags.items()
+        }
 
         # 更新資料
         update_data = {
             "department": profile.department,
             "gender": profile.gender,
-            "tags": {**existing_tags, **{skill: True for skill in profile.skills}},  # 更新現有技能的值為 true
+            "grade": profile.grade,
+            "name": profile.name,
+            "skilltags": updated_skills_tags,  # 更新後的技能標籤
+            "languagetags": updated_languages_tags,  # 更新後的語言標籤
             "trans": profile.isTransferStudent,  # 更新是否為轉學生
             "isProfileComplete": True,  # 設定為已完成註冊
         }

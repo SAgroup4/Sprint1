@@ -1,5 +1,5 @@
 /* 容器樣式 */
-.post-detail-container {
+.postDetailContainer {
   max-width: 960px;
   margin: 0 auto;
   padding: 16px;
@@ -12,15 +12,15 @@
 }
 
 /* 標題區域 */
-.post-header {
+.postHeader {
   display: flex;
-  align-items: center; /* 垂直置中所有元素 */
+  align-items: center;
   gap: 16px;
   margin-bottom: 18px;
-  padding: 0 16px; /* 預防左右壓邊 */
+  padding: 0 16px;
 }
 
-.back-button {
+.backButton {
   color: #1c4874 !important;
   font-size: 1.2em;
   cursor: pointer;
@@ -28,22 +28,22 @@
   align-items: center;
 }
 
-.post-word {
+.postWord {
   font-size: 1rem;
   font-weight: bold;
   margin: 0;
   color: #1c4874;
 }
 
-.post-date {
-  margin-left: auto; /* 推到最右邊 */
+.postDate {
+  margin-left: auto;
   font-size: 0.9rem;
   color: #888;
   display: flex;
-  align-items: center; /* 垂直置中 */
+  align-items: center;
 }
 
-.post-title {
+.postTitle {
   font-size: 1.8rem;
   font-weight: bold;
   margin: 0;
@@ -51,28 +51,28 @@
 }
 
 /* 元數據樣式 */
-.post-meta {
+.postMeta {
   display: flex;
-  justify-content: flex-start; /* 靠左對齊 */
+  justify-content: flex-start;
   font-size: 0.9rem;
   color: #888;
   margin-bottom: 16px;
 }
 
-.author-info {
+.authorInfo {
   display: flex;
-  align-items: center; /* 垂直置中三個元素 */
+  align-items: center;
   gap: 8px;
 }
 
-.author-avatar {
+.authorAvatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
 }
 
-.message-button {
+.messageButton {
   background-color: transparent;
   color: #4a90e2;
   border: none;
@@ -83,17 +83,17 @@
   transition: color 0.3s ease;
 }
 
-.message-button:hover {
+.messageButton:hover {
   background-color: #357abd;
 }
 
 /* 內容樣式 */
-.post-content {
+.postContent {
   margin-top: 16px;
   font-size: 1rem;
   color: #333;
   line-height: 1.6;
-  white-space: pre-wrap; /* 保留換行 */
+  white-space: pre-wrap;
   margin-bottom: 16px;
 }
 
@@ -104,25 +104,25 @@
 }
 
 /* 留言區樣式 */
-.comments-title {
+.commentsTitle {
   font-size: 1.2rem;
   font-weight: bold;
   margin-bottom: 16px;
   color: #1c4874;
 }
 
-.comments-list {
+.commentsList {
   display: flex;
   flex-direction: column;
 }
 
-.comment-item {
+.commentItem {
   padding: 8px;
   padding-bottom: 14px;
   border-bottom: 1px solid #ddd;
 }
 
-.comment-meta {
+.commentMeta {
   display: flex;
   justify-content: space-between;
   font-size: 0.9rem;
@@ -131,26 +131,26 @@
   padding: 8px;
 }
 
-.comment-author {
+.commentAuthor {
   font-weight: bold;
   color: #003366;
 }
 
-.comment-content {
+.commentContent {
   font-size: 1rem;
   color: #333;
   margin-left: 20px;
 }
 
 /* 新增留言樣式 */
-.add-comment {
+.addComment {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 16px;
 }
 
-.comment-input {
+.commentInput {
   margin-top: 20px;
   width: 100%;
   height: 80px;
@@ -163,26 +163,25 @@
   color: #606060;
 }
 
-.submit-comment-button {
+.submitCommentButton {
   padding: 0.5rem 1rem;
-  background-color: #357abd; /* 藍色背景 */
-  color: white; /* 白色文字 */
-  border: none; /* 移除邊框 */
-  border-radius: 25px; /* 圓角 */
-  font-size: 16px; /* 字體大小 */
-  cursor: pointer; /* 滑鼠指標變成手型 */
-  transition: background-color 0.3s ease, transform 0.2s ease; /* 動畫效果 */
-  margin-left: auto; /* 將按鈕推到右側 */
-  align-items: center; /* 垂直置中 */
+  background-color: #357abd;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-left: auto;
+  align-items: center;
 }
 
-.submit-comment-button:hover {
-  background-color: #0056b3; /* 深藍色背景 */
-  transform: scale(1.05); /* 放大效果 */
+.submitCommentButton:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
 }
 
-.submit-comment-button:active {
-  background-color: #003f7f; /* 更深的藍色背景 */
-  transform: scale(0.95); /* 按下時縮小效果 */
+.submitCommentButton:active {
+  background-color: #003f7f;
+  transform: scale(0.95);
 }
-
