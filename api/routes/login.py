@@ -57,4 +57,12 @@ async def get_current_user(request: Request):
     if not doc.exists:
         raise HTTPException(status_code=404, detail="使用者不存在")
 
-    return doc.to_dict()
+    user_data = doc.to_dict()
+    return {
+        "id": student_id,
+        "nickname": user_data.get("nickname", "未知用戶"),
+        "avatar": user_data.get("avatar", "/placeholder.svg"),
+        "email": user_data.get("email", ""),
+        "department": user_data.get("department", ""),
+        "isProfileComplete": user_data.get("isProfileComplete", False)
+    }
