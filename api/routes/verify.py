@@ -46,15 +46,20 @@ async def verify_email(token: str):
         "grade": "",                     # 預留的年級欄位
         "trans": False, 
         "isProfileComplete": False,      # 新增的布林值欄位，預設為 False，看資料填寫了沒
-        "tags": {                        # 新增的 tags 欄位，所有值預設為 False
+        "skilltags": {                   # 技能標籤
             "Java": False,
             "Python": False,
             "網頁開發": False,
+            "其他程式語言": False
+        },
+        "languagetags": {                # 語言標籤
             "英文": False,
             "日文": False,
             "韓文": False,
+            "其他語言": False
+        },
+        "leasuretags": {                 # 休閒標籤
             "跑步": False,
-            "籃球": False,
             "桌球": False,
             "閒聊": False,
             "吃飯": False,

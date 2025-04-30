@@ -15,7 +15,9 @@ interface Post {
   avatar: string;
   timestamp: string;
   replies: number;
-  skills?: string[]; // 改為 skill
+  skilltags?: string[];
+  languagetags?: string[];
+  leisuretags?: string[];
 }
 
 const Post: React.FC<{ post: Post; onClick: (post: Post) => void }> = ({
@@ -38,12 +40,19 @@ const Post: React.FC<{ post: Post; onClick: (post: Post) => void }> = ({
       <div className="post-footer">
         <hr />
         <div className="post-skills">
-          {post.skills?.map((skill) => (
-            <span
-              key={skill}
-              className={`skill ${skill === "轉學生" ? "skill-gold" : ""}`}
-            >
+          {post.skilltags?.map((skill) => (
+            <span key={skill} className="skill">
               #{skill}
+            </span>
+          ))}
+          {post.languagetags?.map((language) => (
+            <span key={language} className="language">
+              #{language}
+            </span>
+          ))}
+          {post.leisuretags?.map((leisure) => (
+            <span key={leisure} className="leisure">
+              #{leisure}
             </span>
           ))}
         </div>
@@ -61,21 +70,43 @@ const PostList: React.FC = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [showDateFilter, setShowDateFilter] = useState(false);
-  const [showSkillFilter, setShowSkillFilter] = useState(false); //  skill 篩選
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]); 
+  const [showSkillFilter, setShowSkillFilter] = useState(false);
+  const [showLanguageFilter, setShowLanguageFilter] = useState(false);
+  const [showLeisureFilter, setShowLeisureFilter] = useState(false);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+  const [selectedLeisure, setSelectedLeisure] = useState<string[]>([]);
   const [dateOrder, setDateOrder] = useState<'newest' | 'oldest'>('newest');
 
   const toggleSkill = (skill: string) => {
-    setSelectedSkills(prev =>
-      prev.includes(skill) ? prev.filter(s => s !== skill) : [...prev, skill]
+    setSelectedSkills((prev) =>
+      prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill]
     );
   };
 
-  const fetchPosts = async () => {
+  const toggleLanguage = (language: string) => {
+    setSelectedLanguages((prev) =>
+      prev.includes(language) ? prev.filter((l) => l !== language) : [...prev, language]
+    );
+  };
+
+  const toggleLeisure = (leisure: string) => {
+    setSelectedLeisure((prev) =>
+      prev.includes(leisure) ? prev.filter((l) => l !== leisure) : [...prev, leisure]
+    );
+  };
+
+  const fetchFilteredPosts = async () => {
     try {
-      const response = await fetch("http://localhost:8000/posts");//如果後面加/filter會找不到文章
+      const skillParams = selectedSkills.length > 0 ? `&skilltags=${selectedSkills.join(",")}` : "";
+      const languageParams = selectedLanguages.length > 0 ? `&languagetags=${selectedLanguages.join(",")}` : "";
+      const leisureParams = selectedLeisure.length > 0 ? `&leisuretags=${selectedLeisure.join(",")}` : "";
+      const response = await fetch(`http://localhost:8000/posts/filter?order=${dateOrder}${skillParams}${languageParams}${leisureParams}`);
       if (!response.ok) throw new Error("獲取文章失敗");
-      const data = await response.json();
+
+      const result = await response.json();
+      const data = result.posts;
+
       const formattedPosts = data.map((post: any) => {
         let formattedTime = "剛剛";
         if (post.timestamp) {
@@ -101,18 +132,22 @@ const PostList: React.FC = () => {
           avatar: "/avatar.png",
           timestamp: formattedTime,
           replies: post.comments_count || 0,
-          skills: post.skill || [], 
+          skilltags: post.skilltags || [],
+          languagetags: post.languagetags || [],
+          leisuretags: post.leisuretags || [],
         };
       });
+
       setPosts(formattedPosts);
+      console.log("獲取篩選後文章成功:", formattedPosts);
     } catch (error) {
-      console.error("獲取文章列表失敗:", error);
+      console.error("獲取篩選後文章失敗:", error);
     }
   };
 
   React.useEffect(() => {
-    fetchPosts();
-  }, []);
+    fetchFilteredPosts();
+  }, [dateOrder, selectedSkills, selectedLanguages, selectedLeisure]);
 
   const handleOpenModal = () => {
     if (!user) {
@@ -133,21 +168,6 @@ const PostList: React.FC = () => {
     router.push(`/posts/${post.id}`);
   };
 
-  const filteredPosts = useMemo(() => {
-    let filtered = [...posts];
-    if (selectedSkills.length > 0) {
-      filtered = filtered.filter(post =>
-        post.skills?.some(skill => selectedSkills.includes(skill)) // 篩選 skill標籤
-      );
-    }
-    if (dateOrder === 'newest') {
-      filtered.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-    } else {
-      filtered.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-    }
-    return filtered;
-  }, [posts, selectedSkills, dateOrder]);
-
   return (
     <div>
       <div className="post-list-container">
@@ -156,69 +176,133 @@ const PostList: React.FC = () => {
             <FaRegLightbulb className="title-icon" />
             <h1 className="sidebar-title">學習路上，不如找個人同行</h1>
           </div>
-          <div className="filter-controls">
-            <div
-              className="filter-group"
-              onClick={() => {
-                setShowDateFilter(prev => !prev);
-                setShowSkillFilter(false);
-              }}
-            >
-              依日期排序 {showDateFilter ? <IoIosArrowDropup /> : <IoIosArrowDropdown />} 
-              {showDateFilter && (
-                <div className="dropdown">
-                  <label>
-                    <input
-                      type="radio"
-                      name="date"
-                      checked={dateOrder === 'newest'}
-                      onChange={() => setDateOrder('newest')}
-                    />
-                    由近到遠
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      name="date"
-                      checked={dateOrder === 'oldest'}
-                      onChange={() => setDateOrder('oldest')}
-                    />
-                    由遠到近
-                  </label>
-                </div>
-              )}
-            </div>
-
-            <div
-              className="filter-group"
-              onClick={() => {
-                setShowSkillFilter(prev => !prev);
-                setShowDateFilter(false);
-              }}
-            >
-              依技能搜尋 {showSkillFilter ? <IoIosArrowDropup /> : <IoIosArrowDropdown />}
-              {showSkillFilter && (
-                <div className="dropdown">
-                  {['Python', 'Java', '英文','網頁開發','日文','韓文','跑步','籃球','桌球','閒聊','吃飯','其他'].map(skill => (
-                    <label key={skill}>
-                      <input
-                        type="checkbox"
-                        checked={selectedSkills.includes(skill)}
-                        onChange={() => toggleSkill(skill)}
-                      />
-                      {skill}
-                    </label>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-          <button className="add-button" onClick={handleOpenModal}>+</button>
         </div>
       </div>
 
+      {/* 篩選功能移到貼文列表上方 */}
+      <div className="filter-controls">
+        <h2>篩選條件</h2>
+
+        {/* 日期篩選 */}
+        <div
+          className="filter-group"
+          onClick={() => {
+            setShowDateFilter((prev) => !prev);
+            setShowSkillFilter(false);
+            setShowLanguageFilter(false);
+            setShowLeisureFilter(false);
+          }}
+        >
+          依日期排序 {showDateFilter ? <IoIosArrowDropup /> : <IoIosArrowDropdown />}
+          {showDateFilter && (
+            <div className="dropdown">
+              <label>
+                <input
+                  type="radio"
+                  name="date"
+                  checked={dateOrder === 'newest'}
+                  onChange={() => setDateOrder('newest')}
+                />
+                由近到遠
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="date"
+                  checked={dateOrder === 'oldest'}
+                  onChange={() => setDateOrder('oldest')}
+                />
+                由遠到近
+              </label>
+            </div>
+          )}
+        </div>
+
+        {/* 技能篩選 */}
+        <div
+          className="filter-group"
+          onClick={() => {
+            setShowSkillFilter((prev) => !prev);
+            setShowDateFilter(false);
+            setShowLanguageFilter(false);
+            setShowLeisureFilter(false);
+          }}
+        >
+          依技能搜尋 {showSkillFilter ? <IoIosArrowDropup /> : <IoIosArrowDropdown />}
+          {showSkillFilter && (
+            <div className="dropdown">
+              {["Python", "Java", "網頁開發", "跑步", "籃球", "桌球"].map((skill) => (
+                <label key={skill}>
+                  <input
+                    type="checkbox"
+                    checked={selectedSkills.includes(skill)}
+                    onChange={() => toggleSkill(skill)}
+                  />
+                  {skill}
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* 語言篩選 */}
+        <div
+          className="filter-group"
+          onClick={() => {
+            setShowLanguageFilter((prev) => !prev);
+            setShowDateFilter(false);
+            setShowSkillFilter(false);
+            setShowLeisureFilter(false);
+          }}
+        >
+          依語言搜尋 {showLanguageFilter ? <IoIosArrowDropup /> : <IoIosArrowDropdown />}
+          {showLanguageFilter && (
+            <div className="dropdown">
+              {["英文", "日文", "韓文", "中文"].map((language) => (
+                <label key={language}>
+                  <input
+                    type="checkbox"
+                    checked={selectedLanguages.includes(language)}
+                    onChange={() => toggleLanguage(language)}
+                  />
+                  {language}
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* 休閒篩選 */}
+        <div
+          className="filter-group"
+          onClick={() => {
+            setShowLeisureFilter((prev) => !prev);
+            setShowDateFilter(false);
+            setShowSkillFilter(false);
+            setShowLanguageFilter(false);
+          }}
+        >
+          依休閒搜尋 {showLeisureFilter ? <IoIosArrowDropup /> : <IoIosArrowDropdown />}
+          {showLeisureFilter && (
+            <div className="dropdown">
+              {["旅遊", "音樂", "電影", "運動"].map((leisure) => (
+                <label key={leisure}>
+                  <input
+                    type="checkbox"
+                    checked={selectedLeisure.includes(leisure)}
+                    onChange={() => toggleLeisure(leisure)}
+                  />
+                  {leisure}
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 貼文列表 */}
       <div className="post-list">
-        {filteredPosts.map((post) => (
+        {posts.map((post) => (
           <Post key={post.id} post={post} onClick={handlePostClick} />
         ))}
       </div>

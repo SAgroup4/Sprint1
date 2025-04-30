@@ -1,5 +1,5 @@
 .form-container {
-  min-height: 100vh;
+  min-height: 140vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,7 +11,7 @@
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 32px;
-  max-width: 480px;
+  max-width: 800px;
   width: 100%;
 }
 
@@ -23,6 +23,12 @@
   text-align: center;
 }
 
+.double-columns{
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 兩列 */
+  gap: 16px; /* 列之間的間距 */
+}
+
 .form-group {
   margin-bottom: 20px;
 }
@@ -31,12 +37,12 @@
   display: block;
   font-size: 16px;
   font-weight: bold;
-  color: #333;
+  color: #333; /* 統一為深灰色 */
   margin-bottom: 8px;
 }
 
 .form-group input[type="text"] {
-  background-color: #f0f8ff; /* 淺藍色背景 */
+  background-color: #ffffff  !important; /* 淺藍色背景 */
   color: #1a1a1a; /* 深灰色文字，對比更佳 */
   border: 1px solid #007bff; /* 藍色邊框 */
   padding: 12px;
@@ -49,14 +55,14 @@
 }
 
 .form-group input[type="text"]:focus {
-  background-color: #e6f7ff !important; /* 更亮的淺藍色背景 */
+  background-color: #ffffff !important; /* 更亮的淺藍色背景 */
   border-color: #0056b3 !important; /* 深藍色邊框 */
   outline: none; /* 移除默認的瀏覽器外框 */
   box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* 添加藍色陰影效果 */
 }
 
 .form-group input[type="text"]::placeholder {
-  color: #aaa; /* 提示文字顏色 */
+  color: #aaa; /* 提示文字顏色保持一致 */
 }
 
 .checkbox-group {
@@ -153,3 +159,153 @@ input:checked + .custom-radio::after {
   background-color: #357ab8;
 }
 
+/* 下拉式選單專屬樣式 */
+.form-group-select {
+  position: relative; /* 為自定義箭頭提供定位基準 */
+  overflow: visible; 
+  color: #1a1a1a;
+}
+
+.form-group-select select {
+  background-color: #ffffff; /* 淺藍色背景 */
+  color:  #494949; /* 深灰色文字，對比更佳 */
+  border: 1px solid #007bff; /* 藍色邊框 */
+  padding: 12px;
+  width: 100%;
+  border-radius: 25px; /* 圓角邊框 */
+  margin-top: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+  transition: all 0.3s ease; /* 增加過渡效果 */
+  appearance: none; /* 移除瀏覽器預設樣式 */
+  outline: none; /* 移除點擊時的外框 */
+  position: relative;
+  z-index: 0; /* 確保選單在箭頭之上 */
+}
+
+/* 下拉式選單的 hover 效果 */
+.form-group-select select:hover {
+  border-color: #0056b3; /* 滑鼠懸停時改變邊框顏色 */
+}
+
+/* 下拉式選單的 focus 效果 */
+.form-group-select select:focus {
+  background-color: #ffffff !important; /* 更亮的淺藍色背景 */
+  border-color: #0056b3 !important; /* 深藍色邊框 */
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* 添加藍色陰影效果 */
+  color: #1a1a1a;
+}
+
+
+/* 禁用選項的樣式 */
+.form-group-select select option:disabled {
+  color: #aaa; /* 禁用選項的字體顏色 */
+}
+
+
+/* 年級下拉選單樣式 */
+.grade-group select {
+  background-color: #ffffff !important; /* 淺藍色背景 */
+  color:  #494949; /* 深灰色文字 */
+  border: 1px solid #007bff; /* 藍色邊框 */
+  padding: 12px;
+  border-radius: 25px; /* 圓角邊框 */
+  font-size: 16px;
+  width: 100%; /* 自動調整寬度 */
+  appearance: none; /* 移除瀏覽器預設樣式 */
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+/* 下拉選單 hover 效果 */
+.grade-group select:hover {
+  border-color: #0056b3;
+}
+
+/* 下拉選單 focus 效果 */
+.grade-group select:focus {
+  background-color: #ffffff !important;
+  border-color: #0056b3;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+.centered-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin-bottom: 20px; /* 增加與其他元素的間距 */
+  
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* 控制頭像與學號之間的間距 */
+}
+
+.profile-image {
+  width: 80px; /* 調整頭像大小 */
+  height: 80px;
+  border-radius: 50%; /* 圓形頭像 */
+  object-fit: cover;
+  border: 2px solid rgb(177, 203, 231);
+
+}
+
+.profile-id {
+  font-size: 22px;
+  font-weight: bold;
+  color: #1a3e6e;
+}
+
+/* 淡金色樣式 */
+.gold-radio-group {
+  display: flex;
+  gap: 12px; /* 選項之間的間距 */
+}
+
+.gold-radio-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 25px; /* 橢圓形 */
+  background-color: #fff8dc; /* 淡金色背景 */
+  transition: background-color 0.3s ease;
+}
+
+.gold-radio-label:hover {
+  background-color: #f5deb3; /* 更深的淡金色背景 */
+}
+
+.gold-radio-label input {
+  display: none;
+}
+
+.gold-custom-radio {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #daa520; /* 金色邊框 */
+  border-radius: 50%; /* 圓形 */
+  margin-right: 8px;
+  margin-top: 2px; /* 向下移動 */
+  display: inline-block;
+  position: relative;
+  background-color: white;
+}
+
+input:checked + .gold-custom-radio {
+  background-color: #ffd700; /* 金色填充 */
+  border-color: #ffd700;
+}
+
+input:checked + .gold-custom-radio::after {
+  content: '✔'; /* 小打勾符號 */
+  color: white;
+  font-size: 12px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
