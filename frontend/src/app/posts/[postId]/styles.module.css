@@ -185,3 +185,35 @@
   background-color: #003f7f;
   transform: scale(0.95);
 }
+
+.tagContainer {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skillTag {
+  background-color: #c8e6c9;
+  color: #1b5e20;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.languageTag {
+  background-color: #bbdefb;
+  color: #0d47a1;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.leisureTag {
+  background-color: #ffe0b2;
+  color: #e65100;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+}
