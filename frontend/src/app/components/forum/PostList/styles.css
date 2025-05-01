@@ -27,7 +27,6 @@
   resize: vertical;
   transition: border-color 0.3s;
   background-color: aliceblue;
-
 }
 
 .post-input:focus {
@@ -35,7 +34,6 @@
   border-color: #4a90e2;
   box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
   background-color: aliceblue;
-
 }
 
 /* 短文字輸入框樣式 */
@@ -140,7 +138,7 @@
 
 .post-body {
   margin-bottom: 8px;
-  color:  #242424;
+  color: #242424;
 }
 
 .post-replies {
@@ -222,13 +220,12 @@
   margin-top: 0;
   margin-bottom: 5px;
   text-align: center;
-  color: #003366
+  color: #003366;
 }
 
 .modal-field {
   margin: 15px 5px;
   padding: 1px;
-  
 }
 
 .modal-field label {
@@ -236,7 +233,6 @@
   margin-bottom: 5px;
   font-weight: bold;
   color: #003366; /* 深藍色字體 */
-
 }
 
 .modal-field input,
@@ -284,7 +280,7 @@
 .people-counter span {
   font-size: 16px;
   font-weight: bold;
-  color: #003366
+  color: #003366;
 }
 
 .modal-actions {
@@ -299,6 +295,8 @@
   border: none;
   padding: 8px 16px;
   border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -456,10 +454,15 @@
   transform: scale(0.95); /* 點擊時縮小 */
 }
 
+.two-Columns {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+}
+
 .title-with-icon {
   display: flex;
   align-items: center; /* ✅ 垂直置中對齊 */
-  gap: 0.5rem;  
+  gap: 0.5rem;
 }
 
 .title-icon {
@@ -467,17 +470,8 @@
   color: #003366; /* 圖示顏色 */
 }
 
-.sidebar-title {
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-top: 8px;
-  color: #333;
-  
-}
-
 /* === Filter Controls === */
-.filter-controls {
-  display: flex;
+.filter-area {
   gap: 2rem;
   margin-top: 0.5rem;
   font-size: 1rem;
@@ -485,76 +479,346 @@
   font-weight: 500;
 }
 
-.filter-group {
-  position: relative;
+.filter-area h2 {
+  display: flex; /* 使用 flexbox */
+  justify-content: center; /* 水平置中 */
+  align-items: center; /* 垂直置中 */
+  height: 100%; /* 確保高度充滿父容器 */
+  font-size: 1.2rem;
+  color: #003366;
+  font-weight: bold;
+  margin: 0; /* 移除多餘的外邊距 */
+}
+
+/* 讓按鈕和選項在同一行 */
+.filter-row {
+  display: flex;
+  justify-content: space-between; /* 按鈕置左，選項置右 */
+  align-items: center; /* 垂直置中 */
+}
+
+/* 灰色篩選按鈕樣式 */
+.filter-button {
+  background-color: #c6d3e0; /* 淡灰藍色背景 */
+  color: #003366; /* 主題色的淡藍字體 */ /* 主題色的淡藍字體 */
+  border: none;
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 5px;
+}
+
+.filter-button:hover {
+  background-color: #d6d6d6;
+}
+
+/* 篩選選項樣式 */
+.filter-options {
+  display: flex;
+  gap: 1rem; /* 選項之間的間距 */
+}
+
+.filter-options label {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  user-select: none;
+  gap: 0.5rem; /* 圓圈與文字的間距 */
+  font-size: 0.95rem;
+  color: #003366;
 }
 
-.filter-group:hover {
-  text-decoration: underline;
+/* 標籤容器樣式 */
+.post-tag {
+  display: inline-block;
+  padding: 6px 12px; /* 內邊距，控制標籤大小 */
+  border-radius: 999px; /* 圓角，確保橢圓形 */
+  font-size: 13px; /* 字體大小 */
+  font-weight: bold; /* 加粗字體 */
+  color: white; /* 文字顏色 */
+  text-align: center; /* 文字置中 */
 }
 
-.dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 0.75rem;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  z-index: 10;
+/* 技能標籤樣式 */
+.post-tag.skill {
+  background-color: #6a5acd; /* 紫色背景 */
+}
+
+/* 語言標籤樣式 */
+.post-tag.lang {
+  background-color: #8b4513; /* 棕色背景 */
+}
+
+/* 休閒標籤樣式 */
+.post-tag.leisure {
+  background-color: #f08080; /* 淺紅色背景 */
+}
+
+.filter-controls input[type="radio"],
+.filter-controls input[type="checkbox"] {
+  appearance: none; /* 移除預設樣式 */
+  border: 2px solid #a3d8f4; /* 淺藍色邊框 */
+  border-radius: 8px; /* 圓弧角 */
+  width: 15px; /* 寬度 */
+  height: 15px; /* 高度 */
+  background-color: #f0faff; /* 淺藍色背景 */
+  cursor: pointer; /* 滑鼠變成手型 */
+  display: inline-block; /* 讓元素保持 inline */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* 過渡效果 */
+}
+
+.filter-controls input[type="radio"]:checked,
+.filter-controls input[type="checkbox"]:checked {
+  background-color: #4a90e2; /* 勾選時的背景色 */
+  border-color: #4a90e2; /* 勾選時的邊框顏色 */
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* 勾選時的陰影效果 */
+}
+
+.filter-controls input[type="radio"]:focus,
+.filter-controls input[type="checkbox"]:focus {
+  outline: none; /* 移除預設的聚焦樣式 */
+  border-color: #4a90e2; /* 聚焦時的邊框顏色 */
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* 聚焦時的陰影效果 */
+}
+
+/* 篩選選項容器 */
+.filter-options {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  min-width: 180px;
-  margin-top: 0.5rem;
-  opacity: 0;
-  transform: translateY(-10px);
-  animation: dropdownFade 0.25s forwards ease-out;
+  justify-content: flex-end; /* 靠右對齊 */
+  gap: 1rem; /* 選項之間的間距 */
+  margin-top: 0.5rem; /* 上方留白 */
 }
 
-@keyframes dropdownFade {
+/* 隱藏選項 */
+.filter-options.hidden {
+  display: none; /* 隱藏選項 */
+}
+
+/* 顯示選項 */
+.filter-options.visible {
+  display: flex; /* 顯示選項 */
+}
+
+.filter-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* 選項文字與圓圈之間的間距 */
+  font-size: 0.95rem; /* 選項文字大小 */
+  color: #003366; /* 選項文字顏色 */
+  cursor: pointer; /* 滑鼠變成手型 */
+}
+
+.filter-options input[type="radio"],
+.filter-options input[type="checkbox"] {
+  appearance: none; /* 移除預設樣式 */
+  border: 2px solid #a3d8f4; /* 淺藍色邊框 */
+  border-radius: 8px; /* 圓弧角 */
+  width: 15px; /* 寬度 */
+  height: 15px; /* 高度 */
+  background-color: #f0faff; /* 淺藍色背景 */
+  cursor: pointer; /* 滑鼠變成手型 */
+  display: inline-block; /* 讓元素保持 inline */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* 過渡效果 */
+}
+
+.filter-options input[type="radio"]:checked,
+.filter-options input[type="checkbox"]:checked {
+  background-color: #4a90e2; /* 勾選時的背景色 */
+  border-color: #4a90e2; /* 勾選時的邊框顏色 */
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* 勾選時的陰影效果 */
+}
+
+.filter-options input[type="radio"]:focus,
+.filter-options input[type="checkbox"]:focus {
+  outline: none; /* 移除預設的聚焦樣式 */
+  border-color: #4a90e2; /* 聚焦時的邊框顏色 */
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* 聚焦時的陰影效果 */
+}
+
+/* 讓標籤和回應數在同一行 */
+.post-footer-content {
+  display: flex;
+  justify-content: space-between; /* 兩端對齊 */
+  align-items: center; /* 垂直置中 */
+  margin-top: 0.5rem;
+}
+
+/* 標籤容器樣式 */
+.post-tags {
+  display: flex;
+  flex-wrap: wrap; /* 允許標籤換行 */
+  gap: 0.5rem; /* 標籤之間的間距 */
+}
+
+/* 回應數樣式 */
+.post-replies {
+  font-size: 0.9rem;
+  color: #888; /* 灰色文字 */
+  white-space: nowrap; /* 防止文字換行 */
+}
+
+/* Overlay 背景 */
+.overlay {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  display: flex;
+  justify-content: flex-end; /* 將內容推到右邊 */
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Overlay 內容 */
+.overlay-content {
+  background-color: white;
+  width: 260px; /* 固定寬度 */
+  height: 100%; /* 滿高 */
+  padding: 20px;
+  border-radius: 8px 0 0 8px; /* 左側圓角 */
+  box-shadow: -4px 0 6px rgba(0, 0, 0, 0.1); /* 左側陰影 */
+  text-align: center;
+  transform: translateX(100%); /* 初始位置在畫面外 */
+  animation: slideInFromRight 0.3s ease forwards; /* 滑入動畫 */
+}
+
+/* 滑入動畫 */
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%); /* 從畫面外開始 */
+  }
   to {
-    opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0); /* 滑入畫面 */
   }
 }
 
-.dropdown label {
+/* 表單容器樣式 */
+.filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* 每組問題之間的間距 */
+}
+.filter-form h2{
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* 每組問題之間的間距 */
+  color: #003366;
+}
+
+
+/* 每組問題的樣式 */
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* 每組問題之間的間距 */
+}
+
+.filter-group h3 {
+  font-size: 1rem;
+  color: #003366; /* 深藍色字體 */
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+/* 選項容器，讓選項水平排列 */
+.filter-options-row {
+  display: flex;
+  flex-wrap: wrap; /* 允許換行 */
+  gap: 1rem; /* 選項之間的間距 */
+}
+
+/* 複選框樣式 */
+.filter-group label {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.5rem; /* 複選框與文字之間的間距 */
   font-size: 0.95rem;
-  color: #333;
+  color: #333; /* 深灰色字體 */
 }
 
-.dropdown input[type="radio"],
-.dropdown input[type="checkbox"] {
-  accent-color: #4a90e2;
+.filter-group input[type="checkbox"] {
+  appearance: none; /* 移除預設樣式 */
+  border: 2px solid #a3d8f4; /* 淺藍色邊框 */
+  border-radius: 4px; /* 圓角 */
+  width: 16px;
+  height: 16px;
+  background-color: #f0faff; /* 淺藍色背景 */
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.post-tags {
-  margin-top: 0.5rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+.filter-group input[type="checkbox"]:checked {
+  background-color: #4a90e2; /* 勾選時的背景色 */
+  border-color: #4a90e2; /* 勾選時的邊框顏色 */
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* 勾選時的陰影效果 */
 }
 
-.tag {
-  background-color: #f0f0f0;
-  color: #333;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.85rem;
+.filter-group input[type="checkbox"]:focus {
+  outline: none; /* 移除預設的聚焦樣式 */
+  border-color: #4a90e2; /* 聚焦時的邊框顏色 */
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* 聚焦時的陰影效果 */
 }
 
-.tag-gold {
-  background-color: #FFD700;
-  color: #000;
+/* 提交按鈕樣式 */
+.submit-button {
+  background-color: #4caf50; /* 綠色背景 */
+  color: white; /* 白色文字 */
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
   font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #45a049; /* 懸停時背景色變深 */
+}
+
+/* 關閉按鈕樣式 */
+.cancel-button {
+  background-color: #f44336; /* 紅色背景 */
+  color: white; /* 白色文字 */
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+
+.cancel-button:hover {
+  background-color: #e53935; /* 懸停時背景色變深 */
+}
+
+/* 按鈕容器樣式 */
+.button-row {
+  display: flex; /* 使用 flexbox */
+  justify-content: space-between; /* 按鈕兩端對齊 */
+  align-items: center; /* 垂直置中 */
+  margin-top: 1rem; /* 與表單內容保持間距 */
+  gap: 1rem; /* 按鈕之間的間距 */
+}
+
+/* 清除按鈕樣式 */
+.clear-button {
+  background-color: #f44336; /* 紅色背景 */
+  color: white; /* 白色文字 */
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.clear-button:hover {
+  background-color: #e53935; /* 懸停時背景色變深 */
 }

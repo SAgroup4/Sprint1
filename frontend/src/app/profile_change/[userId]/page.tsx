@@ -86,7 +86,7 @@ export default function UserProfileForm({
 
       if (response.ok) {
         alert("資料更新成功！");
-        router.push("/general");
+        router.push(`/profile/${userId}`); // 導向到使用者的個人資料頁
       } else {
         const errorData = await response.json();
         alert(`更新失敗：${errorData.detail}`);
