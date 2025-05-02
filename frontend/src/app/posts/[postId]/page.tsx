@@ -203,10 +203,10 @@ interface Post {
   timestamp: string;
 }
 
-// ✅ params 是 Promise，使用 use(params) 解包
+// params 是 Promise，使用 use(params) 解包
 const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
   const router = useRouter();
-  const { postId } = use(params); // ✅ 解包 Promise，取得真實 postId
+  const { postId } = use(params); // 解包 Promise，取得真實 postId
 
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -229,7 +229,7 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
       const data = await res.json();
       setComments(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error("❌ 取得留言失敗", err);
+      console.error("取得留言失敗", err);
     }
   };
 
@@ -269,7 +269,7 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
 
   useEffect(() => {
     fetchPost();
-    console.log("🔍 正在取得文章 ID:", postId);
+    console.log("正在取得文章 ID:", postId);
     fetchComments();
   }, [postId]);
 
@@ -292,7 +292,7 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
     });
   };
 
-  if (!post) return <p>🔄 載入文章中...</p>;
+  if (!post) return <p>載入文章中...</p>;
 
   return (
     <div className={styles.postDetailContainer}>

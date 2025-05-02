@@ -148,7 +148,7 @@ const PostList: React.FC = () => {
             <FaRegLightbulb className="title-icon" />
             <h1 className="sidebar-title">學習路上，不如找個人同行</h1>
           </div>
-          <button className="add-button" onClick={() => alert("新增功能")}>
+          <button className="add-button" onClick={() => router.push("/topost")}>
             +
           </button>
         </div>
