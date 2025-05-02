@@ -15,20 +15,18 @@ async def get_user_info(user_id: str):
 
         user_data = user_doc.to_dict()
 
-        # 把 tags 的物件轉成陣列，只拿有 true 的項目
-        tags_object = user_data.get("tags", {})
-        print("原本拿到的tags物件：", tags_object)  # ← 加這行
-        tags_list = [tag for tag, selected in tags_object.items() if selected]
-        print("轉成的tags陣列：", tags_list)  # ← 再加這行
-
-
+        # 新版結構：直接傳回 skilltags、languagetags、leasuretags 三個物件
         filtered_data = {
+            "name": user_data.get("name", ""),
             "department": user_data.get("department", ""),
             "grade": user_data.get("grade", ""),
-            "tags": tags_list,
-            "is_transfer": bool(user_data.get("trans", 0)),  # 用 trans 欄位
-            "gender": user_data.get("gender", "")
+            "gender": user_data.get("gender", ""),
+            "is_transfer": bool(user_data.get("trans", 0)),  # 用 trans 判斷是否為轉學生
+            "skilltags": user_data.get("skilltags", {}),
+            "languagetags": user_data.get("languagetags", {}),
+            "leasuretags": user_data.get("leasuretags", {}),
         }
+        
 
         return filtered_data
 

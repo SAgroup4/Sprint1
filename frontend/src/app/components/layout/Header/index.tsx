@@ -96,23 +96,23 @@ const Header: React.FC = () => {
               className="flex items-center cursor-pointer space-x-1 login-button"
               onClick={() => setDropdownOpen(!dropdownOpen)}
             >
-              <Image
-                src={userphoto}
-                alt="用戶頭像"
-                width={23}
-                height={23}
-                className="rounded-full"
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7Gi3Gu0z0-qZiLSPXSl9Wi6nAMRVQMZHrbg&s"
+                alt="頭像"
+                style={{
+                  width: "25px",
+                  height: "25px",
+                  borderRadius: "50%",
+                  border: "1px solid #4a90e2",
+                }}
               />
               <IoMdArrowDropdown size={20} />
             </div>
 
             {dropdownOpen && (
               <div className="dropdown-menu">
-                <Link
-                  href={`/profile/${userId}`}>
-                <button>
-                  個人主頁
-                </button>
+                <Link href={`/profile/${userId}`}>
+                  <button>個人主頁</button>
                 </Link>
 
                 <button onClick={logout}>登出</button>
