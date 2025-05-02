@@ -4,6 +4,7 @@ import React, { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./styles.module.css";
 import { IoIosArrowBack } from "react-icons/io";
+import Link from "next/link";
 
 interface Comment {
   comment_id: string;
@@ -21,6 +22,10 @@ interface Post {
   name: string; // 新增的 name 欄位
   trans: boolean; // 新增的 trans 欄位
   timestamp: string;
+  skilltags: Map<string, boolean>; // 新增的 skilltags 欄位
+  languagetags: Map<string, boolean>; // 新增的 languagetags 欄位
+  leisuretags: Map<string, boolean>; // 新增的 leisuretags 欄位
+  comments_count: number; // 新增的 comments_count 欄位
 }
 
 const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
@@ -36,6 +41,7 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
       const res = await fetch(`http://localhost:8000/posts/${postId}`);
       if (!res.ok) throw new Error("取得貼文失敗");
       const data = await res.json();
+
       setPost({
         id: data.post_id,
         title: data.title,
@@ -44,6 +50,10 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
         name: data.name || "未知名稱", // 新增的 name 欄位
         trans: data.trans || false, // 新增的 trans 欄位
         timestamp: data.timestamp,
+        skilltags: new Map(Object.entries(data.skilltags || {})), // 確保 skilltags 是 Map
+        languagetags: new Map(Object.entries(data.languagetags || {})), // 確保 languagetags 是 Map
+        leisuretags: new Map(Object.entries(data.leisuretags || {})), // 確保 leisuretags 是 Map
+        comments_count: data.comments_count || 0, // 新增的 comments_count 欄位
       });
     } catch (err) {
       console.error("無法取得文章內容", err);
@@ -136,21 +146,56 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
           onClick={() => router.back()}
         />
         <h5 className={styles.postWord}>內文</h5>
-        <span className={styles.postDate}>{formatTimestamp(post.timestamp)}</span>
+        <span className={styles.postDate}>
+          {formatTimestamp(post.timestamp)}
+        </span>
       </div>
 
       <hr className={styles.divider} />
       <div className={styles.postMeta}>
         <div className={styles.authorInfo}>
-          <img src="/avatar.png" alt="頭貼" className={styles.authorAvatar} />
-          <span className={styles.postAuthor}>{post.name}</span> {/* 顯示 name */}
+          <div className={styles.authorInfo}>
+            <Link href={`/profile/${post.user_id}`}>
+              <img
+                src="/avatar.png"
+                alt="頭貼"
+                className={styles.authorAvatar}
+              />
+            </Link>
+            <Link href={`/profile/${post.user_id}`}>
+              <span className={styles.postAuthor}>{post.name}</span>
+            </Link>
+          </div>
           <button className={styles.messageButton}>私訊</button>
         </div>
       </div>
 
       <h1 className={styles.postWord}>{post.title}</h1>
       <div className={styles.postContent}>{post.content}</div>
-
+      <div className={styles.postTags}>
+        {post.trans && <span className={styles.postTagTrans}>轉學生</span>}
+        {Array.from(post.skilltags.entries())
+          .filter(([_, value]) => value)
+          .map(([key]) => (
+            <span key={key} className={styles.postTagSkill}>
+              {key}
+            </span>
+          ))}
+        {Array.from(post.languagetags.entries())
+          .filter(([_, value]) => value)
+          .map(([key]) => (
+            <span key={key} className={styles.postTagLang}>
+              {key}
+            </span>
+          ))}
+        {Array.from(post.leisuretags.entries())
+          .filter(([_, value]) => value)
+          .map(([key]) => (
+            <span key={key} className={styles.postTagLeisure}>
+              {key}
+            </span>
+          ))}
+      </div>
       <hr className={styles.divider} />
       <h2 className={styles.commentsTitle}>全部留言</h2>
 
@@ -164,7 +209,8 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
                   alt="頭貼"
                   className={styles.authorAvatar}
                 />
-                <span className={styles.commentAuthor}>{comment.name}</span> {/* 顯示 name */}
+                <span className={styles.commentAuthor}>{comment.name}</span>{" "}
+                {/* 顯示 name */}
               </div>
               <span className={styles.commentTimestamp}>
                 {formatTimestamp(comment.timestamp)}
