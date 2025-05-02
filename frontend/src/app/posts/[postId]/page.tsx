@@ -89,12 +89,8 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
     }
 
     try {
-
       const userName = localStorage.getItem("userName") || "匿名???"; // 從 localStorage 取得使用者名稱
       const userEmail = localStorage.getItem("userEmail") || "匿名"; // 從 localStorage 取得使用者 ID
-      
-      console.log(localStorage.getItem("userName"));
-      console.log(localStorage.getItem("userEmail"));
 
       console.log("傳遞的留言資料：", {
         user_id: userEmail,
@@ -242,28 +238,19 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
 
       {/* 新增評論 */}
       <div className={styles.addComment}>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault(); // 防止表單預設提交行為
-            handleAddComment();
-          }}
-        >
-          {/* 隱藏欄位，傳送使用者名稱 */}
-          <input
-            type="hidden"
-            name="userName"
-            value={localStorage.getItem("userName") || "匿名"}
-          />
-          <textarea
+        <div>
+        <textarea
             className={styles.commentInput}
             placeholder="輸入你的評論..."
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
           />
-          <button type="submit" className={styles.submitCommentButton}>
+        </div>
+        <div>
+          <button type="submit" className={styles.submitCommentButton} onClick={handleAddComment}>
             提交評論
           </button>
-        </form>
+        </div>
       </div>
     </div>
   );

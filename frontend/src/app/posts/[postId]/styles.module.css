@@ -153,20 +153,22 @@
 
 /* 新增留言樣式 */
 .addComment {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  margin-top: 20px;
+  display: grid; /* 使用 Grid */
+  grid-template-columns: 1fr auto; /* textarea 占用剩餘空間，按鈕自適應大小 */
+  align-items: center; /* 垂直置中 */
+  justify-content: center; /* 水平置中 */
+  gap: 10px; /* 元件之間的間距 */
   margin-bottom: 16px;
 }
 
 .commentInput {
-  margin-top: 20px;
-  width: 100%;
-  height: 80px;
-  padding: 8px;
+  width: 100%; /* 填滿可用空間 */
+  height: 60px; /* 固定高度 */
+  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 16px;
-  font-size: 0.8rem;
+  font-size: 16px;
   resize: none;
   background-color: #ffffff;
   color: #606060;
@@ -181,8 +183,6 @@
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  margin-left: auto;
-  align-items: center;
 }
 
 .submitCommentButton:hover {
