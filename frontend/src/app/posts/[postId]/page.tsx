@@ -63,15 +63,20 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
   const fetchComments = async () => {
     try {
       const res = await fetch(`http://localhost:8000/posts/${postId}/comments`);
+      if (!res.ok) throw new Error("無法取得留言");
       const data = await res.json();
-      setComments(
-        Array.isArray(data)
-          ? data.map((comment: any) => ({
-              ...comment,
-              name: comment.name || "匿名", // 新增的 name 欄位
-            }))
-          : []
-      );
+
+      if (Array.isArray(data)) {
+        setComments(
+          data.map((comment: any) => ({
+            ...comment,
+            name: comment.name || "匿名", // 確保 name 欄位存在
+          }))
+        );
+      } else {
+        console.error("留言資料格式錯誤", data);
+        setComments([]);
+      }
     } catch (err) {
       console.error("❌ 取得留言失敗", err);
     }
@@ -84,6 +89,19 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
     }
 
     try {
+
+      const userName = localStorage.getItem("userName") || "匿名???"; // 從 localStorage 取得使用者名稱
+      const userEmail = localStorage.getItem("userEmail") || "匿名"; // 從 localStorage 取得使用者 ID
+      
+      console.log(localStorage.getItem("userName"));
+      console.log(localStorage.getItem("userEmail"));
+
+      console.log("傳遞的留言資料：", {
+        user_id: userEmail,
+        name: userName,
+        content: newComment,
+      }); // 檢查傳遞的資料
+
       const res = await fetch(
         `http://localhost:8000/posts/${postId}/comments`,
         {
@@ -92,18 +110,19 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            user_id: localStorage.getItem("userEmail") || "匿名",
-            content: newComment,
+            user_id: userEmail, // 傳遞使用者 ID
+            name: userName, // 傳遞使用者名稱
+            content: newComment, // 傳遞評論內容
           }),
         }
       );
 
       if (res.ok) {
-        setNewComment("");
-        fetchComments();
+        setNewComment(""); // 清空輸入框
+        fetchComments(); // 重新取得留言
       } else {
-        const err = await res.json();
-        alert(`留言失敗：${err.detail}`);
+        const err = await res.json(); // 解析錯誤回應
+        alert(`留言失敗：${err.detail || "未知錯誤"}`); // 顯示具體錯誤訊息
       }
     } catch (err) {
       alert("伺服器錯誤，留言失敗");
@@ -223,18 +242,28 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
 
       {/* 新增評論 */}
       <div className={styles.addComment}>
-        <textarea
-          className={styles.commentInput}
-          placeholder="輸入你的評論..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-        />
-        <button
-          className={styles.submitCommentButton}
-          onClick={handleAddComment}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault(); // 防止表單預設提交行為
+            handleAddComment();
+          }}
         >
-          提交評論
-        </button>
+          {/* 隱藏欄位，傳送使用者名稱 */}
+          <input
+            type="hidden"
+            name="userName"
+            value={localStorage.getItem("userName") || "匿名"}
+          />
+          <textarea
+            className={styles.commentInput}
+            placeholder="輸入你的評論..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+          />
+          <button type="submit" className={styles.submitCommentButton}>
+            提交評論
+          </button>
+        </form>
       </div>
     </div>
   );
