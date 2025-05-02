@@ -7,6 +7,7 @@ from db import db
 # 定義 Post 模型（與資料庫結構相對應）
 class Post(BaseModel):
     user_id: str
+    name : str  # 新增 name 欄位
     title: str
     content: str
     skilltags: Dict[str, bool] = {}
@@ -22,6 +23,7 @@ async def create_post(post: Post):
     try:
         result = db.collection("post").add({
             "user_id": post.user_id,
+            "name": post.name,  # 新增 name 欄位
             "title": post.title,
             "content": post.content,
             "skilltags": post.skilltags,
@@ -144,6 +146,7 @@ async def filter_posts(request: Request):
             posts.append({
                 "post_id": post.id,
                 "user_id": data.get("user_id"),
+                "name": data.get("name"),  # 新增 name 欄位
                 "title": data.get("title"),
                 "content": data.get("content"),
                 "timestamp": timestamp,

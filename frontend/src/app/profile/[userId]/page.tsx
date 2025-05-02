@@ -29,12 +29,13 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchPosts = async () => {
       const res = await fetch(`http://localhost:8000/posts`);
-      const data = await res.json();
-      const filtered = data.filter((post: any) => post.user_id === userId);
+      const result = await res.json();
+      const filtered = result.posts.filter((post: any) => post.user_id === userId);
       setPosts(filtered);
     };
     fetchPosts();
   }, [userId]);
+  
 
   useEffect(() => {
     const fetchUserInfo = async () => {
