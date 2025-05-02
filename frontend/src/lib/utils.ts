@@ -6,8 +6,19 @@ import { clsx, type ClassValue } from "clsx"
 // 純前端工具函數 - 不需要後端集成
 
 export function formatDistanceToNow(date: Date): string {
+  // 暫時禁用時間顯示功能
+  return ""
+  
+  /* 原始實現（暫時註釋掉）
+  // 將輸入的日期轉換為UTC+8時區
+  const utcDate = new Date(date)
+  const utc8Date = new Date(utcDate.getTime() + 8 * 60 * 60 * 1000)
+  
+  // 獲取當前時間（也轉換為UTC+8）
   const now = new Date()
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+  const utc8Now = new Date(now.getTime() + 8 * 60 * 60 * 1000)
+  
+  const diffInSeconds = Math.floor((utc8Now.getTime() - utc8Date.getTime()) / 1000)
 
   if (diffInSeconds < 60) {
     return "剛剛"
@@ -29,7 +40,8 @@ export function formatDistanceToNow(date: Date): string {
   }
 
   const options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" }
-  return date.toLocaleDateString("zh-TW", options)
+  return utc8Date.toLocaleDateString("zh-TW", options)
+  */
 }
 
 export function formatTime(date: Date): string {

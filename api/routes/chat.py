@@ -12,7 +12,7 @@ router = APIRouter () # 設置 prefix 為 /api
 # 請求和響應模型
 class User(BaseModel):
     id: str
-    nickname: str
+    name: str
     avatar: str
     email: str
     department: str
@@ -83,7 +83,7 @@ async def get_conversations(current_user_id: str = Depends(get_current_user)):
                 id=conv.id,
                 user=User(
                     id=other_user_id,
-                    nickname=user_data.get("nickname", "未知用戶"),
+                    name=user_data.get("name", "未知用戶"),
                     avatar=user_data.get("avatar", "/placeholder.svg"),
                     email=user_data.get("email", ""),
                     department=user_data.get("department", "")
@@ -253,7 +253,7 @@ async def create_conversation(request: Request, current_user_id: str = Depends(g
                     id=conv.id,
                     user=User(
                         id=target_user_id,
-                        nickname=target_user_data.get("nickname", "未知用戶"),
+                        name=target_user_data.get("name", "未知用戶"),
                         avatar=target_user_data.get("avatar", "/placeholder.svg"),
                         email=target_user_data.get("email", ""),
                         department=target_user_data.get("department", "")
@@ -281,7 +281,7 @@ async def create_conversation(request: Request, current_user_id: str = Depends(g
             id=new_conv_ref.id,
             user=User(
                 id=target_user_id,
-                nickname=target_user_data.get("nickname", "未知用戶"),
+                name=target_user_data.get("name", "未知用戶"),
                 avatar=target_user_data.get("avatar", "/placeholder.svg"),
                 email=target_user_data.get("email", ""),
                 department=target_user_data.get("department", "")
@@ -313,7 +313,7 @@ async def search_user(student_id: str, current_user_id: str = Depends(get_curren
         # 返回用戶資料
         return User(
             id=student_id,
-            nickname=user_data.get("nickname", f"學生 {student_id}"),  # 如果沒有暱稱，則使用學號
+            name=user_data.get("name", f"學生 {student_id}"),  # 如果沒有暱稱，則使用學號
             avatar=user_data.get("avatar", f"/placeholder.svg?height=200&width=200&text={student_id[:2]}"),  # 如果沒有頭像，則使用預設頭像
             email=user_data.get("email", ""),
             department=user_data.get("department", "")
@@ -354,7 +354,7 @@ async def add_contact(request: Request, current_user_id: str = Depends(get_curre
 
         return User(
             id=contact_id,
-            nickname=contact_data.get("nickname", "未知用戶"),
+            name=contact_data.get("name", "未知用戶"),
             avatar=contact_data.get("avatar", "/placeholder.svg"),
             email=contact_data.get("email", ""),
             department=contact_data.get("department", "")

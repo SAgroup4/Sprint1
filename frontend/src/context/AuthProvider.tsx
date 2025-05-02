@@ -9,8 +9,7 @@ interface User {
   name: string;
   department: string;
   grade: string;
-  id: string; 
-  nickname: string;
+  id: string;
 }
 
 interface AuthContextType {

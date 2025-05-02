@@ -41,7 +41,7 @@ export async function getCurrentUser(): Promise<User> {
       headers: getAuthHeaders(),
     });
     const data = await handleResponse<User>(response);
-    if (!data.id || !data.nickname) {
+    if (!data.id || !data.name) {
       throw new Error("Invalid user data received");
     }
     return data;
@@ -149,7 +149,7 @@ export async function createConversation(participantId: string): Promise<Convers
       { participantId },
       { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
     );
-    return res.data;
+    return res.data as Conversation;
   } catch (error) {
     console.error("Error in createConversation:", error);
     throw error;
@@ -166,7 +166,21 @@ export async function getUserProfile(userId: string): Promise<User | null> {
       headers: getAuthHeaders(),
     });
     if (response.status === 404) return null;
-    return await handleResponse<User>(response);
+    
+    const userData = await handleResponse<User>(response);
+    
+    // 確保用戶ID和姓名存在
+    if (!userData.id) {
+      userData.id = userId; // 使用傳入的userId作為備用
+    }
+    
+    // 如果姓名不存在，嘗試從其他屬性獲取或設置默認值
+    if (!userData.name) {
+      userData.name = userData.email ? userData.email.split('@')[0] : '未知用戶';
+    }
+    
+    console.log("獲取到的用戶資料:", userData);
+    return userData;
   } catch (error) {
     console.error("Error in getUserProfile:", error);
     throw error;

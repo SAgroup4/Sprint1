@@ -7,7 +7,7 @@
  */
 export interface User {
   id: string // 學號，作為用戶的唯一標識符
-  nickname: string // 用戶暱稱
+  name: string // 用戶名稱
   avatar: string // 頭像 URL
   email: string // 電子郵件
   department: string // 系所

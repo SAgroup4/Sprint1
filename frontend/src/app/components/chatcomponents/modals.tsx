@@ -145,7 +145,7 @@ export function UserProfileModal({ user, onClose }: UserProfileModalProps) {
           <Box sx={{ mt: -6 }}>
             <Avatar
               src={user.avatar || "/placeholder.svg"}
-              alt={user.nickname}
+              alt={user.name}
               sx={{
                 width: 96,
                 height: 96,
@@ -158,7 +158,7 @@ export function UserProfileModal({ user, onClose }: UserProfileModalProps) {
 
           {/* 用戶基本信息 */}
           <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold" }}>
-            {user.nickname}
+            {user.name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             學號: {user.id}
@@ -381,7 +381,7 @@ export function AddContactModal({ onClose, onAddContact }: AddContactModalProps)
             >
               <Avatar
                 src={searchResult.avatar}
-                alt={searchResult.nickname}
+                alt={searchResult.name}
                 sx={{
                   width: 56,
                   height: 56,
@@ -393,7 +393,7 @@ export function AddContactModal({ onClose, onAddContact }: AddContactModalProps)
               />
               <Box sx={{ flex: 1 }}>
                 <Typography variant="subtitle1" fontWeight="medium">
-                  {searchResult.nickname}
+                  {searchResult.name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   {searchResult.department} · 學號: {searchResult.id}

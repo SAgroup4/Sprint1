@@ -32,16 +32,6 @@ const ProfileBanner = styled(Box)(({ theme }) => ({
   borderTopRightRadius: theme.shape.borderRadius,
 }))
 
-const StatusBadge = styled(Box, {
-  shouldForwardProp: (prop) => prop !== "isOnline",
-})<{ isOnline: boolean }>(({ theme, isOnline }) => ({
-  display: "inline-block",
-  padding: theme.spacing(0.5, 2),
-  borderRadius: 16,
-  backgroundColor: isOnline ? theme.palette.secondary.light : theme.palette.grey[200],
-  color: isOnline ? theme.palette.primary.dark : theme.palette.text.secondary,
-  fontSize: 14,
-}))
 
 export default function UserProfileModal({ user, onClose }: UserProfileModalProps) {
   return (
@@ -78,7 +68,6 @@ export default function UserProfileModal({ user, onClose }: UserProfileModalProp
                 width: 16,
                 height: 16,
                 borderRadius: "50%",
-                bgcolor: user.status === "online" ? "success.main" : "grey.400",
                 border: 2,
                 borderColor: "background.paper",
               }}
@@ -90,19 +79,10 @@ export default function UserProfileModal({ user, onClose }: UserProfileModalProp
             {user.name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            @{user.username || user.name.toLowerCase().replace(/\s+/g, "")}
+            @{user.name ? user.name.toLowerCase().replace(/\s+/g, "") : ""}
           </Typography>
 
-          {/* Status */}
-          <Box sx={{ mt: 2 }}>
-            <StatusBadge isOnline={user.status === "online"}>{user.status === "online" ? "在線" : "離線"}</StatusBadge>
-          </Box>
-
-          {/* Bio */}
-          <Typography variant="body2" sx={{ mt: 2, px: 4, textAlign: "center" }}>
-            {user.bio || "沒有個人簡介"}
-          </Typography>
-
+       
           <Divider sx={{ my: 2, width: "100%" }} />
 
           {/* Contact info */}
@@ -117,19 +97,16 @@ export default function UserProfileModal({ user, onClose }: UserProfileModalProp
               <ListItemIcon sx={{ minWidth: 36, color: "primary.main" }}>
                 <Phone size={18} />
               </ListItemIcon>
-              <ListItemText primary={user.phone || "沒有電話"} />
             </ListItem>
             <ListItem>
               <ListItemIcon sx={{ minWidth: 36, color: "primary.main" }}>
                 <MapPin size={18} />
               </ListItemIcon>
-              <ListItemText primary={user.location || "沒有位置"} />
             </ListItem>
             <ListItem>
               <ListItemIcon sx={{ minWidth: 36, color: "primary.main" }}>
                 <Calendar size={18} />
               </ListItemIcon>
-              <ListItemText primary={`加入時間 ${user.joinDate || "未知"}`} />
             </ListItem>
           </List>
 

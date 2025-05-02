@@ -10,6 +10,7 @@ import {
   Avatar,
   List,
   ListItem,
+  ListItemButton,
   ListItemAvatar,
   Divider,
 } from "@mui/material"
@@ -26,7 +27,7 @@ interface ConversationListProps {
 }
 
 // 樣式組件
-const StyledListItem = styled(ListItem)(({ theme }) => ({
+const StyledListItem = styled(ListItemButton)(({ theme }) => ({
   padding: theme.spacing(1.5, 2),
   cursor: "pointer",
   transition: "all 0.3s ease",
@@ -47,7 +48,7 @@ const MessagePreview = styled(Typography)({
   whiteSpace: "nowrap",
   display: "block",
   maxWidth: "100%",
-})
+}) as typeof Typography
 
 const ConversationItem = styled(Box)({
   transition: "all 0.3s ease",
@@ -63,6 +64,7 @@ export default function ConversationList({
 }: ConversationListProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [sortedConversations, setSortedConversations] = useState<Conversation[]>([])
+  const [, forceUpdate] = useState({})
 
   // 更新排序的對話列表
   useEffect(() => {
@@ -79,11 +81,28 @@ export default function ConversationList({
 
     return () => clearTimeout(timer)
   }, [conversations])
+  
+  // 暫時禁用時間更新定時器
+  /*
+  useEffect(() => {
+    // 每分鐘強制更新組件以刷新時間顯示
+    const timer = setInterval(() => {
+      forceUpdate({})
+    }, 60000) // 60秒 = 1分鐘
+    
+    return () => clearInterval(timer) // 清理定時器
+  }, [])
+  */
 
   // 過濾對話列表
-  const filteredConversations = sortedConversations.filter((conversation) =>
-    conversation.user.nickname.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+  const filteredConversations = sortedConversations.filter((conversation) => {
+    // 如果搜索查詢為空，顯示所有對話
+    if (!searchQuery.trim()) return true;
+    
+    // 如果用戶名存在，則按名稱過濾，否則顯示為「未知用戶」
+    const userName = conversation.user.name || "未知用戶";
+    return userName.toLowerCase().includes(searchQuery.toLowerCase());
+  })
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -140,17 +159,15 @@ export default function ConversationList({
           filteredConversations.map((conversation) => (
             <ConversationItem key={conversation.id}>
               <StyledListItem
-                component="div"
                 selected={selectedConversationId === conversation.id}
                 onClick={() => onSelectConversation(conversation)}
-                disablePadding
                 sx={{ px: 2, py: 1.5 }}
               >
                 <Box sx={{ display: "flex", width: "100%", alignItems: "center" }}>
                   <ListItemAvatar sx={{ minWidth: 60 }}>
                     <Avatar
                       src={conversation.user.avatar || "/placeholder.svg"}
-                      alt={conversation.user.nickname}
+                      alt={conversation.user.name}
                       sx={{ width: 48, height: 48, border: 2, borderColor: "background.paper" }}
                     />
                   </ListItemAvatar>
@@ -158,15 +175,17 @@ export default function ConversationList({
                   <Box sx={{ flex: 1, minWidth: 0, mr: 1 }}>
                     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <Typography variant="subtitle1" component="span" fontWeight="medium">
-                        {conversation.user.nickname}
+                        {conversation.user.name || "未知用戶"}
                       </Typography>
+                      {/* 暫時禁用時間顯示功能
                       <Typography variant="caption" color="text.secondary">
                         {formatDistanceToNow(new Date(conversation.lastMessageTime))}
                       </Typography>
+                      */}
                     </Box>
 
                     <Box sx={{ display: "flex", alignItems: "center", mt: 0.5 }}>
-                      <MessagePreview variant="body2" color="text.secondary" component="span" sx={{ flex: 1 }}>
+                      <MessagePreview variant="body2" color="text.secondary" sx={{ flex: 1 }}>
                         {conversation.lastMessage}
                       </MessagePreview>
 

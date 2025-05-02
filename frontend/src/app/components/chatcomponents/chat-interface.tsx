@@ -47,7 +47,7 @@ export default function ChatInterface() {
 
         setCurrentUser({
           id: user.id,
-          nickname: user.nickname,
+          name: user.name,
           email: user.email,
           department: user.department,
           avatar: "", 

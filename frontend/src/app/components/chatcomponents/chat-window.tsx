@@ -91,8 +91,10 @@ export default function ChatWindow({
 
   // 滾動到底部
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    if (messagesEndRef.current && messageContainerRef.current) {
+      // 使用scrollTo方法實現平滑滾動效果
+      const scrollHeight = messageContainerRef.current.scrollHeight
+      messageContainerRef.current.scrollTo({ top: scrollHeight, behavior: "smooth" })
     }
     setUserScrolled(false)
   }, [messages, conversation.id])
@@ -165,11 +167,11 @@ export default function ChatWindow({
         >
           <Avatar
             src={conversation.user.avatar || "/placeholder.svg"}
-            alt={conversation.user.nickname}
+            alt={conversation.user.name}
             sx={{ width: 40, height: 40, border: 2, borderColor: "background.paper" }}
           />
           <Box sx={{ ml: 1.5 }}>
-            <Typography variant="subtitle1">{conversation.user.nickname}</Typography>
+            <Typography variant="subtitle1">{conversation.user.name || "未知用戶"}</Typography>
           </Box>
         </Box>
       </Box>
@@ -217,7 +219,7 @@ export default function ChatWindow({
                     <Box sx={{ mt: 1 }}>
                       <Avatar
                         src={user.avatar || "/placeholder.svg"}
-                        alt={user.nickname}
+                        alt={user.name}
                         sx={{
                           width: 32,
                           height: 32,
@@ -239,7 +241,7 @@ export default function ChatWindow({
                   >
                     {showAvatar && !isCurrentUserMessage && (
                       <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, ml: 0.5 }}>
-                        {user.nickname}
+                        {user.name}
                       </Typography>
                     )}
 
@@ -305,7 +307,8 @@ export default function ChatWindow({
             <Typography>還沒有訊息。開始對話吧！</Typography>
           </Box>
         )}
-        <div ref={messagesEndRef} />
+        {/* 使用空的div作為滾動參考點，但不使用scrollIntoView */}
+      <div ref={messagesEndRef} />
       </Box>
 
       {/* 新消息指示器 */}
@@ -325,7 +328,11 @@ export default function ChatWindow({
             color="primary"
             sx={{ borderRadius: 20, boxShadow: 2 }}
             onClick={() => {
-              messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+              // 使用scrollTo方法實現平滑滾動效果
+              if (messageContainerRef.current) {
+                const scrollHeight = messageContainerRef.current.scrollHeight
+                messageContainerRef.current.scrollTo({ top: scrollHeight, behavior: "smooth" })
+              }
               setUserScrolled(false)
             }}
           >
