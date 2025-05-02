@@ -32,11 +32,11 @@ const Post: React.FC<{ post: Post; onClick: (post: Post) => void }> = ({
       <div className="post-header">
         <div className="post-author">
           <img
-            src={post.avatar || "/default-avatar.png"}
+            src={post.avatar || "/avatar.png"}
             alt="頭貼"
             className="post-avatar"
           />
-          <span>{post.author}</span>
+          <span>{post.author || "匿名使用者"}</span>{" "}
         </div>
         <span className="post-timestamp">{post.timestamp}</span>
       </div>
@@ -48,6 +48,7 @@ const Post: React.FC<{ post: Post; onClick: (post: Post) => void }> = ({
         <hr />
         <div className="post-footer-content">
           <div className="post-tags">
+            {post.trans && <span className="post-tag trans">轉學生</span>}
             {Array.from(post.skilltags.entries())
               .filter(([_, value]) => value)
               .map(([key]) => (

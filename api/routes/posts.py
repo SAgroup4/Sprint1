@@ -57,6 +57,7 @@ async def get_posts(request: Request):
             posts.append({
                 "post_id": post.id,
                 "user_id": data.get("user_id"),
+                "name": data.get("name"),  # 新增 name 欄位
                 "title": data.get("title"),
                 "content": data.get("content"),
                 "timestamp": timestamp,  # 確保 timestamp 存在
@@ -64,6 +65,8 @@ async def get_posts(request: Request):
                 "skilltags": data.get("skilltags", {}),
                 "languagetags": data.get("languagetags", {}),
                 "leisuretags": data.get("leisuretags", {}),
+                "trans": data.get("trans", False),  # 新增 trans 欄位，預設為 False
+
             })
 
         print(f"成功取得 {len(posts)} 篇文章，排序：{order}")
