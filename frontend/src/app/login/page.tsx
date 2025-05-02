@@ -26,17 +26,17 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = async () => {
+    const handleLogin = async () => {
     const { email, password } = formData;
-
+  
     if (!email || !password) {
       alert('請輸入帳號和密碼');
       return;
     }
-
+  
     setLoading(true);
     setError('');
-
+  
     try {
       const res = await fetch('http://localhost:8000/login', {
         method: 'POST',
@@ -45,16 +45,17 @@ const Login = () => {
         },
         body: JSON.stringify({ email, password }),
       });
-
+  
       const result = await res.json();
-
+  
       if (res.ok) {
-        const { access_token, isProfileComplete } = result;
+        const { access_token, isProfileComplete, userName } = result; // 接收 userName
         const userId = email.split('@')[0]; // 假設 userId 是 email 的前綴
-
+  
         localStorage.setItem('token', access_token);
         localStorage.setItem('userEmail', email);
-
+        localStorage.setItem('userName', userName); // 存入 userName
+  
         // 根據 isProfileComplete 狀態導向不同頁面
         if (!isProfileComplete) {
           router.push(`/user_creation/${userId}`);

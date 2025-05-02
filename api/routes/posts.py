@@ -57,6 +57,7 @@ async def get_posts(request: Request):
             posts.append({
                 "post_id": post.id,
                 "user_id": data.get("user_id"),
+                "name": data.get("name"),  # 新增 name 欄位
                 "title": data.get("title"),
                 "content": data.get("content"),
                 "timestamp": timestamp,  # 確保 timestamp 存在
@@ -64,6 +65,8 @@ async def get_posts(request: Request):
                 "skilltags": data.get("skilltags", {}),
                 "languagetags": data.get("languagetags", {}),
                 "leisuretags": data.get("leisuretags", {}),
+                "trans": data.get("trans", False),  # 新增 trans 欄位，預設為 False
+
             })
 
         print(f"成功取得 {len(posts)} 篇文章，排序：{order}")
@@ -81,16 +84,24 @@ async def get_post(post_id: str):
             raise HTTPException(status_code=404, detail="貼文不存在")
         
         data = doc.to_dict()
+
+        # 避免 timestamp 為 None
+        timestamp = data.get("timestamp")
+        if not timestamp:
+            raise HTTPException(status_code=400, detail="貼文缺少 timestamp")
+
         return {
             "post_id": post_id,
             "user_id": data.get("user_id"),
+            "name": data.get("name"),  # 新增 name 欄位
             "title": data.get("title"),
             "content": data.get("content"),
-            "timestamp": data.get("timestamp"),
-            "comments_count": data.get("comments_count"),
+            "timestamp": timestamp,  # 確保 timestamp 存在
+            "comments_count": data.get("comments_count", 0),  # 預設為 0
             "skilltags": data.get("skilltags", {}),
             "languagetags": data.get("languagetags", {}),
             "leisuretags": data.get("leisuretags", {}),
+            "trans": data.get("trans", False),  # 新增 trans 欄位，預設為 False
         }
     except Exception as e:
         print(f"獲取單一貼文時出錯: {e}")

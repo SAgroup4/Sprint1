@@ -121,7 +121,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #363636;
+  color: #003366;
+  font-weight: bold;
+  font-size: 0.9rem;
 }
 
 .post-avatar {
@@ -544,7 +546,10 @@
 .post-tag.skill {
   background-color: #6a5acd; /* 紫色背景 */
 }
-
+/* 轉學生標籤樣式 */
+.post-tag.trans {
+  background-color: #ffd000; /* 金色背景 */
+}
 /* 語言標籤樣式 */
 .post-tag.lang {
   background-color: #8b4513; /* 棕色背景 */

@@ -29,14 +29,17 @@ async def login(data: LoginRequest):
     # 產生 JWT token
     access_token = create_access_token({"student_id": student_id})
 
-    # 回傳 isProfileComplete 狀態
+    # 回傳 isProfileComplete 狀態和 name 欄位
     is_profile_complete = user.get("isProfileComplete", False)
+    user_name = user.get("name", "未知名稱")  # 確保有預設值
 
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "isProfileComplete": is_profile_complete  # 加入 isProfileComplete 欄位
+        "isProfileComplete": is_profile_complete,
+        "userName": user_name,  # 回傳 name 欄位
     }
+
 
 # 驗證 Token 用的 API
 @router.get("/me")
