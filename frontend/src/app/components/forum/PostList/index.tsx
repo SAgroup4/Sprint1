@@ -19,6 +19,8 @@ interface Post {
   skilltags: Map<string, boolean>;
   languagetags: Map<string, boolean>;
   leisuretags: Map<string, boolean>;
+  name: string; // 新增的 name 欄位
+  trans: boolean; // 新增的 trans 欄位
 }
 
 const Post: React.FC<{ post: Post; onClick: (post: Post) => void }> = ({
@@ -115,8 +117,8 @@ const PostList: React.FC = () => {
           id: post.post_id,
           title: post.title,
           content: post.content,
-          author: post.user_id,
-          avatar: "/avatar.png",
+          author: post.name,
+          trans: post.trans,
           timestamp: formattedTime,
           replies: post.comments_count || 0,
           skilltags: new Map(Object.entries(post.skilltags || {})),

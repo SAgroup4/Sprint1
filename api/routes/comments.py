@@ -6,6 +6,7 @@ from db import db
 # 定義 Comment 模型
 class Comment(BaseModel):
     user_id: str
+    name: str  # 新增的 name 欄位
     content: str
 
 # 定義路由器
@@ -53,6 +54,7 @@ async def get_comments(post_id: str):
         comments = [{
             "comment_id": c.id,
             "user_id": c.get("user_id"),
+            "name": c.get("name", "匿名"),  # 確保返回 name 欄位，預設為 "匿名"
             "content": c.get("content"),
             "timestamp": c.get("timestamp")
         } for c in comments_ref]

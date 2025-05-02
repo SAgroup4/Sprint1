@@ -121,7 +121,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #363636;
+  color: #003366;
+  font-weight: bold;
+  font-size: 0.9rem;
 }
 
 .post-avatar {
