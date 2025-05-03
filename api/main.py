@@ -15,6 +15,7 @@ from routes import password  # 密碼相關的路由
 from routes import user_creation  # 新增的使用者註冊資料相關的路由
 from routes import profile_change  # 新增的使用者註冊資料相關的路由
 from routes import filter  # 新增的篩選文章的路由
+from routes import chat     # 處理聊天相關的路由
 
 # 創建FastAPI應用實例
 app = FastAPI()
@@ -45,4 +46,5 @@ app.include_router(users.user_router) # 加入使用者相關的路由
 app.include_router(password.router) # 加入密碼相關的路由
 app.include_router(user_creation.user_creation_router) # 加入使用者註冊資料相關的路由
 app.include_router(profile_change.profile_change_router) # 加入使用者註冊資料相關的路由
-app.include_router(filter.filter_router) # 加入篩選文章的路由  
+app.include_router(filter.filter_router) # 加入篩選文章的路由
+app.include_router(chat.router, prefix="/api", tags=["聊天"]) # 加入聊天相關的路由

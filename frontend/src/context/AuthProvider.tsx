@@ -10,6 +10,7 @@ interface User {
   department: string;
   grade: string;
   token?: string; // token 可能是 User 物件的一部分
+  id: string;
 }
 
 interface AuthContextType {
