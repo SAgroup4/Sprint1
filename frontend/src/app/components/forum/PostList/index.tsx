@@ -84,6 +84,7 @@ const PostList: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isDateFilterOpen, setIsDateFilterOpen] = useState(false);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+  const [order, setOrder] = useState<string>("newest"); // 預設排序為 "newest"
 
   const toggleOverlay = () => {
     setIsOverlayOpen((prev) => !prev);
@@ -91,7 +92,9 @@ const PostList: React.FC = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/posts`);
+      const response = await fetch(
+        `http://localhost:8000/posts?order=${order}`
+      );
       if (!response.ok) throw new Error("獲取文章失敗");
 
       const result = await response.json();
@@ -137,10 +140,14 @@ const PostList: React.FC = () => {
 
   React.useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [order]); // 當 order 改變時重新獲取貼文
 
   const handlePostClick = (post: Post) => {
     router.push(`/posts/${post.id}`);
+  };
+
+  const handleOrderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOrder(e.target.value); // 更新排序條件
   };
 
   return (
@@ -162,22 +169,27 @@ const PostList: React.FC = () => {
           <div>
             <h2>篩選條件</h2>
           </div>
-          <div className="filter-controls">
-            <div className="filter-row">
-              <button className="filter-button" onClick={toggleOverlay}>
-                選擇
-              </button>
-              <div className="filter-options">
-                <label>
-                  <input type="radio" name="date" />
-                  由近到遠
-                </label>
-                <label>
-                  <input type="radio" name="date" />
-                  由遠到近
-                </label>
-              </div>
-            </div>
+          <div className="filter-options">
+            <label>
+              <input
+                type="radio"
+                name="date"
+                value="newest"
+                checked={order === "newest"}
+                onChange={handleOrderChange}
+              />
+              由近到遠
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="date"
+                value="oldest"
+                checked={order === "oldest"}
+                onChange={handleOrderChange}
+              />
+              由遠到近
+            </label>
           </div>
         </div>
       </div>
