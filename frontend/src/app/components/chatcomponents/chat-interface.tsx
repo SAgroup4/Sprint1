@@ -140,20 +140,21 @@ export default function ChatInterface() {
         const msgs = await api.getMessages(selectedConversation.id);
         setMessages(msgs);
 
-        // 添加額外的空值檢查，確保selectedConversation和conversations都有值
-        if (selectedConversation && selectedConversation.unreadCount > 0 && conversations && conversations.length > 0) {
+        // 使用函數式更新，不需要依賴 conversations
+        if (selectedConversation && selectedConversation.unreadCount > 0) {
           await api.markConversationAsRead(selectedConversation.id);
-          const updatedConversations = conversations.map((conv) =>
-            conv.id === selectedConversation.id ? { ...conv, unreadCount: 0 } : conv
+          setConversations(prevConversations => 
+            prevConversations.map((conv) =>
+              conv.id === selectedConversation.id ? { ...conv, unreadCount: 0 } : conv
+            )
           );
-          setConversations(updatedConversations);
         }
       } catch (error) {
         console.error("加載消息失敗:", error);
       }
     }
     loadMessages();
-  }, [selectedConversation, conversations]);
+  }, [selectedConversation]); // 移除 conversations 依賴
 
   const handleSendMessage = async (content: string) => {
     if (!selectedConversation || !content.trim() || !currentUser) return;
