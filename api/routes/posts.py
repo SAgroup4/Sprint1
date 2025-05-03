@@ -43,7 +43,7 @@ async def create_post(post: Post):
 @post_router.get("/posts")
 async def get_posts(request: Request):
     try:
-        order = request.query_params.get("order", "newest")
+        order = request.query_params.get("order", "newest")  # 預設為 "newest"
         direction = firestore.firestore.Query.DESCENDING if order == "newest" else firestore.firestore.Query.ASCENDING
 
         posts_ref = db.collection("post").order_by("timestamp", direction=direction).stream()
@@ -59,16 +59,15 @@ async def get_posts(request: Request):
             posts.append({
                 "post_id": post.id,
                 "user_id": data.get("user_id"),
-                "name": data.get("name"),  # 新增 name 欄位
+                "name": data.get("name"),
                 "title": data.get("title"),
                 "content": data.get("content"),
-                "timestamp": timestamp,  # 確保 timestamp 存在
-                "comments_count": data.get("comments_count", 0),  # 預設為 0
+                "timestamp": timestamp,
+                "comments_count": data.get("comments_count", 0),
                 "skilltags": data.get("skilltags", {}),
                 "languagetags": data.get("languagetags", {}),
                 "leisuretags": data.get("leisuretags", {}),
-                "trans": data.get("trans", False),  # 新增 trans 欄位，預設為 False
-
+                "trans": data.get("trans", False),
             })
 
         print(f"成功取得 {len(posts)} 篇文章，排序：{order}")

@@ -150,7 +150,7 @@
 
 .post-list-container .sidebar-title {
   font-size: 1.5rem; /* 增大字體 */
-  color: #003366; /* 深藍色字體 */
+  color: #F5A623; /* 深藍色字體 */
   padding: 0.5rem 0; /* 內部留白 */
   font-weight: bold; /* 加粗字體 */
   text-align: left; /* 文字靠左對齊 */
@@ -473,7 +473,7 @@
 
 .title-icon {
   font-size: 1.5rem; /* 圖示大小 */
-  color: #003366; /* 圖示顏色 */
+  color: #FFB300; /* 圖示顏色 */
 }
 
 /* === Filter Controls === */
@@ -548,21 +548,53 @@
 }
 
 /* 技能標籤樣式 */
-.post-tag.skill {
+.post-tagskill {
   background-color: #6a5acd; /* 紫色背景 */
+  padding: 6px 12px; /* 內邊距，控制標籤大小 */
+  border-radius: 999px; /* 圓角，確保橢圓形 */
+  font-size: 13px; /* 字體大小 */
+  font-weight: bold; /* 加粗字體 */
+  color: white; /* 文字顏色 */
+  text-align: center; /* 文字置中 */
+  height: 30px; /* 固定高度 */
+  margin-top: 5px;
 }
 /* 轉學生標籤樣式 */
-.post-tag.trans {
+.post-tagtrans {
   background-color: #F5A623; /* 金色背景 */
+  padding: 6px 12px; /* 內邊距，控制標籤大小 */
+  border-radius: 999px; /* 圓角，確保橢圓形 */
+  font-size: 13px; /* 字體大小 */
+  font-weight: bold; /* 加粗字體 */
+  color: white; /* 文字顏色 */
+  text-align: center; /* 文字置中 */
+  height: 30px; /* 固定高度 */
+  margin-top: 5px;
 }
 /* 語言標籤樣式 */
-.post-tag.lang {
+.post-taglang {
   background-color: #8b4513; /* 棕色背景 */
+  padding: 6px 12px; /* 內邊距，控制標籤大小 */
+  border-radius: 999px; /* 圓角，確保橢圓形 */
+  font-size: 13px; /* 字體大小 */
+  font-weight: bold; /* 加粗字體 */
+  color: white; /* 文字顏色 */
+  text-align: center; /* 文字置中 */
+  height: 30px; /* 固定高度 */
+  margin-top: 5px;
 }
 
 /* 休閒標籤樣式 */
-.post-tag.leisure {
+.post-tagleisure {
   background-color: #f08080; /* 淺紅色背景 */
+  padding: 6px 12px; /* 內邊距，控制標籤大小 */
+  border-radius: 999px; /* 圓角，確保橢圓形 */
+  font-size: 13px; /* 字體大小 */
+  font-weight: bold; /* 加粗字體 */
+  color: white; /* 文字顏色 */
+  text-align: center; /* 文字置中 */
+  height: 30px; /* 固定高度 */
+  margin-top: 5px;
 }
 
 .filter-controls input[type="radio"],
@@ -833,3 +865,5 @@
 .clear-button:hover {
   background-color: #e53935; /* 懸停時背景色變深 */
 }
+
+
