@@ -5,8 +5,6 @@ import "./styles.css";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthProvider";
 import { FaRegLightbulb } from "react-icons/fa6";
-import { IoIosArrowDropup } from "react-icons/io";
-import { IoIosArrowDropdown } from "react-icons/io";
 
 interface Post {
   id: number;
@@ -19,8 +17,8 @@ interface Post {
   skilltags: Map<string, boolean>;
   languagetags: Map<string, boolean>;
   leisuretags: Map<string, boolean>;
-  name: string; // 新增的 name 欄位
-  trans: boolean; // 新增的 trans 欄位
+  name: string;
+  trans: boolean;
 }
 
 const Post: React.FC<{ post: Post; onClick: (post: Post) => void }> = ({
@@ -36,7 +34,7 @@ const Post: React.FC<{ post: Post; onClick: (post: Post) => void }> = ({
             alt="頭貼"
             className="post-avatar"
           />
-          <span>{post.author || "匿名使用者"}</span>{" "}
+          <span>{post.author || "匿名使用者"}</span>
         </div>
         <span className="post-timestamp">{post.timestamp}</span>
       </div>
@@ -82,9 +80,42 @@ const PostList: React.FC = () => {
   const router = useRouter();
   const { user } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([]); // 新增篩選後的貼文狀態
   const [isDateFilterOpen, setIsDateFilterOpen] = useState(false);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [order, setOrder] = useState<string>("newest"); // 預設排序為 "newest"
+
+  const [skilltags, setSkilltags] = useState<Map<string, boolean>>(
+    new Map([
+      ["Java", false],
+      ["Python", false],
+      ["網頁開發", false],
+      ["其他程式語言", false],
+    ])
+  );
+  const [languagetags, setLanguagetags] = useState<Map<string, boolean>>(
+    new Map([
+      ["英文", false],
+      ["韓文", false],
+      ["日文", false],
+      ["其他語言", false],
+    ])
+  );
+  const [leisuretags, setLeisuretags] = useState<Map<string, boolean>>(
+    new Map([
+      ["跑步", false],
+      ["桌球", false],
+      ["吃飯", false],
+      ["閒聊", false],
+      ["其他", false],
+    ])
+  );
+
+  // 計算是否有啟用篩選條件
+  const isFiltered =
+    Array.from(skilltags.values()).some((value) => value) ||
+    Array.from(languagetags.values()).some((value) => value) ||
+    Array.from(leisuretags.values()).some((value) => value);
 
   const toggleOverlay = () => {
     setIsOverlayOpen((prev) => !prev);
@@ -92,9 +123,7 @@ const PostList: React.FC = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:8000/posts?order=${order}`
-      );
+      const response = await fetch(`http://localhost:8000/posts?order=${order}`); // 傳遞排序參數
       if (!response.ok) throw new Error("獲取文章失敗");
 
       const result = await response.json();
@@ -132,15 +161,42 @@ const PostList: React.FC = () => {
       });
 
       setPosts(formattedPosts);
-      console.log("獲取文章成功:", formattedPosts);
+      setFilteredPosts(formattedPosts); // 初始化篩選後的貼文
     } catch (error) {
       console.error("獲取文章失敗:", error);
     }
   };
 
+  const applyFilters = () => {
+    const filtered = posts.filter((post) => {
+      // 篩選技能標籤
+      const skillMatch = Array.from(skilltags.entries()).every(
+        ([key, value]) => !value || post.skilltags.get(key)
+      );
+
+      // 篩選語言標籤
+      const languageMatch = Array.from(languagetags.entries()).every(
+        ([key, value]) => !value || post.languagetags.get(key)
+      );
+
+      // 篩選休閒標籤
+      const leisureMatch = Array.from(leisuretags.entries()).every(
+        ([key, value]) => !value || post.leisuretags.get(key)
+      );
+
+      return skillMatch && languageMatch && leisureMatch;
+    });
+
+    setFilteredPosts(filtered); // 更新篩選後的貼文
+  };
+
   React.useEffect(() => {
-    fetchPosts();
-  }, [order]); // 當 order 改變時重新獲取貼文
+    fetchPosts(); // 當 order 改變時重新獲取貼文
+  }, [order]);
+
+  React.useEffect(() => {
+    applyFilters();
+  }, [skilltags, languagetags, leisuretags]); // 當篩選條件改變時應用篩選
 
   const handlePostClick = (post: Post) => {
     router.push(`/posts/${post.id}`);
@@ -148,6 +204,71 @@ const PostList: React.FC = () => {
 
   const handleOrderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOrder(e.target.value); // 更新排序條件
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target as HTMLFormElement);
+
+    // 更新 skilltags
+    const updatedSkilltags = new Map(skilltags);
+    updatedSkilltags.forEach((_, key) => {
+      updatedSkilltags.set(key, formData.getAll("skill").includes(key));
+    });
+    setSkilltags(updatedSkilltags);
+
+    // 更新 languagetags
+    const updatedLanguagetags = new Map(languagetags);
+    updatedLanguagetags.forEach((_, key) => {
+      updatedLanguagetags.set(
+        key,
+        formData.getAll("language").includes(key)
+      );
+    });
+    setLanguagetags(updatedLanguagetags);
+
+    // 更新 leisuretags
+    const updatedLeisuretags = new Map(leisuretags);
+    updatedLeisuretags.forEach((_, key) => {
+      updatedLeisuretags.set(
+        key,
+        formData.getAll("leisure").includes(key)
+      );
+    });
+    setLeisuretags(updatedLeisuretags);
+
+    setIsOverlayOpen(false);
+  };
+
+  const handleClear = () => {
+    // 重置所有選項
+    setSkilltags(
+      new Map([
+        ["Java", false],
+        ["Python", false],
+        ["網頁開發", false],
+        ["其他程式語言", false],
+      ])
+    );
+    setLanguagetags(
+      new Map([
+        ["英文", false],
+        ["韓文", false],
+        ["日文", false],
+        ["其他語言", false],
+      ])
+    );
+    setLeisuretags(
+      new Map([
+        ["跑步", false],
+        ["桌球", false],
+        ["吃飯", false],
+        ["閒聊", false],
+        ["其他", false],
+      ])
+    );
+    setFilteredPosts(posts); // 重置篩選後的貼文
   };
 
   return (
@@ -169,33 +290,78 @@ const PostList: React.FC = () => {
           <div>
             <h2>篩選條件</h2>
           </div>
-          <div className="filter-options">
-            <label>
-              <input
-                type="radio"
-                name="date"
-                value="newest"
-                checked={order === "newest"}
-                onChange={handleOrderChange}
-              />
-              由近到遠
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="date"
-                value="oldest"
-                checked={order === "oldest"}
-                onChange={handleOrderChange}
-              />
-              由遠到近
-            </label>
+          <div className="filter-controls">
+            <div className="filter-row">
+              <div className="filter-controls">
+                <div className="filter-controls">
+                  {isFiltered ? (
+                    <div className="active-filters">
+                      {/* 篩選標籤 */}
+                      <div className="post-tags">
+                        {/* 清除按鈕 */}
+                        <button className="filter-button" onClick={handleClear}>
+                          清除
+                        </button>
+                        {Array.from(skilltags.entries())
+                          .filter(([_, value]) => value) // 篩選出值為 true 的標籤
+                          .map(([key]) => (
+                            <span key={key} className="post-tag skill">
+                              {key}
+                            </span>
+                          ))}
+                        {Array.from(languagetags.entries())
+                          .filter(([_, value]) => value)
+                          .map(([key]) => (
+                            <span key={key} className="post-tag lang">
+                              {key}
+                            </span>
+                          ))}
+                        {Array.from(leisuretags.entries())
+                          .filter(([_, value]) => value)
+                          .map(([key]) => (
+                            <span key={key} className="post-tag leisure">
+                              {key}
+                            </span>
+                          ))}
+                      </div>
+                    </div>
+                  ) : (
+                    // 選擇按鈕
+                    <button className="filter-button" onClick={toggleOverlay}>
+                      選擇
+                    </button>
+                  )}
+                </div>
+              </div>
+                            <div className="filter-options">
+                <label>
+                  <input
+                    type="radio"
+                    name="date"
+                    value="newest"
+                    checked={order === "newest"}
+                    onChange={handleOrderChange}
+                  />
+                  由近到遠
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="date"
+                    value="oldest"
+                    checked={order === "oldest"}
+                    onChange={handleOrderChange}
+                  />
+                  由遠到近
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="post-list">
-        {posts.map((post) => (
+        {filteredPosts.map((post) => (
           <Post key={post.id} post={post} onClick={handlePostClick} />
         ))}
       </div>
@@ -206,28 +372,19 @@ const PostList: React.FC = () => {
             className="overlay-content"
             onClick={(e) => e.stopPropagation()} // 防止點擊內容區關閉
           >
-            <form className="filter-form">
+            <form className="filter-form" onSubmit={handleSubmit}>
               <h2>篩選條件</h2>
+
               {/* 第一組問題：依技能搜尋 */}
               <div className="filter-group">
                 <h3>依技能搜尋</h3>
                 <div className="filter-options-row">
-                  <label>
-                    <input type="checkbox" name="skill" value="Java" />
-                    Java
-                  </label>
-                  <label>
-                    <input type="checkbox" name="skill" value="Python" />
-                    Python
-                  </label>
-                  <label>
-                    <input type="checkbox" name="skill" value="網頁開發" />
-                    網頁開發
-                  </label>
-                  <label>
-                    <input type="checkbox" name="skill" value="其他程式語言" />
-                    其他程式語言
-                  </label>
+                  {Array.from(skilltags.keys()).map((key) => (
+                    <label key={key}>
+                      <input type="checkbox" name="skill" value={key} />
+                      {key}
+                    </label>
+                  ))}
                 </div>
               </div>
 
@@ -235,22 +392,12 @@ const PostList: React.FC = () => {
               <div className="filter-group">
                 <h3>依語言搜尋</h3>
                 <div className="filter-options-row">
-                  <label>
-                    <input type="checkbox" name="language" value="英文" />
-                    英文
-                  </label>
-                  <label>
-                    <input type="checkbox" name="language" value="韓文" />
-                    韓文
-                  </label>
-                  <label>
-                    <input type="checkbox" name="language" value="日文" />
-                    日文
-                  </label>
-                  <label>
-                    <input type="checkbox" name="language" value="其他語言" />
-                    其他語言
-                  </label>
+                  {Array.from(languagetags.keys()).map((key) => (
+                    <label key={key}>
+                      <input type="checkbox" name="language" value={key} />
+                      {key}
+                    </label>
+                  ))}
                 </div>
               </div>
 
@@ -258,38 +405,24 @@ const PostList: React.FC = () => {
               <div className="filter-group">
                 <h3>依休閒搜尋</h3>
                 <div className="filter-options-row">
-                  <label>
-                    <input type="checkbox" name="leisure" value="跑步" />
-                    跑步
-                  </label>
-                  <label>
-                    <input type="checkbox" name="leisure" value="桌球" />
-                    桌球
-                  </label>
-                  <label>
-                    <input type="checkbox" name="leisure" value="吃飯" />
-                    吃飯
-                  </label>
-                  <label>
-                    <input type="checkbox" name="leisure" value="閒聊" />
-                    閒聊
-                  </label>
-                  <label>
-                    <input type="checkbox" name="leisure" value="其他" />
-                    其他
-                  </label>
+                  {Array.from(leisuretags.keys()).map((key) => (
+                    <label key={key}>
+                      <input type="checkbox" name="leisure" value={key} />
+                      {key}
+                    </label>
+                  ))}
                 </div>
               </div>
 
               {/* 提交按鈕 */}
               <div className="button-row">
                 <button type="submit" className="submit-button">
-                  確認提交
+                  提交
                 </button>
                 <button
                   type="button"
                   className="clear-button"
-                  onClick={() => alert("清除選項")}
+                  onClick={handleClear}
                 >
                   清除
                 </button>

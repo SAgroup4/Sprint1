@@ -505,7 +505,7 @@
   color: #003366; /* 主題色的淡藍字體 */ /* 主題色的淡藍字體 */
   border: none;
   border-radius: 999px;
-  padding: 4px 14px;
+  padding: 6px 12px;
   font-size: 12px;
   font-weight: bold;
   cursor: pointer;
@@ -533,7 +533,6 @@
 
 /* 標籤容器樣式 */
 .post-tag {
-  display: inline-block;
   padding: 6px 12px; /* 內邊距，控制標籤大小 */
   border-radius: 999px; /* 圓角，確保橢圓形 */
   font-size: 13px; /* 字體大小 */
