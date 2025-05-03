@@ -9,11 +9,13 @@ interface User {
   name: string;
   department: string;
   grade: string;
+  token?: string; // token 可能是 User 物件的一部分
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  login: (token: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -34,8 +36,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const res = await fetch('http://localhost:8000/me', {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!res.ok) throw new Error('Token 無效');
@@ -55,14 +57,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     fetchUser();
   }, []);
 
+  const login = async (token: string) => {
+    localStorage.setItem('token', token);
+    await fetchUser(); // 登入後立即獲取使用者資料
+  };
+
   const logout = () => {
-    localStorage.removeItem('token');
     setUser(null);
+    localStorage.removeItem('token');
     router.push('/login');
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

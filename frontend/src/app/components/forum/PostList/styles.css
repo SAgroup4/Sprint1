@@ -159,6 +159,10 @@
   border-bottom: none; /* 移除底部邊框 */
 }
 
+.sidebar-title{
+  margin-top: 10px;
+}
+
 /* 貼文列表樣式 */
 .post-list {
   display: flex;
@@ -539,6 +543,8 @@
   font-weight: bold; /* 加粗字體 */
   color: white; /* 文字顏色 */
   text-align: center; /* 文字置中 */
+  height: 30px; /* 固定高度 */
+  margin-top: 5px;
 }
 
 /* 技能標籤樣式 */
@@ -653,6 +659,7 @@
   display: flex;
   flex-wrap: wrap; /* 允許標籤換行 */
   gap: 0.5rem; /* 標籤之間的間距 */
+  align-items: center; /* 垂直置中 */
 }
 
 /* 回應數樣式 */

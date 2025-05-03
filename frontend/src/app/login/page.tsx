@@ -14,6 +14,7 @@ import {
   BackgroundAnimation,
   FormContainer,
 } from './loginStyles';
+import { useAuth } from '@/context/AuthProvider';
 
 interface FormData {
   email: string;
@@ -22,6 +23,7 @@ interface FormData {
 
 const Login = () => {
   const router = useRouter();
+  const { login } = useAuth();
   const [formData, setFormData] = useState<FormData>({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -55,6 +57,8 @@ const Login = () => {
         localStorage.setItem('token', access_token);
         localStorage.setItem('userEmail', email);
         localStorage.setItem('userName', userName); // 存入 userName
+        // 傳遞 token 給 AuthProvider
+        await login(access_token);
   
         // 根據 isProfileComplete 狀態導向不同頁面
         if (!isProfileComplete) {

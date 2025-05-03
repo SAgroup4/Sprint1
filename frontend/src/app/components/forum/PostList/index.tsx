@@ -123,7 +123,7 @@ const PostList: React.FC = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/posts?order=${order}`); // 傳遞排序參數
+      const response = await fetch(`http://localhost:8000/posts?order=${order}`);
       if (!response.ok) throw new Error("獲取文章失敗");
 
       const result = await response.json();
@@ -162,6 +162,7 @@ const PostList: React.FC = () => {
 
       setPosts(formattedPosts);
       setFilteredPosts(formattedPosts); // 初始化篩選後的貼文
+      applyFilters(); // 確保篩選邏輯被執行
     } catch (error) {
       console.error("獲取文章失敗:", error);
     }
@@ -187,12 +188,29 @@ const PostList: React.FC = () => {
       return skillMatch && languageMatch && leisureMatch;
     });
 
-    setFilteredPosts(filtered); // 更新篩選後的貼文
+    // 根據 order 狀態排序
+    const sortedFiltered = filtered.sort((a, b) => {
+      if (order === "newest") {
+        return (
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
+      } else {
+        return (
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        );
+      }
+    });
+
+    setFilteredPosts(sortedFiltered); // 更新篩選後的貼文
   };
 
   React.useEffect(() => {
     fetchPosts(); // 當 order 改變時重新獲取貼文
   }, [order]);
+
+  React.useEffect(() => {
+    applyFilters(); // 當 order 改變時重新應用篩選與排序
+  }, [order, posts]); // 確保 posts 更新後也會重新執行
 
   React.useEffect(() => {
     applyFilters();

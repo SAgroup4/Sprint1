@@ -6,7 +6,6 @@ import React, { useState, useRef, useEffect } from "react";
 import "./styles.css";
 import logo from "./logo.png";
 import brandname from "./brandname.png";
-import userphoto from "./user.jpg";
 import { useAuth } from "@/context/AuthProvider";
 import { IoIosText } from "react-icons/io";
 import { FaBell } from "react-icons/fa";
@@ -17,13 +16,7 @@ const Header: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // 取得 userId（這裡用 email 前綴，你也可以改成 user.id）
   const userId = user ? user.email.split("@")[0] : "";
-
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // TODO: 搜尋功能待實作
-  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -62,7 +55,7 @@ const Header: React.FC = () => {
 
       {/* 中間搜尋欄 */}
       <div className="header-search">
-        <form onSubmit={handleSearch}>
+        <form>
           <input
             type="text"
             placeholder="搜尋討論話題..."
@@ -119,7 +112,6 @@ const Header: React.FC = () => {
               </div>
             )}
           </div>
-          {/* 用 Link 導向 /profile/[userId] */}
         </div>
       ) : (
         <button
