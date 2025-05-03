@@ -1,6 +1,6 @@
 // loginStyles.tsx
 // 此檔案用來集中管理 Login 頁面的 styled-components，保持主檔案乾淨
-
+"use client"
 import { styled } from '@mui/material/styles';
 import { Box, Container, Dialog } from '@mui/material';
 import { BaseContainer, BaseTextField, BaseButton, BaseBox } from './style';
