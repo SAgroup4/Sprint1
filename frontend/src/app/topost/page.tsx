@@ -40,13 +40,12 @@
 //   useEffect(() => {
 //     const id = localStorage.getItem("userId");
 //     const name = localStorage.getItem("userName");
-  
+
 //     console.log("從 localStorage 取得：", id, name); // ✅ 除錯用
-  
+
 //     if (id) setUserId(id);
 //     if (name) setUserName(name);
 //   }, []);
-  
 
 //   const handleCheckboxChange = (
 //     tagType: "skilltags" | "languagetags" | "leisuretags",
@@ -209,11 +208,10 @@
 //   );
 // }
 
-
 ///第二版
 // "use client";
 
-// import "./topost.css"; 
+// import "./topost.css";
 // import React, { useEffect, useState } from "react";
 // import { useRouter } from "next/navigation";
 
@@ -433,8 +431,6 @@
 //     </div>
 //   );
 // }
-
-
 
 // //第三版(未完成)
 // "use client";
@@ -653,11 +649,10 @@
 //   );
 // }
 
-
 // //第四版(未完成)
 // "use client";
 
-// import "./topost.css"; 
+// import "./topost.css";
 // import React, { useEffect, useState } from "react";
 // import { useRouter } from "next/navigation";
 
@@ -878,11 +873,10 @@
 //   );
 // }
 
-
 //第五版(未完成)
 "use client";
 
-import "./topost.css"; 
+import "./topost.css";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -899,8 +893,8 @@ export default function ToPostPage() {
   const [skilltags, setSkilltags] = useState<Record<string, boolean>>({
     Java: false,
     Python: false,
-    "網頁開發": false,
-    "其他程式語言": false,
+    網頁開發: false,
+    其他程式語言: false,
   });
 
   const [languagetags, setLanguagetags] = useState<Record<string, boolean>>({
@@ -984,7 +978,7 @@ export default function ToPostPage() {
         body: JSON.stringify(data),
       });
 
-      router.push("/general");
+      router.back();
     } catch (err) {
       console.error("發文錯誤：", err);
       router.push("/general");
@@ -1079,7 +1073,9 @@ export default function ToPostPage() {
           {["是", "否"].map((label, idx) => (
             <label
               key={`trans-${idx}`}
-              className={`checkbox-label ${isTransfer === (label === "是") ? "checked" : ""}`}
+              className={`checkbox-label ${
+                isTransfer === (label === "是") ? "checked" : ""
+              }`}
             >
               <input
                 type="radio"
