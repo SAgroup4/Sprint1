@@ -1,4 +1,15 @@
-.post-container {
+
+  
+
+  
+
+
+
+
+
+
+
+  .postContainer {
     max-width: 800px;
     margin: 30px auto;
     background: white;
@@ -10,8 +21,8 @@
     gap: 16px;
   }
   
-  .post-input,
-  .post-textarea {
+  .postInput,
+  .postTextarea {
     width: 100%;
     padding: 10px;
     border: 2px solid #c0d0ff;
@@ -20,32 +31,30 @@
     box-sizing: border-box;
   }
   
-  .post-textarea {
+  .postTextarea {
     height: 120px;
     resize: none;
   }
   
-  .form-group label {
-    
+  .formGroup label {
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 6px;
     display: block;
-    
   }
-  /* ✅ 單獨針對「技能標籤」這四個字改顏色 */
-  .skill-label {
+  
+  .skillLabel {
     color: #003b9f;
   }
   
-  .checkbox-group {
+  .checkboxGroup {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
     margin-top: 8px;
   }
   
-  .checkbox-label {
+  .checkboxLabel {
     display: flex;
     align-items: center;
     padding: 8px 16px;
@@ -58,30 +67,30 @@
     user-select: none;
   }
   
-  .checkbox-label.checked {
+  .checked {
     background-color: #c5dbff;
     color: #003b9f;
     font-weight: 700;
   }
   
-  .checkbox-label input[type="checkbox"],
-  .checkbox-label input[type="radio"] {
+  .checkboxLabel input[type="checkbox"],
+  .checkboxLabel input[type="radio"] {
     display: none;
   }
   
-  .form-group.row-end {
+  .rowEnd {
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
   }
   
-  .transfer-options {
+  .transferOptions {
     display: flex;
     gap: 12px;
   }
   
-  .submit-button {
+  .submitButton {
     background-color: #4f7cff;
     color: #fff;
     border: none;
@@ -94,20 +103,18 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   }
   
-  .submit-button:hover {
+  .submitButton:hover {
     background-color: #365dcc;
     transform: translateY(-1px);
   }
   
-  .submit-button:active {
+  .submitButton:active {
     transform: scale(0.98);
   }
   
-  .submit-button-wrapper {
+  .submitButtonWrapper {
     display: flex;
     justify-content: flex-end;
     margin-top: 20px;
   }
-  
-
   

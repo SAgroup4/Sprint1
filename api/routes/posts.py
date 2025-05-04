@@ -8,6 +8,7 @@ from db import db
 class Post(BaseModel):
     user_id: str
     name : str  # 新增 name 欄位
+    trans: bool # 新增trans欄位，預設為 False
     title: str
     content: str
     skilltags: Dict[str, bool] = {}
@@ -24,6 +25,7 @@ async def create_post(post: Post):
         result = db.collection("post").add({
             "user_id": post.user_id,
             "name": post.name,  # 新增 name 欄位
+            "trans": post.trans, #新增轉學生欄位
             "title": post.title,
             "content": post.content,
             "skilltags": post.skilltags,
