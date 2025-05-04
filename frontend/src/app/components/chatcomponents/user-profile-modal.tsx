@@ -18,6 +18,7 @@ import {
 import { styled } from "@mui/material/styles"
 import { X, Mail, Phone, MapPin, Calendar } from "lucide-react"
 import type { User } from "@/lib/types"
+import { useRouter } from "next/navigation"
 
 interface UserProfileModalProps {
   user: User
@@ -34,6 +35,15 @@ const ProfileBanner = styled(Box)(({ theme }) => ({
 
 
 export default function UserProfileModal({ user, onClose }: UserProfileModalProps) {
+  const router = useRouter();
+  
+  const handleViewProfile = () => {
+    // 關閉模態框
+    onClose();
+    // 跳轉到用戶的個人檔案頁面
+    router.push(`/profile/${user.id}`);
+  };
+  
   return (
     <Dialog open={true} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pb: 1 }}>
@@ -112,10 +122,7 @@ export default function UserProfileModal({ user, onClose }: UserProfileModalProp
 
           {/* Actions */}
           <Box sx={{ display: "flex", gap: 2, my: 3 }}>
-            <Button variant="contained" color="primary">
-              發送訊息
-            </Button>
-            <Button variant="outlined" color="primary">
+            <Button variant="contained" color="primary" onClick={handleViewProfile}>
               查看資料
             </Button>
           </Box>

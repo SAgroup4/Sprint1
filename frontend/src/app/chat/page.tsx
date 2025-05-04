@@ -1,3 +1,4 @@
+"use client"
 import ChatInterface from "@/app/components/chatcomponents/chat-interface"
 import ThemeRegistry from "@/app/components/chatcomponents/theme-registry"
 import styles from "./styles.module.css"

@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import {
   Dialog,
@@ -104,6 +104,17 @@ const RoundedTextField = styled(TextField)(({ theme }) => ({
  * 顯示用戶的詳細資料，包括頭像、暱稱、學號、電子郵件和系所
  */
 export function UserProfileModal({ user, onClose }: UserProfileModalProps) {
+  // 引入 router 用於頁面跳轉
+  const router = useRouter();
+  
+  // 處理查看資料按鈕點擊
+  const handleViewProfile = () => {
+    // 關閉模態框
+    onClose();
+    // 跳轉到用戶的個人檔案頁面
+    router.push(`/profile/${user.id}`);
+  };
+  
   // 如果 user 為 undefined 或 null，顯示加載中或錯誤信息
   if (!user) {
     return (
@@ -183,12 +194,9 @@ export function UserProfileModal({ user, onClose }: UserProfileModalProps) {
             </ListItem>
           </List>
 
-          {/* 操作按鈕 */}
+          {/* 操作按鈕 - 移除發送訊息按鈕，只保留查看資料按鈕 */}
           <Box sx={{ display: "flex", gap: 2, my: 3 }}>
-            <Button variant="contained" color="primary">
-              發送訊息
-            </Button>
-            <Button variant="outlined" color="primary">
+            <Button variant="outlined" color="primary" onClick={handleViewProfile}>
               查看資料
             </Button>
           </Box>
