@@ -24,7 +24,7 @@ const Sidebar: React.FC = () => {
       title: '轉學生討論區',
       children: [
         { id: 'guides', title: '轉學生指南' },
-        { id: 'transfer-discussion', title: '轉學生討論區' },
+        { id: 'transfer', title: '轉學生討論區' },
       ],
     },
     { id: 'professional', title: '技能交換區' },

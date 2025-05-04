@@ -8,7 +8,6 @@ from db import db
 class Post(BaseModel):
     user_id: str
     name : str  # 新增 name 欄位
-    trans: bool # 新增trans欄位，預設為 False
     title: str
     content: str
     skilltags: Dict[str, bool] = {}
@@ -16,16 +15,15 @@ class Post(BaseModel):
     leisuretags: Dict[str, bool] = {}
 
 # 定義路由器
-post_router = APIRouter()
+search_router = APIRouter()
 
 # 🔹 發文 API
-@post_router.post("/posts")
+@search_router.post("/posts")
 async def create_post(post: Post):
     try:
         result = db.collection("post").add({
             "user_id": post.user_id,
             "name": post.name,  # 新增 name 欄位
-            "trans": post.trans, #新增轉學生欄位
             "title": post.title,
             "content": post.content,
             "skilltags": post.skilltags,
@@ -42,7 +40,7 @@ async def create_post(post: Post):
         raise HTTPException(status_code=500, detail=f"Error creating post: {str(e)}")
 
 # 🔹 一般獲取所有貼文（無篩選）
-@post_router.get("/posts")
+@search_router.get("/posts")
 async def get_posts(request: Request):
     try:
         order = request.query_params.get("order", "newest")  # 預設為 "newest"
@@ -78,7 +76,7 @@ async def get_posts(request: Request):
         print(f"獲取文章時出錯：{e}")
         raise HTTPException(status_code=500, detail=f"Error fetching posts: {e}")
 
-@post_router.get("/posts/{post_id}")
+@search_router.get("/posts/{post_id}")
 async def get_post(post_id: str):
     try:
         doc_ref = db.collection("post").document(post_id)
@@ -111,7 +109,7 @@ async def get_post(post_id: str):
         raise HTTPException(status_code=500, detail=f"Error fetching post: {e}")
 
 # 🔹 支援條件篩選的貼文 API（依技能／語言／休閒／日期）
-@post_router.get("/posts/filter")
+@search_router.get("/posts/filter")
 async def filter_posts(request: Request):
     try:
         params = request.query_params
@@ -161,3 +159,51 @@ async def filter_posts(request: Request):
     except Exception as e:
         print(f"過濾文章時出錯: {e}")
         raise HTTPException(status_code=500, detail=f"Error filtering posts: {e}")
+
+# 🔹 搜尋貼文 API
+@search_router.get("/search")
+async def search_posts(request: Request):
+    try:
+        # 從查詢參數中取得 keyword
+        keyword = request.query_params.get("keyword", "").strip()
+        if not keyword:
+            raise HTTPException(status_code=400, detail="搜尋關鍵字不能為空")
+
+        # 從 Firestore 中獲取所有貼文
+        posts_ref = db.collection("post").stream()
+        results = []
+
+        for post in posts_ref:
+            data = post.to_dict()
+            title = data.get("title", "")
+
+            # 搜尋邏輯：檢查關鍵字是否出現在 title 中（不區分大小寫）
+            if keyword.lower() in title.lower():
+                # 避免 timestamp 為 None
+                timestamp = data.get("timestamp")
+                if not timestamp:
+                    continue
+
+                results.append({
+                    "post_id": post.id,
+                    "user_id": data.get("user_id", ""),
+                    "name": data.get("name", ""),
+                    "title": title,
+                    "content": data.get("content", ""),
+                    "timestamp": str(timestamp),
+                    "comments_count": data.get("comments_count", 0),
+                    "skilltags": data.get("skilltags", {}),
+                    "languagetags": data.get("languagetags", {}),
+                    "leisuretags": data.get("leisuretags", {}),
+                    "trans": data.get("trans", False),
+                })
+
+        # 如果沒有找到任何結果，返回空陣列
+        if not results:
+            return {"results": []}
+
+        # 返回搜尋結果
+        return {"results": results}
+    except Exception as e:
+        print(f"搜尋貼文時發生錯誤: {e}")
+        raise HTTPException(status_code=500, detail=f"Error searching posts: {e}")
