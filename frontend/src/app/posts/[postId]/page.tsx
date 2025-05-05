@@ -182,7 +182,47 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
               <span className={styles.postAuthor}>{post.name}</span>
             </Link>
           </div>
-          <button className={styles.messageButton}>私訊</button>
+          <button 
+            className={styles.messageButton} 
+            onClick={async () => {
+              try {
+                // 獲取當前用戶的 token
+                const token = localStorage.getItem('token');
+                if (!token) {
+                  alert('請先登入');
+                  router.push('/login');
+                  return;
+                }
+
+                // 創建與作者的對話
+                const response = await fetch('http://localhost:8000/api/conversations', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                  },
+                  body: JSON.stringify({
+                    participantId: post.user_id // 使用文章作者的 ID
+                  })
+                });
+
+                if (!response.ok) {
+                  const errorData = await response.json();
+                  throw new Error(errorData.detail || '創建對話失敗');
+                }
+
+                const conversation = await response.json();
+                
+                // 跳轉到聊天頁面
+                router.push('/chat');
+              } catch (error) {
+                console.error('創建對話失敗:', error);
+                alert(`無法創建對話: ${error instanceof Error ? error.message : '未知錯誤'}`);
+              }
+            }}
+          >
+            私訊
+          </button>
         </div>
       </div>
 
