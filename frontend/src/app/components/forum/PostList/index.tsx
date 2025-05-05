@@ -10,7 +10,6 @@ interface Post {
   id: number;
   title: string;
   content: string;
-  author: string;
   avatar: string;
   timestamp: string;
   replies: number;
@@ -34,7 +33,7 @@ const Post: React.FC<{ post: Post; onClick: (post: Post) => void }> = ({
             alt="頭貼"
             className="post-avatar"
           />
-          <span>{post.author || "匿名使用者"}</span>
+          <span>{post.name || "匿名使用者"}</span> 
         </div>
         <span className="post-timestamp">{post.timestamp}</span>
       </div>
@@ -150,7 +149,7 @@ const PostList: React.FC = () => {
           id: post.post_id,
           title: post.title,
           content: post.content,
-          author: post.name,
+          name: post.name || "匿名使用者",
           trans: post.trans,
           timestamp: formattedTime,
           replies: post.comments_count || 0,

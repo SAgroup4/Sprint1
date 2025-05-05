@@ -63,7 +63,7 @@ async def get_current_user(request: Request):
     user_data = doc.to_dict()
     return {
         "id": student_id,
-        "nickname": user_data.get("nickname", "未知用戶"),
+        "name": user_data.get("name", user_data.get("name", "未知用戶")), #將nickname修改成name
         "avatar": user_data.get("avatar", "/placeholder.svg"),
         "email": user_data.get("email", ""),
         "department": user_data.get("department", ""),
