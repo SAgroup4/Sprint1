@@ -1,0 +1,267 @@
+/* 容器樣式 */
+.postDetailContainer {
+  max-width: 960px;
+  margin: 0 auto;
+  margin-bottom: 16px; /* 新增的間距 */
+  padding: 16px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+  width: 100%;
+}
+
+/* 標題區域 */
+.postHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding: 0 16px;
+}
+
+.backButton {
+  color: #1c4874 !important;
+  font-size: 1.2em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.postWord {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin: 0;
+  color: #1c4874;
+}
+
+.postDate {
+  margin-left: auto;
+  font-size: 0.9rem;
+  color: #888;
+  display: flex;
+  align-items: center;
+}
+
+.postTitle {
+  font-size: 1.9rem;
+  font-weight: bold;
+  margin: 0;
+  color: #1c4874;
+}
+
+/* 元數據樣式 */
+.postMeta {
+  display: flex;
+  justify-content: flex-start;
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 16px;
+}
+
+.authorInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.authorAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.postAuthor{
+  font-weight: bold;
+  color: #003366;
+  font-size: 12x; /* 確保文字大小適中 */
+  vertical-align: middle; /* 垂直對齊圖片 */
+  
+}
+
+.messageButton {
+  background-color: transparent;
+  color: #4a90e2;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: color 0.3s ease;
+}
+
+.messageButton:hover {
+  background-color: #357abd;
+  color: white;
+}
+
+/* 內容樣式 */
+.postContent {
+  margin-top: 16px;
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin-bottom: 16px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 16px 0;
+}
+
+/* 留言區樣式 */
+.commentsTitle {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+  color: #1c4874;
+}
+
+.commentsList {
+  display: flex;
+  flex-direction: column;
+}
+
+.commentItem {
+  padding: 8px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.commentMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 8px;
+  padding: 8px;
+}
+
+.commentAuthor {
+  font-weight: bold;
+  color: #003366;
+}
+
+.commentContent {
+  font-size: 1rem;
+  color: #333;
+  margin-left: 20px;
+}
+
+/* 新增留言樣式 */
+.addComment {
+  margin-top: 20px;
+  display: grid; /* 使用 Grid */
+  grid-template-columns: 1fr auto; /* textarea 占用剩餘空間，按鈕自適應大小 */
+  align-items: center; /* 垂直置中 */
+  justify-content: center; /* 水平置中 */
+  gap: 10px; /* 元件之間的間距 */
+  margin-bottom: 16px;
+}
+
+.commentInput {
+  width: 100%; /* 填滿可用空間 */
+  height: 60px; /* 固定高度 */
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  font-size: 16px;
+  resize: none;
+  background-color: #ffffff;
+  color: #606060;
+}
+
+.submitCommentButton {
+  padding: 0.5rem 1rem;
+  background-color: #357abd;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.submitCommentButton:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.submitCommentButton:active {
+  background-color: #003f7f;
+  transform: scale(0.95);
+}
+
+.postTags {
+  display: flex; /* 使用 flex 排列標籤 */
+  flex-wrap: wrap; /* 如果標籤過多，則換行 */
+  gap: 8px; /* 標籤之間的間距 */
+  margin-top: 16px; /* 與上方內容的間距 */
+  border-radius: 20px !important; /* 圓角，確保橢圓形 */}
+
+.postTag {
+  display: inline-flex; /* 使用 flex 讓內容更靈活 */
+  align-items: center; /* 垂直置中 */
+  justify-content: center; /* 水平置中 */
+  padding: 8px 16px; /* 增加內邊距 */
+  border-radius: 20px ; /* 圓角，確保橢圓形 */
+  font-size: 13px; /* 調整字體大小 */
+  font-weight: bold; /* 加粗字體 */
+  color: white; /* 文字顏色 */
+  text-align: center; /* 文字置中 */
+  margin: 4px; /* 為每個標籤添加外邊距 */
+}
+
+
+
+/* 技能標籤樣式 */
+.postTagSkill {
+  background-color: #6a5acd; /* 紫色背景 */
+  padding: 6px 12px; /* 增加內邊距 */
+  border-radius: 20px ; /* 圓角，確保橢圓形 */
+  font-size: 13px; /* 調整字體大小 */
+  font-weight: bold; /* 加粗字體 */
+  color: white; /* 文字顏色 */
+  
+}
+
+/* 轉學生標籤樣式 */
+.postTagTrans {
+  background-color: #ffd000; /* 金色背景 */
+  padding: 6px 12px; /* 增加內邊距 */
+  border-radius: 20px; /* 圓角，確保橢圓形 */
+  font-size: 13px; /* 調整字體大小 */
+  font-weight: bold; /* 加粗字體 */
+  color: white; /* 文字顏色 */
+}
+
+/* 語言標籤樣式 */
+.postTagLang {
+  background-color: #8b4513; /* 棕色背景 */
+  padding: 6px 12px; /* 增加內邊距 */
+  border-radius: 20px; /* 圓角，確保橢圓形 */
+  font-size: 13px; /* 調整字體大小 */
+  font-weight: bold; /* 加粗字體 */
+  color: white; /* 文字顏色 */
+}
+
+/* 休閒標籤樣式 */
+.postTagLeisure {
+  background-color: #f08080; /* 淺紅色背景 */
+  padding: 6px 12px; /* 增加內邊距 */
+  border-radius: 20px; /* 圓角，確保橢圓形 */
+  font-size: 13px; /* 調整字體大小 */
+  font-weight: bold; /* 加粗字體 */
+  color: white; /* 文字顏色 */
+}
+/* 搜尋結果標題樣式 */
+.searchTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #000; /* 黑色文字 */
+  margin-bottom: 16px;
+}
