@@ -1501,7 +1501,7 @@ export default function ToPostPage() {
       </div>
 
       <div className={styles.formGroup}>
-        <label className={styles.skillLabel}>是否放置轉學生討論區</label>
+        <label className={styles.skillLabel}>是否與學生相關</label>
         <div className={styles.checkboxGroup}>
           {["是", "否"].map((label, idx) => (
             <label
