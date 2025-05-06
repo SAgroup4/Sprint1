@@ -26,6 +26,11 @@ export default function UserProfileForm({
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // 如果是暱稱欄位，將其即時存入 localStorage
+    if (name === "name") {
+      localStorage.setItem("userName", value);
+    }
   };
 
   const handleCheckboxChange = (
@@ -57,6 +62,10 @@ export default function UserProfileForm({
 
       if (response.ok) {
         alert("資料更新成功！");
+
+        // 將使用者名稱存入 localStorage
+        localStorage.setItem("userName", formData.name);
+
         router.push("/general");
       } else {
         const errorData = await response.json();
