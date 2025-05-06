@@ -1,13 +1,53 @@
 # routes/chat.py
-from fastapi import APIRouter, HTTPException, Request, Depends
+from fastapi import APIRouter, HTTPException, Request, Depends, WebSocket, WebSocketDisconnect, status
 from pydantic import BaseModel
 from datetime import datetime
 from db import db
 from utils.jwt_handler import verify_token
-from typing import List, Optional
+from typing import List, Optional, Dict, Set
 from google.cloud import firestore
 
 router = APIRouter () # 設置 prefix 為 /api
+
+# WebSocket 連接管理
+class ConnectionManager:
+    def __init__(self):
+        # 按照用戶ID存儲連接
+        self.active_connections: Dict[str, Set[WebSocket]] = {}
+    
+    async def connect(self, websocket: WebSocket, user_id: str):
+        await websocket.accept()
+        if user_id not in self.active_connections:
+            self.active_connections[user_id] = set()
+        self.active_connections[user_id].add(websocket)
+    
+    def disconnect(self, websocket: WebSocket, user_id: str):
+        if user_id in self.active_connections:
+            self.active_connections[user_id].discard(websocket)
+            if not self.active_connections[user_id]:
+                del self.active_connections[user_id]
+    
+    async def send_personal_message(self, message: dict, websocket: WebSocket):
+        await websocket.send_json(message)
+    
+    async def broadcast_to_user(self, user_id: str, message: dict):
+        if user_id in self.active_connections:
+            disconnected_websockets = set()
+            for websocket in self.active_connections[user_id]:
+                try:
+                    await websocket.send_json(message)
+                except RuntimeError:
+                    # 如果連接已關閉，將其標記為要斷開連接
+                    disconnected_websockets.add(websocket)
+            
+            # 移除已關閉的連接
+            for websocket in disconnected_websockets:
+                self.active_connections[user_id].discard(websocket)
+            
+            if not self.active_connections[user_id]:
+                del self.active_connections[user_id]
+
+manager = ConnectionManager()
 
 # 請求和響應模型
 class User(BaseModel):
@@ -33,6 +73,42 @@ class Message(BaseModel):
 
 class MessageRequest(BaseModel):
     content: str
+
+# WebSocket 身份驗證
+async def get_token_from_query(websocket: WebSocket):
+    token = websocket.query_params.get("token")
+    if not token:
+        return None
+    payload = verify_token(token)
+    return payload
+
+# WebSocket 端點
+@router.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    # 身份驗證
+    payload = await get_token_from_query(websocket)
+    if not payload:
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        return
+    
+    student_id = payload.get("student_id")
+    if not student_id:
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        return
+    
+    # 接受連接
+    await manager.connect(websocket, student_id)
+    
+    try:
+        while True:
+            # 等待客戶端訊息
+            data = await websocket.receive_json()
+            # 處理不同類型的訊息，這裡可以添加更多邏輯
+            if "type" in data:
+                if data["type"] == "ping":
+                    await manager.send_personal_message({"type": "pong"}, websocket)
+    except WebSocketDisconnect:
+        manager.disconnect(websocket, student_id)
 
 # 驗證當前用戶
 async def get_current_user(request: Request):
@@ -180,13 +256,42 @@ async def send_message(conversation_id: str, message: MessageRequest, current_us
             "unreadCount": unread_counts
         })
 
-        return Message(
+        message_response = Message(
             id=msg_doc[1].id,
             senderId=current_user_id,
             content=message.content,
             timestamp=now,
             status="delivered"
         )
+
+        # 通過 WebSocket 廣播訊息
+        # 1. 向接收者發送新訊息通知
+        await manager.broadcast_to_user(
+            other_user_id, 
+            {
+                "type": "new_message", 
+                "conversationId": conversation_id,
+                "message": {
+                    "id": msg_doc[1].id,
+                    "senderId": current_user_id,
+                    "content": message.content,
+                    "timestamp": now,
+                    "status": "delivered"
+                }
+            }
+        )
+        
+        # 2. 向發送者廣播發送成功確認
+        await manager.broadcast_to_user(
+            current_user_id, 
+            {
+                "type": "message_delivered", 
+                "messageId": msg_doc[1].id,
+                "conversationId": conversation_id
+            }
+        )
+
+        return message_response
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"發送消息失敗: {str(e)}")
 
@@ -216,8 +321,24 @@ async def mark_conversation_as_read(conversation_id: str, current_user_id: str =
         messages_ref = conv_ref.collection("messages")
         unread_messages = messages_ref.where("status", "==", "delivered").where("senderId", "!=", current_user_id).stream()
 
+        message_ids = []
         for msg in unread_messages:
             msg.reference.update({"status": "read"})
+            message_ids.append(msg.id)
+        
+        # 找出發送者
+        other_user_id = next((uid for uid in participants if uid != current_user_id), None)
+        
+        # 向發送者廣播已讀確認
+        if other_user_id and message_ids:
+            await manager.broadcast_to_user(
+                other_user_id,
+                {
+                    "type": "messages_read",
+                    "conversationId": conversation_id,
+                    "messageIds": message_ids
+                }
+            )
 
         return {"success": True}
     except Exception as e:
@@ -276,6 +397,15 @@ async def create_conversation(request: Request, current_user_id: str = Depends(g
 
         new_conv_ref = conversations_ref.document()
         new_conv_ref.set(new_conv_data)
+
+        # 通過 WebSocket 通知目標用戶有新對話
+        await manager.broadcast_to_user(
+            target_user_id,
+            {
+                "type": "new_conversation",
+                "conversationId": new_conv_ref.id
+            }
+        )
 
         return Conversation(
             id=new_conv_ref.id,

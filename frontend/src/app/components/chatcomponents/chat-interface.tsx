@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Box, Container, Paper, Snackbar, Alert } from "@mui/material";
 import { useMediaQuery, useTheme } from "@mui/material";
 import ConversationList from "./conversation-list";
@@ -10,6 +10,7 @@ import type { Conversation, Message, User } from "@/lib/types";
 import * as api from "@/lib/api";
 import { useAuth } from "@/context/AuthProvider";
 import { useRouter } from "next/navigation";
+import { useChatWebSocket, ChatSocketEvent } from "@/lib/useChatWebSocket";
 
 /**
  * 聊天界面主組件
@@ -43,22 +44,109 @@ export default function ChatInterface() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
+  // 用 useCallback 包住 WebSocket 事件處理，避免每次 render 都產生新函數
+  const handleSocketEvent = useCallback((event: ChatSocketEvent) => {
+    if (!event) return;
+    if (event.type === "new_message") {
+      const isCurrentUserSender = event.message.senderId === currentUser?.id;
+      const isCurrentChatOpen = selectedConversation?.id === event.conversationId;
+
+      if (isCurrentChatOpen) {
+        setMessages((prev) => {
+          if (prev.some((msg) => msg.id === event.message.id)) return prev;
+          return [...prev, event.message];
+        });
+        // 只有對方發送才自動標記已讀
+        if (!isCurrentUserSender) {
+          api.markConversationAsRead(event.conversationId);
+          setConversations((prev) =>
+            prev.map((conv) =>
+              conv.id === event.conversationId
+                ? { ...conv, unreadCount: 0, lastMessage: event.message.content, lastMessageTime: event.message.timestamp }
+                : conv
+            )
+          );
+        } else {
+          // 自己發送只更新最後訊息
+          setConversations((prev) =>
+            prev.map((conv) =>
+              conv.id === event.conversationId
+                ? { ...conv, lastMessage: event.message.content, lastMessageTime: event.message.timestamp }
+                : conv
+            )
+          );
+        }
+      } else {
+        // 不是目前聊天室，且是對方發送，unreadCount +1
+        if (!isCurrentUserSender) {
+          setConversations((prev) =>
+            prev.map((conv) => {
+              if (conv.id !== event.conversationId) return conv;
+              // 僅當這個訊息 id 尚未被記錄為 lastMessage 時才 +1
+              if (conv.lastMessage === event.message.content && conv.lastMessageTime === event.message.timestamp) {
+                // 已經加過了，不再加
+                return conv;
+              }
+              return {
+                ...conv,
+                lastMessage: event.message.content,
+                lastMessageTime: event.message.timestamp,
+                unreadCount: Math.max(0, (conv.unreadCount || 0) + 1),
+              };
+            })
+          );
+        } else {
+          // 自己發送只更新最後訊息
+          setConversations((prev) =>
+            prev.map((conv) =>
+              conv.id === event.conversationId
+                ? { ...conv, lastMessage: event.message.content, lastMessageTime: event.message.timestamp }
+                : conv
+            )
+          );
+        }
+      }
+    } else if (event.type === "message_delivered") {
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === event.messageId ? { ...msg, status: "delivered" } : msg
+        )
+      );
+    } else if (event.type === "messages_read") {
+      setMessages((prev) =>
+        prev.map((msg) =>
+          event.messageIds.includes(msg.id) ? { ...msg, status: "read" } : msg
+        )
+      );
+      setConversations((prev) =>
+        prev.map((conv) =>
+          conv.id === event.conversationId ? { ...conv, unreadCount: 0 } : conv
+        )
+      );
+    } else if (event.type === "new_conversation") {
+      // 可選：自動拉取新對話
+    }
+  }, [selectedConversation, currentUser]);
+
+  useChatWebSocket({
+    enabled: !!user,
+    onEvent: handleSocketEvent,
+  });
+
+  // 只保留首次載入時的 API 請求
   useEffect(() => {
     async function initializeData() {
       try {
         if (!user) throw new Error("User not authenticated");
-
         setCurrentUser({
           id: user.id,
           name: user.name,
           email: user.email,
           department: user.department,
-          avatar: "", 
+          avatar: "",
           isProfileComplete: false,
         });
-
         const convs = await api.getConversations();
-        // 對獲取的對話列表進行排序
         const sortedConvs = (convs || []).sort(
           (a, b) => new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
         );
@@ -84,8 +172,7 @@ export default function ChatInterface() {
         }, 3000);
       }
     }
-
-    if (loading) return; // 還在判斷中，不要誤跳轉
+    if (loading) return;
     if (!user) {
       setNotification({
         open: true,
@@ -138,21 +225,18 @@ export default function ChatInterface() {
     }
   };
 
-  // 添加輪詢機制獲取新消息
+  // 選擇對話時，拉取一次歷史訊息
   useEffect(() => {
     if (!selectedConversation) return;
-    
-    // 首次加载消息
     const loadMessages = async () => {
       try {
         if (!selectedConversation.id) return;
         const msgs = await api.getMessages(selectedConversation.id);
         setMessages(msgs);
-        
-        // 标记为已读
+        // 只會將目前聊天室的 unreadCount 歸零
         if (selectedConversation.unreadCount > 0) {
           await api.markConversationAsRead(selectedConversation.id);
-          setConversations(prevConversations => 
+          setConversations(prevConversations =>
             prevConversations.map((conv) =>
               conv.id === selectedConversation.id ? { ...conv, unreadCount: 0 } : conv
             )
@@ -162,27 +246,7 @@ export default function ChatInterface() {
         console.error("加载消息失败:", error);
       }
     };
-    
     loadMessages();
-    
-    // 设置轮询间隔，每3秒检查一次新消息
-    const intervalId = setInterval(async () => {
-      try {
-        if (!selectedConversation.id) return;
-        const msgs = await api.getMessages(selectedConversation.id);
-        
-        // 只有当消息数量或最后一条消息ID变化时才更新
-        if (msgs.length !== messages.length || 
-            (msgs.length > 0 && messages.length > 0 && 
-             msgs[msgs.length-1].id !== messages[messages.length-1].id)) {
-          setMessages(msgs);
-        }
-      } catch (error) {
-        console.error("轮询消息失败:", error);
-      }
-    }, 3000); // 3秒轮询一次
-    
-    return () => clearInterval(intervalId);
   }, [selectedConversation]);
 
   const handleSendMessage = async (content: string) => {
@@ -270,40 +334,6 @@ export default function ChatInterface() {
   const handleCloseNotification = () => {
     setNotification({ ...notification, open: false });
   };
-
-  // 添加輪詢機制獲取新對話或對話更新
-  useEffect(() => {
-    if (!user || loading) return;
-    
-    const fetchConversations = async () => {
-      try {
-        const convs = await api.getConversations();
-        // 对获取的对话列表进行排序
-        const sortedConvs = (convs || []).sort(
-          (a, b) => new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
-        );
-        
-        // 使用 useRef 存储的上一次对话列表进行比较，而不是直接依赖 conversations
-        const currentConversationsJson = JSON.stringify(sortedConvs);
-        const hasChanges = currentConversationsJson !== previousConversationsRef.current;
-        
-        if (hasChanges) {
-          setConversations(sortedConvs);
-          previousConversationsRef.current = currentConversationsJson;
-        }
-      } catch (error) {
-        console.error("获取对话列表失败:", error);
-      }
-    };
-    
-    // 首次加载
-    fetchConversations();
-    
-    // 设置轮询间隔，每5秒检查一次新对话
-    const intervalId = setInterval(fetchConversations, 5000);
-    
-    return () => clearInterval(intervalId);
-  }, [user, loading]); // 移除 conversations 依赖项，使用 useRef 代替
 
   if (isLoading) {
     return (
