@@ -52,7 +52,7 @@ const Login = () => {
       if (res.ok) {
         const { access_token, isProfileComplete, userName } = result; // 接收 userName
         const userId = email.split('@')[0]; // 假設 userId 是 email 的前綴
-  
+        
         localStorage.setItem('token', access_token);
         localStorage.setItem('userEmail', email);
         localStorage.setItem('userName', userName); // 存入 userName

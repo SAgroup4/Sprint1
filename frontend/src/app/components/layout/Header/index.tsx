@@ -12,29 +12,66 @@ import { FaBell } from "react-icons/fa";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useRouter } from "next/navigation";
 
+interface Notification {
+  notification_id: string;
+  post_id: string;
+  post_title: string;
+  comment_content: string;
+  comment_user_name: string;
+  is_read: boolean;
+  timestamp: string;
+}
+
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false); // 控制通知 Overlay 的顯示
+  const [hasUnread, setHasUnread] = useState(false); // 控制紅點顯示
+  const [loading, setLoading] = useState(false); // 加載狀態
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const userId = user ? user.id : "";
-//接Search的page.tsx
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const searchInput = (e.target as HTMLFormElement).elements.namedItem("search") as HTMLInputElement;
-    const keyword = searchInput.value.trim();
 
-    if (!keyword) {
-      alert("請輸入搜尋關鍵字");
-      return;
+  // 從後端 API 獲取通知
+  const fetchNotifications = async () => {
+    if (!user) return;
+
+    setLoading(true); // 開始加載
+    try {
+      const res = await fetch(
+        `http://localhost:8000/users/${user.id}/notifications` // 後端已限制返回前五則通知
+      );
+      if (!res.ok) throw new Error("無法取得通知");
+      const data = await res.json();
+      setNotifications(data.notifications);
+
+      // 判斷是否有未讀通知
+      const unreadExists = data.notifications.some((n: Notification) => !n.is_read);
+      setHasUnread(unreadExists);
+    } catch (error) {
+      console.error("取得通知失敗:", error);
+    } finally {
+      setLoading(false); // 結束加載
     }
-
-    router.push(`/search?keyword=${encodeURIComponent(keyword)}`);
   };
 
+  // 點擊通知按鈕時顯示通知 Overlay
+  const handleToggleNotifications = () => {
+    setShowNotifications(!showNotifications);
+    if (!showNotifications) {
+      fetchNotifications(); // 點擊時讀取通知
+    }
+  };
+
+  // 點擊外部時關閉通知 Overlay
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowNotifications(false);
         setDropdownOpen(false);
       }
     };
@@ -67,7 +104,7 @@ const Header: React.FC = () => {
 
         {/* 中間搜尋欄 */}
         <div className="header-search">
-          <form onSubmit={handleSearch}>
+          <form>
             <input
               type="text"
               name="search"
@@ -83,12 +120,83 @@ const Header: React.FC = () => {
         {/* 右側使用者操作區塊 */}
         {user ? (
           <div className="header-user">
-            <div
-              className="userbutton"
-              onClick={() => (window.location.href = "/chat")}
-            >
+            {/* 通知按鈕 */}
+            <div className="userbutton" onClick={handleToggleNotifications}>
               <FaBell />
             </div>
+
+            {/* 通知 Overlay */}
+            {showNotifications && (
+              <div className="notifications-overlay" ref={dropdownRef}>
+                <h4>通知</h4>
+                {loading ? (
+                  <p>加載中...</p> // 顯示加載中的狀態
+                ) : (
+                  <ul>
+                    {notifications.length > 0 ? (
+                      notifications.map((notification) => (
+                        <li
+                          key={notification.notification_id}
+                          style={{
+                            fontWeight: notification.is_read ? "normal" : "bold", // 未讀通知顯示粗體
+                          }}
+                          onClick={async () => {
+                            // 點擊後跳轉到貼文頁面
+                            router.push(`/posts/${notification.post_id}`);
+
+                            // 標記通知為已讀
+                            if (!notification.is_read) {
+                              try {
+                                const res = await fetch(
+                                  `http://localhost:8000/users/${userId}/notifications/${notification.notification_id}/read`,
+                                  {
+                                    method: "PUT",
+                                  }
+                                );
+                                if (!res.ok)
+                                  throw new Error("無法標記通知為已讀");
+
+                                // 更新前端通知狀態
+                                setNotifications((prevNotifications) =>
+                                  prevNotifications.map((n) =>
+                                    n.notification_id === notification.notification_id
+                                      ? { ...n, is_read: true }
+                                      : n
+                                  )
+                                );
+
+                                // 更新紅點狀態
+                                const unreadExists = notifications.some((n) => !n.is_read);
+                                setHasUnread(unreadExists);
+                              } catch (error) {
+                                console.error("標記通知為已讀失敗:", error);
+                              }
+                            }
+                          }}
+                        >
+                          <p>
+                            <span className="notification-user-name">
+                              {notification.comment_user_name}
+                            </span>{" "}
+                            在你的貼文{" "}
+                            <span className="notification-post-title">
+                              {notification.post_title}
+                            </span>{" "}
+                            中留言
+                          </p>
+                          <p className="notification-timestamp">
+                            {new Date(notification.timestamp).toLocaleString()} {/* 顯示留言日期 */}
+                          </p>
+                        </li>
+                      ))
+                    ) : (
+                      <p>目前沒有通知</p>
+                    )}
+                  </ul>
+                )}
+              </div>
+            )}
+
             <div
               className="userbutton"
               onClick={() => (window.location.href = "/chat")}
