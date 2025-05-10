@@ -6,38 +6,56 @@ from db import db
 # 定義 Comment 模型
 class Comment(BaseModel):
     user_id: str
-    name: str  # 新增的 name 欄位
+    name: str
     content: str
 
 # 定義路由器
 comment_router = APIRouter()
 
-# 新增留言 API（對指定 post_id 留言）
+# 新增留言 API
 @comment_router.post("/posts/{post_id}/comments")
 async def add_comment(post_id: str, comment: Comment):
+    """
+    新增留言並為貼文作者新增通知
+    """
     try:
-        # 先檢查這篇文章是否存在
+        # 檢查文章是否存在
         post_ref = db.collection("post").document(post_id)
         if not post_ref.get().exists:
             raise HTTPException(status_code=404, detail="找不到這篇文章")
 
-        # 建立留言資料，加入 name 欄位
+        # 建立留言資料
         comment_data = {
             "user_id": comment.user_id,
-            "name": comment.name,  # 新增的 name 欄位
+            "name": comment.name,
             "content": comment.content,
-            "timestamp": firestore.firestore.SERVER_TIMESTAMP
+            "timestamp": firestore.SERVER_TIMESTAMP
         }
-
-        # 將留言加入到文章的 comments 子集合
         post_ref.collection("comments").add(comment_data)
 
-        # 更新該文章的留言數
+        # 更新留言數
         post_ref.update({
             "comments_count": firestore.Increment(1)
         })
 
-        return {"message": "留言新增成功"}
+        # 為貼文作者新增通知
+        post_data = post_ref.get().to_dict()
+        author_id = post_data.get("user_id")
+        if not author_id:
+            raise HTTPException(status_code=400, detail="無法找到貼文作者")
+
+        notification_data = {
+            "post_id": post_id,
+            "post_title": post_data.get("title", "未知標題"),
+            "comment_content": comment.content,
+            "comment_user_id": comment.user_id,
+            "comment_user_name": comment.name,
+            "timestamp": firestore.SERVER_TIMESTAMP,
+            "is_read": False
+        }
+        db.collection("users").document(author_id).collection("notifications").add(notification_data)
+
+        return {"message": "留言新增成功，通知已發送"}
     except Exception as e:
         print(f"留言錯誤: {str(e)}")
         raise HTTPException(status_code=500, detail=f"留言失敗: {str(e)}")

@@ -145,6 +145,38 @@
   transform: scale(0.95); /* 按下時縮小效果 */
 }
 
+.notification-button {
+  display: flex; /* 使用彈性佈局 */
+  position: relative; /* 確保紅點相對於按鈕定位 */
+  justify-content: center; /* 水平置中 */
+  align-items: center; /* 垂直置中 */
+  padding: 0.5rem;
+  width: 40px; /* 設定按鈕寬度 */
+  height: 40px; /* 設定按鈕高度 */
+  background-color: #357abd; /* 藍色背景 */
+  color: white; /* 白色文字 */
+  border: none; /* 移除邊框 */
+  border-radius: 25px; /* 圓角 */
+  font-size: 1.5rem; /* 調整圖示大小 */
+  cursor: pointer; /* 滑鼠指標變成手型 */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* 動畫效果 */
+}
+
+.notification-button:hover {
+  background-color: #285a8e; /* 滑鼠懸停時的背景色 */
+}
+
+.notification-button .unread-indicator {
+  position: absolute; /* 紅點絕對定位 */
+  top: 0px; /* 調整紅點的垂直位置 */
+  right: 0px; /* 調整紅點的水平位置 */
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%; /* 圓形紅點 */
+  border: 1px solid white; /* 白色邊框 */
+}
+
 .clickable {
   cursor: pointer; /* 游標變成手指頭 */
 }
@@ -225,6 +257,7 @@
   padding: 16px;
   z-index: 1000;
   color: #333;
+  
 }
 
 .notifications-overlay h4 {
@@ -264,15 +297,4 @@
   font-size: 0.85rem; /* 調整字體大小 */
   color: gray; /* 設定灰色文字 */
   margin-top: 0.2rem; /* 增加與上方文字的間距 */
-}
-
-.notification-dot {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 10px;
-  height: 10px;
-  background-color: red;
-  border-radius: 50%;
-  border: 2px solid white; /* 外圍白色邊框 */
 }

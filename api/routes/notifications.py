@@ -69,6 +69,25 @@ async def mark_notification_as_read(user_id: str, notification_id: str):
         print(f"標記通知為已讀失敗: {str(e)}")
         raise HTTPException(status_code=500, detail="無法標記通知為已讀")
 
+# 🔹 將指定使用者的所有通知標記為已讀
+@notification_router.put("/users/{user_id}/notifications/read-all")
+async def mark_all_notifications_as_read(user_id: str):
+    """
+    將指定使用者的所有通知標記為已讀
+    """
+    try:
+        notifications_ref = db.collection("users").document(user_id).collection("notifications")
+        notifications = notifications_ref.stream()
+
+        for notification in notifications:
+            notification.reference.update({"is_read": True})
+
+        print(f"使用者 {user_id} 的所有通知已標記為已讀")
+        return {"message": "所有通知已標記為已讀"}
+    except Exception as e:
+        print(f"標記所有通知為已讀失敗: {str(e)}")
+        raise HTTPException(status_code=500, detail="無法標記所有通知為已讀")
+
 # 🔹 刪除通知
 @notification_router.delete("/users/{user_id}/notifications/{notification_id}")
 async def delete_notification(user_id: str, notification_id: str):
