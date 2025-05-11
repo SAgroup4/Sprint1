@@ -3,10 +3,12 @@
     font-family: "Noto Sans TC", sans-serif;
     background-color: #f9f9f9;
   }
-  
+
+
   .skillTitle {
     font-weight: bold;
-    font-size: 18px;
+    font-size: 23px;
+    color: #2e3085;
     margin-bottom: 10px;
   }
   
@@ -30,7 +32,8 @@
     background-color: #e0e0e0;
     border: none;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: bold;
   }
   
   .skillButton.selected {
@@ -112,3 +115,42 @@
     color: #555;
   }
   
+.sectionGap {
+  height: 24px;
+}
+
+.postListContainer {
+  background-color: #ffffff;
+  padding: 28px;
+  border-radius: 0px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 12px;
+}
+
+.postHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.titleWithIcon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.titleIcon {
+  font-size: 24px;
+  color: #2427c1;
+}
+
+.sidebarTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2427c1;
+}
+.chatIcon {
+  margin-right: 6px;
+  font-size: 24px;
+  vertical-align: middle;
+}
