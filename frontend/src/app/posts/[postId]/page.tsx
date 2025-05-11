@@ -88,17 +88,18 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
       alert("請輸入評論內容");
       return;
     }
-
+  
     try {
       const userName = localStorage.getItem("userName") || "匿名???"; // 從 localStorage 取得使用者名稱
       const userEmail = localStorage.getItem("userEmail") || "匿名"; // 從 localStorage 取得使用者 ID
-
+      
       console.log("傳遞的留言資料：", {
         user_id: userEmail,
         name: userName,
         content: newComment,
+        author_id: post?.user_id, // 傳遞貼文作者的 ID
       }); // 檢查傳遞的資料
-
+  
       const res = await fetch(
         `http://localhost:8000/posts/${postId}/comments`,
         {
@@ -107,13 +108,14 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            user_id: userEmail, // 傳遞使用者 ID
-            name: userName, // 傳遞使用者名稱
+            user_id: userEmail, // 傳遞留言者 ID
+            name: userName, // 傳遞留言者名稱
             content: newComment, // 傳遞評論內容
+            author_id: post?.user_id, // 傳遞貼文作者的 ID
           }),
         }
       );
-
+  
       if (res.ok) {
         setNewComment(""); // 清空輸入框
         fetchComments(); // 重新取得留言

@@ -145,6 +145,38 @@
   transform: scale(0.95); /* 按下時縮小效果 */
 }
 
+.notification-button {
+  display: flex; /* 使用彈性佈局 */
+  position: relative; /* 確保紅點相對於按鈕定位 */
+  justify-content: center; /* 水平置中 */
+  align-items: center; /* 垂直置中 */
+  padding: 0.5rem;
+  width: 40px; /* 設定按鈕寬度 */
+  height: 40px; /* 設定按鈕高度 */
+  background-color: #357abd; /* 藍色背景 */
+  color: white; /* 白色文字 */
+  border: none; /* 移除邊框 */
+  border-radius: 25px; /* 圓角 */
+  font-size: 1.5rem; /* 調整圖示大小 */
+  cursor: pointer; /* 滑鼠指標變成手型 */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* 動畫效果 */
+}
+
+.notification-button:hover {
+  background-color: #285a8e; /* 滑鼠懸停時的背景色 */
+}
+
+.notification-button .unread-indicator {
+  position: absolute; /* 紅點絕對定位 */
+  top: 0px; /* 調整紅點的垂直位置 */
+  right: 0px; /* 調整紅點的水平位置 */
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%; /* 圓形紅點 */
+  border: 1px solid white; /* 白色邊框 */
+}
+
 .clickable {
   cursor: pointer; /* 游標變成手指頭 */
 }
@@ -211,3 +243,58 @@
   border-radius: 0.375rem;
 }
 
+.notifications-overlay {
+  position: absolute;
+  top: 60px;
+  right: 30px;
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  z-index: 1000;
+  color: #333;
+  
+}
+
+.notifications-overlay h4 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: bold;
+ 
+}
+
+.notifications-overlay ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notifications-overlay li {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.notifications-overlay li:hover {
+  background-color: #f9f9f9;
+}
+
+.notification-user-name {
+  color: #0056b3; /* 設定使用者名稱的顏色 */
+  font-weight: bold; /* 可選：讓文字加粗 */
+}
+
+.notification-post-title {
+  color: #0056b3; /* 設定貼文標題的顏色 */
+  font-weight: bold; /* 可選：讓文字加粗 */
+}
+
+.notification-timestamp {
+  font-size: 0.85rem; /* 調整字體大小 */
+  color: gray; /* 設定灰色文字 */
+  margin-top: 0.2rem; /* 增加與上方文字的間距 */
+}
