@@ -2,10 +2,10 @@ from fastapi import APIRouter, Query, HTTPException
 from typing import List
 from db import db  # 延用原本的 Firebase 連線方式
 
-skills_router = APIRouter()
+languages_router = APIRouter()
 
-@skills_router.get("/skill-users")
-async def get_users_by_skills(skills: List[str] = Query(...)):
+@languages_router.get("/language-users")
+async def get_users_by_languages(languages: List[str] = Query(...)):
     try:
         users_ref = db.collection("users")
         users = users_ref.stream()
@@ -13,21 +13,21 @@ async def get_users_by_skills(skills: List[str] = Query(...)):
         results = []
         for user in users:
             user_data = user.to_dict()
-            skilltags = user_data.get("skilltags", {})
+            languagetags = user_data.get("languagetags", {})
 
-            # OR 邏輯：只要 skilltags 中有任一為 True
-            if any(skilltags.get(skill, False) for skill in skills):
+            # OR 邏輯：只要 languagetags 中有任一為 True
+            if any(languagetags.get(language, False) for language in languages):
                 results.append({
                     "name": user_data.get("name", ""),
                     "studentId": user.id,
                     "department": user_data.get("department", ""),
                     "year": user_data.get("grade", ""),
                     "avatar": user_data.get("avatar", ""),
-                    "skills": skilltags
+                    "languages": languagetags
                 })
 
         return results
 
     except Exception as e:
-        print(f"技能搜尋錯誤：{str(e)}")
-        raise HTTPException(status_code=500, detail="搜尋技能使用者失敗")
+        print(f"語言搜尋錯誤：{str(e)}")
+        raise HTTPException(status_code=500, detail="搜尋語言使用者失敗")
