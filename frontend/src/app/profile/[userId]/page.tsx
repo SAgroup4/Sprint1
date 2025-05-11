@@ -357,7 +357,7 @@ export default function ProfilePage() {
           }}
         >
           <button
-            onClick={() => router.push('/general')}
+            onClick={() => router.back()}
             style={{
               backgroundColor: '#4a90e2',
               color: 'white',
@@ -368,7 +368,7 @@ export default function ProfilePage() {
               fontWeight: 'bold',
             }}
           >
-            ◀ 返回主討論區
+            ◀ 返回上一頁
           </button>
 
           {isCurrentUser && (

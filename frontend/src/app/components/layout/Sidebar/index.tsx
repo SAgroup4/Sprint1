@@ -27,8 +27,8 @@ const Sidebar: React.FC = () => {
         { id: 'transfer', title: '轉學生討論區' },
       ],
     },
-    { id: 'professional', title: '技能交換區' },
-    { id: 'language', title: '外籍語言交換區' },
+    { id: 'skill', title: '技能交換區' },
+    { id: 'language', title: '語言交換區' },
   ];
 
   /**

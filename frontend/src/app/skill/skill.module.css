@@ -1,0 +1,114 @@
+.skillPage {
+    padding: 20px;
+    font-family: "Noto Sans TC", sans-serif;
+    background-color: #f9f9f9;
+  }
+  
+  .skillTitle {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .skillSelectRow {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .skillButtons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .skillButton {
+    padding: 6px 12px;
+    border-radius: 15px;
+    background-color: #e0e0e0;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .skillButton.selected {
+    background-color: #4a90e2;
+    color: white;
+  }
+  
+  .searchIcon {
+    font-size: 14px;
+    font-display: bold;
+    padding: 8px 12px;
+    background-color: #2e3085;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .divider {
+    border-top: 2px solid #2e3085;
+    margin: 20px 0 10px 0;
+    padding-top: 5px;
+    font-weight: bold;
+    color: #2e3085;
+  }
+  
+  .userList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .userCard {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 12px;
+    padding: 12px 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 12px;
+    cursor: pointer;
+  }
+  
+  .userInfo {
+    flex: 1;
+  }
+  
+  .userInfo strong {
+    font-size: 16px;
+  }
+  
+  .skillTagsRight {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+    margin-right: 10px;
+  }
+  
+  .tag {
+    background-color: #e0e7ff;
+    color: #3f51b5;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 15px;
+  }
+  
+  .chatButton {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #555;
+  }
+  
