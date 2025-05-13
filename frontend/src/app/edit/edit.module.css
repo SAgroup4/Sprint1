@@ -1,0 +1,143 @@
+.postContainer {
+    max-width: 800px;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ddd;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .postInput,
+  .postTextarea {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #c0d0ff;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+  
+  .postTextarea {
+    height: 120px;
+    resize: none;
+  }
+  
+  .formGroup label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    display: block;
+  }
+  
+  .skillLabel {
+    color: #003b9f;
+  }
+  
+  .checkboxGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  
+  .checkboxLabel {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: #f0f4ff;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    user-select: none;
+  }
+  
+  .checked {
+    background-color: #c5dbff;
+    color: #003b9f;
+    font-weight: 700;
+  }
+  
+  .checkboxLabel input[type="checkbox"],
+  .checkboxLabel input[type="radio"] {
+    display: none;
+  }
+  
+  .rowEnd {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .transferOptions {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .editButton {
+    background-color: #4f7cff;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .editButton:hover {
+    background-color: #365dcc;
+    transform: translateY(-1px);
+  }
+  
+  .editButton:active {
+    transform: scale(0.98);
+  }
+  
+  .editButtonWrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  .cancelButton {
+    background-color: #e0e0e0;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cancelButton:hover {
+    background-color: #365dcc;
+    transform: translateY(-1px);
+  }
+  
+  .cancelButton:active {
+    transform: scale(0.98);
+  }
+  
+  .cancelButtonWrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+
+  .buttonBar {
+    display: flex;
+    justify-content: flex-start; 
+    gap: 16px; 
+    margin-top: 24px; 
+  }
+  

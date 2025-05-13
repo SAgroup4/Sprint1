@@ -51,15 +51,27 @@
 }
 
 /* 元數據樣式 */
+
+
 .postMeta {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between; /* 左右分開！ */
+  align-items: center;
   font-size: 0.9rem;
   color: #888;
   margin-bottom: 16px;
 }
 
+.authorLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
 .authorInfo {
+  position: relative;
+  /* 原本的樣式保留 */
   display: flex;
   align-items: center;
   gap: 8px;
@@ -96,6 +108,57 @@
   color: white;
 }
 
+.buttonGroup {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.moreOptionsButton {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  color: #666;
+}
+.moreOptionsButton:hover {
+  color: #000;
+}
+
+.menu {
+  position: absolute;
+  top: 0;
+  right: 100%; 
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  z-index: 999;
+  display: flex;
+  flex-direction: column; 
+  gap: 0.3rem;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+
+.menu button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  padding: 0.3rem 0.5rem;
+}
+
+.menu button:hover {
+  background-color: #f0f0f0;
+}
+
+.moreMenuContainer {
+  position: relative;
+}
 /* 內容樣式 */
 .postContent {
   margin-top: 16px;

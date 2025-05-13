@@ -161,3 +161,45 @@ async def filter_posts(request: Request):
     except Exception as e:
         print(f"過濾文章時出錯: {e}")
         raise HTTPException(status_code=500, detail=f"Error filtering posts: {e}")
+
+#編輯貼文    
+@post_router.put("/posts/{post_id}")
+async def update_post(post_id: str, post: Post):
+    try:
+        doc_ref = db.collection("post").document(post_id)
+        doc = doc_ref.get()
+        if not doc.exists:
+            raise HTTPException(status_code=404, detail="貼文不存在")
+
+        # 更新資料
+        doc_ref.update({
+            "title": post.title,
+            "content": post.content,
+            "user_id": post.user_id,
+            "name": post.name,
+            "trans": post.trans,
+            "skilltags": post.skilltags,
+            "languagetags": post.languagetags,
+            "leisuretags": post.leisuretags,
+        })
+
+        return {"message": "貼文已更新成功"}
+    except Exception as e:
+        print(f"更新貼文時出錯: {e}")
+        raise HTTPException(status_code=500, detail=f"更新失敗: {e}")
+    
+#刪除貼文
+@post_router.delete("/posts/{post_id}")
+async def delete_post(post_id: str):
+    try:
+        doc_ref = db.collection("post").document(post_id)
+        doc = doc_ref.get()
+        if not doc.exists:
+            raise HTTPException(status_code=404, detail="貼文不存在")
+
+        doc_ref.delete()
+        return {"message": "貼文刪除成功"}
+    except Exception as e:
+        print(f"刪除貼文失敗: {e}")
+        raise HTTPException(status_code=500, detail=f"刪除失敗: {e}")
+

@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useEffect, useState, use } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./styles.module.css";
 import { IoIosArrowBack } from "react-icons/io";
 import Link from "next/link";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 interface Comment {
   comment_id: string;
   user_id: string;
-  name: string; // 新增的 name 欄位
+  name: string;
   content: string;
   timestamp: string;
 }
@@ -19,23 +20,62 @@ interface Post {
   title: string;
   content: string;
   user_id: string;
-  name: string; // 新增的 name 欄位
-  trans: boolean; // 新增的 trans 欄位
+  name: string;
+  trans: boolean;
   timestamp: string;
-  skilltags: Map<string, boolean>; // 新增的 skilltags 欄位
-  languagetags: Map<string, boolean>; // 新增的 languagetags 欄位
-  leisuretags: Map<string, boolean>; // 新增的 leisuretags 欄位
-  comments_count: number; // 新增的 comments_count 欄位
+  skilltags: Map<string, boolean>;
+  languagetags: Map<string, boolean>;
+  leisuretags: Map<string, boolean>;
+  comments_count: number;
 }
-
 
 const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
   const router = useRouter();
-  const { postId } = use(params); // 解包 Promise，取得真實 postId
-
+  const [postId, setPostId] = useState<string | null>(null);
+  const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [post, setPost] = useState<Post | null>(null);
+  const [showMenu, setShowMenu] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  
+
+
+  // 確保 Hook 在頂層執行
+  useEffect(() => {
+    params.then((res) => setPostId(res.postId));
+  }, [params]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const email = localStorage.getItem("userEmail");
+      const idPrefix = email?.split("@")[0] || null;
+      setCurrentUserId(idPrefix);
+    }
+  }, []);
+
+  
+  useEffect(() => {
+    params.then((res) => setPostId(res.postId));
+  }, [params]);
+
+  useEffect(() => {
+    if (postId) {
+      fetchPost();
+      fetchComments();
+    }
+  }, [postId]);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const needRefresh = urlParams.get("refresh");
+
+    if (needRefresh === "true" && postId) {
+      fetchPost(); 
+      const newUrl = `${window.location.pathname}`;
+      window.history.replaceState({}, "", newUrl); 
+    }
+  }, [postId]); 
+
 
   const fetchPost = async () => {
     try {
@@ -48,13 +88,13 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
         title: data.title,
         content: data.content,
         user_id: data.user_id,
-        name: data.name || "未知名稱", // 新增的 name 欄位
-        trans: data.trans || false, // 新增的 trans 欄位
+        name: data.name || "未知名稱",
+        trans: data.trans || false,
         timestamp: data.timestamp,
-        skilltags: new Map(Object.entries(data.skilltags || {})), // 確保 skilltags 是 Map
-        languagetags: new Map(Object.entries(data.languagetags || {})), // 確保 languagetags 是 Map
-        leisuretags: new Map(Object.entries(data.leisuretags || {})), // 確保 leisuretags 是 Map
-        comments_count: data.comments_count || 0, // 新增的 comments_count 欄位
+        skilltags: new Map(Object.entries(data.skilltags || {})),
+        languagetags: new Map(Object.entries(data.languagetags || {})),
+        leisuretags: new Map(Object.entries(data.leisuretags || {})),
+        comments_count: data.comments_count || 0,
       });
     } catch (err) {
       console.error("無法取得文章內容", err);
@@ -71,7 +111,7 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
         setComments(
           data.map((comment: any) => ({
             ...comment,
-            name: comment.name || "匿名", // 確保 name 欄位存在
+            name: comment.name || "匿名",
           }))
         );
       } else {
@@ -88,40 +128,23 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
       alert("請輸入評論內容");
       return;
     }
-  
+
     try {
-      const userName = localStorage.getItem("userName") || "匿名???"; // 從 localStorage 取得使用者名稱
-      const userEmail = localStorage.getItem("userEmail") || "匿名"; // 從 localStorage 取得使用者 ID
-      
-      console.log("傳遞的留言資料：", {
-        user_id: userEmail,
-        name: userName,
-        content: newComment,
-        author_id: post?.user_id, // 傳遞貼文作者的 ID
-      }); // 檢查傳遞的資料
-  
-      const res = await fetch(
-        `http://localhost:8000/posts/${postId}/comments`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_id: userEmail, // 傳遞留言者 ID
-            name: userName, // 傳遞留言者名稱
-            content: newComment, // 傳遞評論內容
-            author_id: post?.user_id, // 傳遞貼文作者的 ID
-          }),
-        }
-      );
-  
+      const userName = localStorage.getItem("userName") || "匿名???";
+      const userEmail = localStorage.getItem("userEmail") || "匿名";
+
+      const res = await fetch(`http://localhost:8000/posts/${postId}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userEmail, name: userName, content: newComment }),
+      });
+
       if (res.ok) {
-        setNewComment(""); // 清空輸入框
-        fetchComments(); // 重新取得留言
+        setNewComment("");
+        fetchComments();
       } else {
-        const err = await res.json(); // 解析錯誤回應
-        alert(`留言失敗：${err.detail || "未知錯誤"}`); // 顯示具體錯誤訊息
+        const err = await res.json();
+        alert(`留言失敗：${err.detail || "未知錯誤"}`);
       }
     } catch (err) {
       alert("伺服器錯誤，留言失敗");
@@ -129,131 +152,113 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
     }
   };
 
-  useEffect(() => {
-    fetchPost();
-    console.log("正在取得文章 ID:", postId);
-    fetchComments();
-  }, [postId]);
+  const handleDelete = async () => {
+    const confirm = window.confirm("你確定要刪除這篇貼文嗎？這個動作無法復原！");
+    if (!confirm) return;
+  
+    try {
+      const res = await fetch(`http://localhost:8000/posts/${postId}`, {
+        method: "DELETE",
+      });
+  
+      if (res.ok) {
+        alert("刪除成功！");
+        router.push("/?refresh=true"); // ⬅️ 回首頁並刷新
+      } else {
+        const err = await res.json();
+        alert(`刪除失敗：${err.detail || "未知錯誤"}`);
+      }
+    } catch (err) {
+      console.error("刪除錯誤：", err);
+      alert("伺服器錯誤，無法刪除貼文");
+    }
+  };
+  
 
   const formatTimestamp = (timestamp: any) => {
     if (!timestamp) return "時間不明";
-
-    const date = timestamp._seconds
-      ? new Date(timestamp._seconds * 1000)
-      : new Date(timestamp);
-
-    if (isNaN(date.getTime())) return "時間格式錯誤";
-
-    return date.toLocaleString("zh-TW", {
-      timeZone: "Asia/Taipei",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    const date = timestamp._seconds ? new Date(timestamp._seconds * 1000) : new Date(timestamp);
+    return isNaN(date.getTime())
+      ? "時間格式錯誤"
+      : date.toLocaleString("zh-TW", {
+          timeZone: "Asia/Taipei",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
   };
+  
 
+  if (!postId) return <p>載入中...</p>;
   if (!post) return <p>載入文章中...</p>;
+  if (!currentUserId) return <p>正在驗證使用者...</p>;
 
   return (
     <div className={styles.postDetailContainer}>
       <div className={styles.postHeader}>
-        <IoIosArrowBack
-          className={styles.backButton}
-          onClick={() => router.back()}
-        />
+        <IoIosArrowBack className={styles.backButton} onClick={() => router.back()} />
         <h5 className={styles.postWord}>內文</h5>
-        <span className={styles.postDate}>
-          {formatTimestamp(post.timestamp)}
-        </span>
+        <span className={styles.postDate}>{formatTimestamp(post.timestamp)}</span>
       </div>
 
       <hr className={styles.divider} />
       <div className={styles.postMeta}>
-        <div className={styles.authorInfo}>
-          <div className={styles.authorInfo}>
-            <Link href={`/profile/${post.user_id}`}>
-              <img
-                src="/avatar.png"
-                alt="頭貼"
-                className={styles.authorAvatar}
-              />
-            </Link>
-            <Link href={`/profile/${post.user_id}`}>
-              <span className={styles.postAuthor}>{post.name}</span>
-            </Link>
-          </div>
-          <button 
-            className={styles.messageButton} 
-            onClick={async () => {
-              try {
-                // 獲取當前用戶的 token
-                const token = localStorage.getItem('token');
-                if (!token) {
-                  alert('請先登入');
-                  router.push('/login');
-                  return;
-                }
-
-                // 創建與作者的對話
-                const response = await fetch('http://localhost:8000/api/conversations', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                  },
-                  body: JSON.stringify({
-                    participantId: post.user_id // 使用文章作者的 ID
-                  })
-                });
-
-                if (!response.ok) {
-                  const errorData = await response.json();
-                  throw new Error(errorData.detail || '創建對話失敗');
-                }
-
-                const conversation = await response.json();
-                
-                // 跳轉到聊天頁面
-                router.push('/chat');
-              } catch (error) {
-                console.error('創建對話失敗:', error);
-                alert(`無法創建對話: ${error instanceof Error ? error.message : '未知錯誤'}`);
-              }
-            }}
-          >
-            私訊
-          </button>
+        <div className={styles.authorleft}>
+          <Link href={`/profile/${post.user_id}`}>
+            <img src="/avatar.png" alt="頭貼" className={styles.authorAvatar} />
+          </Link>
+          <Link href={`/profile/${post.user_id}`}>
+            <span className={styles.postAuthor}>{post.name}</span>
+          </Link>
+          <button className={styles.messageButton}>私訊</button>
         </div>
+
+        {post.user_id === currentUserId && (
+          <div className={styles.moreMenuContainer}>
+            <button className={styles.moreOptionsButton} onClick={() => setShowMenu(!showMenu)}>
+              <BsThreeDotsVertical />
+            </button>
+            {showMenu && (
+              <div className={styles.menu}>
+                <button className={styles.menuItem} onClick={() => router.push(`/edit?postId=${post.id}`)}>
+                  編輯
+                </button>
+                <button className={styles.menuItem} onClick={handleDelete}>刪除</button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <h1 className={styles.postWord}>{post.title}</h1>
       <div className={styles.postContent}>{post.content}</div>
       <div className={styles.postTags}>
         {post.trans && <span className={styles.postTagTrans}>轉學生</span>}
-        {Array.from(post.skilltags.entries())
-          .filter(([_, value]) => value)
-          .map(([key]) => (
-            <span key={key} className={styles.postTagSkill}>
-              {key}
+        {[...post.skilltags.entries()]
+          .filter(([_, v]) => v)
+          .map(([k]) => (
+            <span key={k} className={styles.postTagSkill}>
+              {k}
             </span>
           ))}
-        {Array.from(post.languagetags.entries())
-          .filter(([_, value]) => value)
-          .map(([key]) => (
-            <span key={key} className={styles.postTagLang}>
-              {key}
+        {[...post.languagetags.entries()]
+          .filter(([_, v]) => v)
+          .map(([k]) => (
+            <span key={k} className={styles.postTagLang}>
+              {k}
             </span>
           ))}
-        {Array.from(post.leisuretags.entries())
-          .filter(([_, value]) => value)
-          .map(([key]) => (
-            <span key={key} className={styles.postTagLeisure}>
-              {key}
+        {[...post.leisuretags.entries()]
+          .filter(([_, v]) => v)
+          .map(([k]) => (
+            <span key={k} className={styles.postTagLeisure}>
+              {k}
             </span>
           ))}
       </div>
+
       <hr className={styles.divider} />
       <h2 className={styles.commentsTitle}>全部留言</h2>
 
@@ -262,27 +267,19 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
           <div key={comment.comment_id} className={styles.commentItem}>
             <div className={styles.commentMeta}>
               <div className={styles.authorInfo}>
-                <img
-                  src="/avatar.png"
-                  alt="頭貼"
-                  className={styles.authorAvatar}
-                />
-                <span className={styles.commentAuthor}>{comment.name}</span>{" "}
-                {/* 顯示 name */}
+                <img src="/avatar.png" alt="頭貼" className={styles.authorAvatar} />
+                <span className={styles.commentAuthor}>{comment.name}</span>
               </div>
-              <span className={styles.commentTimestamp}>
-                {formatTimestamp(comment.timestamp)}
-              </span>
+              <span className={styles.commentTimestamp}>{formatTimestamp(comment.timestamp)}</span>
             </div>
             <div className={styles.commentContent}>{comment.content}</div>
           </div>
         ))}
       </div>
 
-      {/* 新增評論 */}
       <div className={styles.addComment}>
         <div>
-        <textarea
+          <textarea
             className={styles.commentInput}
             placeholder="輸入你的評論..."
             value={newComment}

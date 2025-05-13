@@ -5,6 +5,9 @@ import "./styles.css";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthProvider";
 import { FaRegLightbulb } from "react-icons/fa6";
+import { useSearchParams } from "next/navigation";
+
+
 
 interface Post {
   id: number;
@@ -77,12 +80,17 @@ const Post: React.FC<{ post: Post; onClick: (post: Post) => void }> = ({
 
 const PostList: React.FC = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([]); // 新增篩選後的貼文狀態
   const [isDateFilterOpen, setIsDateFilterOpen] = useState(false);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [order, setOrder] = useState<string>("newest"); // 預設排序為 "newest"
+
+  const refreshPosts = async () => {
+    await fetchPosts(); // 重新抓取貼文列表
+  };
 
   const [skilltags, setSkilltags] = useState<Map<string, boolean>>(
     new Map([
@@ -203,6 +211,8 @@ const PostList: React.FC = () => {
     setFilteredPosts(sortedFiltered); // 更新篩選後的貼文
   };
 
+  
+
   React.useEffect(() => {
     fetchPosts(); // 當 order 改變時重新獲取貼文
   }, [order]);
@@ -214,6 +224,15 @@ const PostList: React.FC = () => {
   React.useEffect(() => {
     applyFilters();
   }, [skilltags, languagetags, leisuretags]); // 當篩選條件改變時應用篩選
+
+  React.useEffect(() => {
+    const refresh = searchParams?.get("refresh");
+    if (refresh === "true") {
+      fetchPosts(); // 重新抓貼文
+      const newUrl = `${window.location.pathname}`;
+      window.history.replaceState({}, "", newUrl); // 把 ?refresh 清掉
+    }
+  }, []);
 
   const handlePostClick = (post: Post) => {
     router.push(`/posts/${post.id}`);
@@ -453,3 +472,5 @@ const PostList: React.FC = () => {
 };
 
 export default PostList;
+
+
