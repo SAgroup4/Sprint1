@@ -15,8 +15,6 @@ import {
 
 interface FormData {
   email: string;
-  password: string;
-  confirmPassword: string;
 }
 
 const validateEmail = (email: string): boolean => {
@@ -24,19 +22,17 @@ const validateEmail = (email: string): boolean => {
   return emailRegex.test(email);
 };
 
-const Login = () => {
+const EmailSubmit = () => {
   const router = useRouter();
 
   const [formData, setFormData] = useState<FormData>({
-    email: '',
-    password: '',
-    confirmPassword: ''
+    email: ''
   });
 
-  const handleRegister = async () => {
-    const { email, password, confirmPassword } = formData;
+  const handleSubmit = async () => {
+    const { email } = formData;
 
-    if (!email || !password || !confirmPassword) {
+    if (!email) {
       alert('請填寫所有欄位');
       return;
     }
@@ -46,27 +42,22 @@ const Login = () => {
       return;
     }
 
-    if (password !== confirmPassword) {
-      alert('兩次輸入的密碼不一致');
-      return;
-    }
-
     try {
-      const res = await fetch('http://localhost:8000/register', {
+      const res = await fetch('http://localhost:8000/request-reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ email, password, confirmPassword })
+        body: JSON.stringify({ email })
       });
 
       const result = await res.json();
 
       if (res.ok) {
         alert('驗證信已發送，請前往信箱完成驗證');
-        router.push('/verify-success?type=register');
+        router.push('/verify-success?type=reset');
       } else {
-        alert(`註冊失敗：${result.detail || '未知錯誤'}`);
+        alert(`錯誤：${result.message || result.detail || '未知錯誤'}`);
       }
     } catch (error) {
       console.error(error);
@@ -76,7 +67,7 @@ const Login = () => {
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
-      handleRegister();
+      handleSubmit();
     }
   };
 
@@ -101,13 +92,13 @@ const Login = () => {
               variant="h4"
               sx={{ fontSize: '24px', fontWeight: 'bold', mb: 3, textAlign: 'center' }}
             >
-              註冊新帳號
+              驗證身份
             </Typography>
 
             <Typography
               sx={{ mb: 3, textAlign: 'center', color: 'rgba(0, 0, 0, 0.7)' }}
             >
-              請填寫以下資訊以建立新帳號
+              請填寫以下資訊驗證身份以重設密碼
             </Typography>
 
             <form>
@@ -122,33 +113,13 @@ const Login = () => {
                 />
               </Box>
 
-              <Box sx={{ mb: 3 }}>
-                <Typography sx={{ mb: 1 }}>密碼</Typography>
-                <LoginTextField
-                  fullWidth
-                  type="password"
-                  placeholder="請輸入密碼"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  onKeyDown={handleKeyDown}
-                />
-              </Box>
-
-              <Box sx={{ mb: 3 }}>
-                <Typography sx={{ mb: 1 }}>確認密碼</Typography>
-                <LoginTextField
-                  fullWidth
-                  type="password"
-                  placeholder="請再次輸入密碼"
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  onKeyDown={handleKeyDown}
-                />
-              </Box>
-
               <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-                <LoginButton fullWidth type="button" onClick={handleRegister}>
-                  註冊帳號
+                <LoginButton
+                  fullWidth
+                  type="button"
+                  onClick={handleSubmit}
+                >
+                  確認信箱
                   <span className="dot"></span>
                 </LoginButton>
               </Box>
@@ -170,4 +141,7 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default EmailSubmit;
+
+
+

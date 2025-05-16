@@ -19,6 +19,8 @@ from routes import chat     # 處理聊天相關的路由
 from routes import search   # 新增的搜尋文章的路由
 from routes import skills #新增技能交換的路由
 from routes import languages # 新增語言交換的路由
+from routes import request_reset 
+from routes import resetverify 
 
 from routes import notifications
 
@@ -49,6 +51,7 @@ app.include_router(posts.post_router) # 加入文章相關的路由
 app.include_router(comments.comment_router) # 加入留言相關的路由
 app.include_router(users.user_router) # 加入使用者相關的路由
 app.include_router(password.router) # 加入密碼相關的路由
+app.include_router(password.router, prefix="/password") # 加入忘記密碼相關的路由
 app.include_router(user_creation.user_creation_router) # 加入使用者註冊資料相關的路由
 app.include_router(profile_change.profile_change_router) # 加入使用者註冊資料相關的路由
 app.include_router(filter.filter_router) # 加入篩選文章的路由
@@ -57,3 +60,5 @@ app.include_router(search.search_router) # 加入搜尋文章的路由
 app.include_router(skills.skills_router) # 加入技能交換的路由
 app.include_router(languages.languages_router) # 加入語言交換的路由
 app.include_router(notifications.notification_router) # 加入搜尋文章的路由
+app.include_router(request_reset.router) 
+app.include_router(resetverify.router) 

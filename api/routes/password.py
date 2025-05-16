@@ -4,6 +4,8 @@ from pydantic import BaseModel
 from db import db
 import bcrypt
 from utils.jwt_handler import verify_token
+from fastapi.responses import JSONResponse
+from pydantic import EmailStr
 
 router = APIRouter()
 
@@ -41,3 +43,31 @@ async def change_password(request: Request, data: ChangePasswordRequest):
     user_ref.update({"password": hashed_new_pw})
 
     return {"message": "密碼已成功更新"}
+
+#忘記密碼
+#使用者輸入信箱,產生token&寄信
+class ResetPasswordByTokenRequest(BaseModel):
+    token: str
+    password: str
+    confirmPassword: str
+
+@router.post("/reset-password")
+async def reset_password(data: ResetPasswordByTokenRequest):
+    if data.password != data.confirmPassword:
+        return JSONResponse(status_code=400, content={"message": "兩次密碼不一致"})
+    #驗證token
+    payload = verify_token(data.token)
+    if not payload or payload.get("type") != "reset-password":
+        raise HTTPException(status_code=400, detail="連結無效或已過期")
+
+    student_id = payload.get("student_id")
+    user_ref = db.collection("users").document(student_id)
+    user_doc = user_ref.get()
+
+    if not user_doc.exists:
+        raise HTTPException(status_code=404, detail="使用者不存在")
+
+    hashed_pw = bcrypt.hashpw(data.password.encode(), bcrypt.gensalt()).decode()
+    user_ref.update({"password": hashed_pw})
+
+    return JSONResponse(status_code=200, content={"message": "密碼更新成功！"})

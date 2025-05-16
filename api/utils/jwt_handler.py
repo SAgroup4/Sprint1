@@ -17,13 +17,22 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60  # Token 有效時間為 60 分鐘
 
 # ✅ 建立 JWT Token
 # data: 欲儲存在 token 中的資料（例如 student_id）
-def create_access_token(data: dict):
+
+#def create_access_token(data: dict):
     # 複製資料並加上過期時間
-    to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
+    #to_encode = data.copy()
+    #expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    #to_encode.update({"exp": expire})
 
     # 使用 JWT 加密並回傳字串型的 token
+    #encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    #return encoded_jwt
+
+def create_access_token(data: dict, expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=expires_minutes)
+    to_encode.update({"exp": expire})
+
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 

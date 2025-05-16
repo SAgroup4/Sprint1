@@ -140,9 +140,9 @@ const Login = () => {
               </Box>
 
 
-
               <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
-                <Button color="primary" sx={{ textDecoration: 'underline', color: 'var(--primary)' }}>
+                <Button color="primary" sx={{ textDecoration: 'underline', color: 'var(--primary)' }}
+                 onClick={() => router.push('/forgetverify')}>
                   忘記密碼？
                 </Button>
                 <Button color="primary" sx={{ textDecoration: 'underline', color: 'var(--primary)' }}
