@@ -35,6 +35,18 @@ const Header: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const userId = user ? user.id : "";
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const searchInput = (e.target as HTMLFormElement).elements.namedItem("search") as HTMLInputElement;
+    const keyword = searchInput.value.trim();
+
+    if (!keyword) {
+      alert("請輸入搜尋關鍵字");
+      return;
+    }
+
+    router.push(`/search?keyword=${encodeURIComponent(keyword)}`);
+  };
 
   // 從後端 API 獲取通知
   const fetchNotifications = async () => {
@@ -147,7 +159,7 @@ const Header: React.FC = () => {
 
         {/* 中間搜尋欄 */}
         <div className="header-search">
-          <form>
+          <form onSubmit={handleSearch}>
             <input
               type="text"
               name="search"

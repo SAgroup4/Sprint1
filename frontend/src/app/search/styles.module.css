@@ -265,3 +265,19 @@
   color: #000; /* 黑色文字 */
   margin-bottom: 16px;
 }
+
+.searchTitleWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.clearButton {
+  background-color: #a7d0f1;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+}
