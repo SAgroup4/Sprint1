@@ -96,3 +96,73 @@ async def get_comments(post_id: str):
         # 捕捉其他錯誤
         print(f"取得留言時發生錯誤: {str(e)}")
         raise HTTPException(status_code=500, detail=f"無法取得留言: {str(e)}")
+
+
+# 編輯留言 API
+@comment_router.put("/posts/{post_id}/comments/{comment_id}")
+async def edit_comment(post_id: str, comment_id: str, comment: Comment):
+    """
+    編輯指定留言內容
+    """
+    try:
+        # 嘗試取得文章文件
+        post_ref = db.collection("post").document(post_id)
+        post_snapshot = post_ref.get()
+        if not post_snapshot.exists:
+            raise HTTPException(status_code=404, detail="找不到這篇文章")
+
+        # 嘗試取得特定留言文件
+        comment_ref = post_ref.collection("comments").document(comment_id)
+        comment_snapshot = comment_ref.get()
+        if not comment_snapshot.exists:
+            raise HTTPException(status_code=404, detail="找不到這則留言")
+
+        # 更新留言內容
+        comment_ref.update({
+            "content": comment.content,
+            "timestamp": firestore.SERVER_TIMESTAMP  # 更新時間戳
+        })
+
+        return {"message": "留言已更新"}
+    except HTTPException as http_err:
+        print(f"HTTP 錯誤: {http_err.detail}")
+        raise http_err
+    except Exception as e:
+        print(f"編輯留言時發生錯誤: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"編輯留言失敗: {str(e)}")
+
+
+# 刪除留言 API
+@comment_router.delete("/posts/{post_id}/comments/{comment_id}")
+async def delete_comment(post_id: str, comment_id: str):
+    """
+    刪除指定留言
+    """
+    try:
+        # 嘗試取得文章文件
+        post_ref = db.collection("post").document(post_id)
+        post_snapshot = post_ref.get()
+        if not post_snapshot.exists:
+            raise HTTPException(status_code=404, detail="找不到這篇文章")
+
+        # 嘗試取得特定留言文件
+        comment_ref = post_ref.collection("comments").document(comment_id)
+        comment_snapshot = comment_ref.get()
+        if not comment_snapshot.exists:
+            raise HTTPException(status_code=404, detail="找不到這則留言")
+
+        # 刪除留言
+        comment_ref.delete()
+
+        # 更新留言數
+        post_ref.update({
+            "comments_count": firestore.Increment(-1)
+        })
+
+        return {"message": "留言已刪除"}
+    except HTTPException as http_err:
+        print(f"HTTP 錯誤: {http_err.detail}")
+        raise http_err
+    except Exception as e:
+        print(f"刪除留言時發生錯誤: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"刪除留言失敗: {str(e)}")

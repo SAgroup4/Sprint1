@@ -51,8 +51,6 @@
 }
 
 /* 元數據樣式 */
-
-
 .postMeta {
   display: flex;
   justify-content: space-between; /* 左右分開！ */
@@ -67,7 +65,6 @@
   align-items: center;
   gap: 8px;
 }
-
 
 .authorInfo {
   position: relative;
@@ -143,7 +140,6 @@
   white-space: nowrap;
 }
 
-
 .menu button {
   background: none;
   border: none;
@@ -159,6 +155,7 @@
 .moreMenuContainer {
   position: relative;
 }
+
 /* 內容樣式 */
 .postContent {
   margin-top: 16px;
@@ -212,6 +209,69 @@
   font-size: 1rem;
   color: #333;
   margin-left: 20px;
+}
+
+/* 留言動作區域樣式 */
+.commentActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.commentTimestamp {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+/* 留言三點選單樣式 - 與貼文三點選單一致 */
+.commentMenuContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.commentMoreOptionsButton {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  color: #666;
+  display: flex;
+  align-items: center;
+}
+
+.commentMoreOptionsButton:hover {
+  color: #000;
+}
+
+.commentMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  min-width: 80px;
+}
+
+.commentMenuItem {
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.9rem;
+}
+
+.commentMenuItem:hover {
+  background-color: #f0f0f0;
 }
 
 /* 新增留言樣式 */
@@ -278,8 +338,6 @@
   margin: 4px; /* 為每個標籤添加外邊距 */
 }
 
-
-
 /* 技能標籤樣式 */
 .postTagSkill {
   background-color: #6a5acd; /* 紫色背景 */
@@ -320,3 +378,58 @@
   font-weight: bold; /* 加粗字體 */
   color: white; /* 文字顏色 */
 }
+
+/* 編輯留言樣式 */
+.editCommentContainer {
+  margin: 10px 0 10px 20px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.editCommentInput {
+  width: 100%;
+  height: 60px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  resize: none;
+  margin-bottom: 8px;
+}
+
+.editCommentButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.editCommentCancel {
+  padding: 6px 12px;
+  background-color: #f2f2f2;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.editCommentSubmit {
+  padding: 6px 12px;
+  background-color: #357abd;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.editCommentCancel:hover {
+  background-color: #e0e0e0;
+}
+
+.editCommentSubmit:hover {
+  background-color: #2868a3;
+}
+

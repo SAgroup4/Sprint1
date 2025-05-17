@@ -12,7 +12,7 @@ interface Comment {
   user_id: string;
   name: string;
   content: string;
-  timestamp: string;
+  timestamp: any;
 }
 
 interface Post {
@@ -37,9 +37,10 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
   const [newComment, setNewComment] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editCommentContent, setEditCommentContent] = useState("");
+  const [showCommentMenu, setShowCommentMenu] = useState<string | null>(null);
   
-
-
   // 確保 Hook 在頂層執行
   useEffect(() => {
     params.then((res) => setPostId(res.postId));
@@ -53,7 +54,6 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
     }
   }, []);
 
-  
   useEffect(() => {
     params.then((res) => setPostId(res.postId));
   }, [params]);
@@ -75,7 +75,6 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
       window.history.replaceState({}, "", newUrl); 
     }
   }, [postId]); 
-
 
   const fetchPost = async () => {
     try {
@@ -174,7 +173,7 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
     }
   };
   
-
+  // 格式化時間戳
   const formatTimestamp = (timestamp: any) => {
     if (!timestamp) return "時間不明";
     const date = timestamp._seconds ? new Date(timestamp._seconds * 1000) : new Date(timestamp);
@@ -189,7 +188,95 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
           minute: "2-digit",
         });
   };
-  
+
+  // 檢查留言是否在發布後3分鐘內
+  const isCommentEditable = (commentTimestamp: any) => {
+    if (!commentTimestamp) return false;
+    
+    const commentDate = commentTimestamp._seconds 
+      ? new Date(commentTimestamp._seconds * 1000) 
+      : new Date(commentTimestamp);
+    
+    if (isNaN(commentDate.getTime())) return false;
+    
+    const now = new Date();
+    const diffInMinutes = (now.getTime() - commentDate.getTime()) / (60 * 1000);
+    
+    return diffInMinutes <= 3; // 3分鐘內可編輯
+  };
+
+  // 開始編輯留言
+  const startEditComment = (comment: Comment) => {
+    setEditingCommentId(comment.comment_id);
+    setEditCommentContent(comment.content);
+    setShowCommentMenu(null); // 關閉選單
+  };
+
+  // 取消編輯留言
+  const cancelEditComment = () => {
+    setEditingCommentId(null);
+    setEditCommentContent("");
+  };
+
+  // 提交編輯後的留言
+  const submitEditComment = async () => {
+    if (!editingCommentId || !editCommentContent.trim()) return;
+
+    try {
+      const userName = localStorage.getItem("userName") || "匿名";
+      const userEmail = localStorage.getItem("userEmail") || "匿名";
+
+      const res = await fetch(`http://localhost:8000/posts/${postId}/comments/${editingCommentId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          user_id: userEmail, 
+          name: userName, 
+          content: editCommentContent 
+        }),
+      });
+
+      if (res.ok) {
+        setEditingCommentId(null);
+        setEditCommentContent("");
+        fetchComments(); // 重新取得所有留言
+      } else {
+        const err = await res.json();
+        alert(`編輯留言失敗：${err.detail || "未知錯誤"}`);
+      }
+    } catch (err) {
+      console.error("編輯留言錯誤：", err);
+      alert("伺服器錯誤，無法編輯留言");
+    }
+  };
+
+  // 刪除留言
+  const deleteComment = async (commentId: string) => {
+    const confirm = window.confirm("你確定要刪除這則留言嗎？這個動作無法復原！");
+    if (!confirm) return;
+
+    try {
+      const res = await fetch(`http://localhost:8000/posts/${postId}/comments/${commentId}`, {
+        method: "DELETE"
+      });
+
+      if (res.ok) {
+        alert("留言已刪除！");
+        fetchComments(); // 重新取得所有留言
+      } else {
+        const err = await res.json();
+        alert(`刪除留言失敗：${err.detail || "未知錯誤"}`);
+      }
+    } catch (err) {
+      console.error("刪除留言錯誤：", err);
+      alert("伺服器錯誤，無法刪除留言");
+    }
+  };
+
+  // 切換留言的選單顯示
+  const toggleCommentMenu = (commentId: string) => {
+    setShowCommentMenu(showCommentMenu === commentId ? null : commentId);
+  };
 
   if (!postId) return <p>載入中...</p>;
   if (!post) return <p>載入文章中...</p>;
@@ -270,9 +357,66 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
                 <img src="/avatar.png" alt="頭貼" className={styles.authorAvatar} />
                 <span className={styles.commentAuthor}>{comment.name}</span>
               </div>
-              <span className={styles.commentTimestamp}>{formatTimestamp(comment.timestamp)}</span>
+              <div className={styles.commentActions}>
+                <span className={styles.commentTimestamp}>{formatTimestamp(comment.timestamp)}</span>
+                
+                {comment.user_id === localStorage.getItem("userEmail") && (
+                  <div className={styles.commentMenuContainer}>
+                    <button 
+                      className={styles.commentMoreOptionsButton} 
+                      onClick={() => toggleCommentMenu(comment.comment_id)}
+                    >
+                      <BsThreeDotsVertical />
+                    </button>
+                    
+                    {showCommentMenu === comment.comment_id && (
+                      <div className={styles.commentMenu}>
+                        {isCommentEditable(comment.timestamp) && (
+                          <button 
+                            className={styles.commentMenuItem} 
+                            onClick={() => startEditComment(comment)}
+                          >
+                            編輯
+                          </button>
+                        )}
+                        <button 
+                          className={styles.commentMenuItem} 
+                          onClick={() => deleteComment(comment.comment_id)}
+                        >
+                          刪除
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
+            
             <div className={styles.commentContent}>{comment.content}</div>
+            
+            {editingCommentId === comment.comment_id && (
+              <div className={styles.editCommentContainer}>
+                <textarea
+                  className={styles.editCommentInput}
+                  value={editCommentContent}
+                  onChange={(e) => setEditCommentContent(e.target.value)}
+                />
+                <div className={styles.editCommentButtons}>
+                  <button 
+                    className={styles.editCommentCancel} 
+                    onClick={cancelEditComment}
+                  >
+                    取消
+                  </button>
+                  <button 
+                    className={styles.editCommentSubmit} 
+                    onClick={submitEditComment}
+                  >
+                    更新留言
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>
