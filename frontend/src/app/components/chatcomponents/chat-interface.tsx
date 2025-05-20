@@ -9,7 +9,7 @@ import { UserProfileModal, AddContactModal } from "./modals";
 import type { Conversation, Message, User } from "@/lib/types";
 import * as api from "@/lib/api";
 import { useAuth } from "@/context/AuthProvider";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useChatWebSocket, ChatSocketEvent } from "@/lib/useChatWebSocket";
 
 /**
@@ -34,12 +34,12 @@ export default function ChatInterface() {
     severity: "success",
   });
   
-  // 将 useRef 移到组件顶部与其他 Hooks 一起声明
+  // 將 useRef 移到組件頂部與其他 Hooks 一起聲明
   const previousConversationsRef = useRef<string>("");
 
   const { user, loading } = useAuth();
-  console.log("目前的 user:", user);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -124,7 +124,12 @@ export default function ChatInterface() {
         )
       );
     } else if (event.type === "new_conversation") {
-      // 可選：自動拉取新對話
+      // 自動拉取新對話
+      api.getConversations().then(newConvs => {
+        setConversations(newConvs.sort(
+          (a, b) => new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
+        ));
+      });
     }
   }, [selectedConversation, currentUser]);
 
@@ -133,11 +138,12 @@ export default function ChatInterface() {
     onEvent: handleSocketEvent,
   });
 
-  // 只保留首次載入時的 API 請求
+  // 初始化資料和處理 URL 參數
   useEffect(() => {
     async function initializeData() {
       try {
         if (!user) throw new Error("User not authenticated");
+        
         setCurrentUser({
           id: user.id,
           name: user.name,
@@ -146,11 +152,22 @@ export default function ChatInterface() {
           avatar: "",
           isProfileComplete: false,
         });
+        
         const convs = await api.getConversations();
         const sortedConvs = (convs || []).sort(
           (a, b) => new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
         );
         setConversations(sortedConvs);
+        
+        // 檢查 URL 中是否有指定對話
+        const convId = searchParams.get('conv');
+        if (convId) {
+          const targetConv = sortedConvs.find(conv => conv.id === convId);
+          if (targetConv) {
+            setSelectedConversation(targetConv);
+          }
+        }
+        
         setIsLoading(false);
       } catch (error) {
         console.error("初始化數據失敗:", error);
@@ -172,6 +189,7 @@ export default function ChatInterface() {
         }, 3000);
       }
     }
+    
     if (loading) return;
     if (!user) {
       setNotification({
@@ -185,7 +203,7 @@ export default function ChatInterface() {
     } else {
       initializeData();
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, searchParams]);
 
   const handleAddContact = () => {
     setShowAddContact(true);
