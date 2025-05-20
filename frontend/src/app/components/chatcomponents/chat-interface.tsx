@@ -11,6 +11,7 @@ import * as api from "@/lib/api";
 import { useAuth } from "@/context/AuthProvider";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useChatWebSocket, ChatSocketEvent } from "@/lib/useChatWebSocket";
+import { useChatNotifications } from "@/context/ChatNotificationProvider";
 
 /**
  * 聊天界面主組件
@@ -44,6 +45,8 @@ export default function ChatInterface() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
+  const { refreshUnreadStatus } = useChatNotifications();
+
   // 用 useCallback 包住 WebSocket 事件處理，避免每次 render 都產生新函數
   const handleSocketEvent = useCallback((event: ChatSocketEvent) => {
     if (!event) return;
@@ -66,6 +69,8 @@ export default function ChatInterface() {
                 : conv
             )
           );
+          // 更新全局未讀狀態
+          refreshUnreadStatus();
         } else {
           // 自己發送只更新最後訊息
           setConversations((prev) =>
@@ -95,6 +100,8 @@ export default function ChatInterface() {
               };
             })
           );
+          // 更新全局未讀狀態
+          refreshUnreadStatus();
         } else {
           // 自己發送只更新最後訊息
           setConversations((prev) =>
@@ -123,15 +130,19 @@ export default function ChatInterface() {
           conv.id === event.conversationId ? { ...conv, unreadCount: 0 } : conv
         )
       );
+      // 更新全局未讀狀態
+      refreshUnreadStatus();
     } else if (event.type === "new_conversation") {
       // 自動拉取新對話
       api.getConversations().then(newConvs => {
         setConversations(newConvs.sort(
           (a, b) => new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
         ));
+        // 更新全局未讀狀態
+        refreshUnreadStatus();
       });
     }
-  }, [selectedConversation, currentUser]);
+  }, [selectedConversation, currentUser, refreshUnreadStatus]);
 
   useChatWebSocket({
     enabled: !!user,
@@ -205,6 +216,13 @@ export default function ChatInterface() {
     }
   }, [user, loading, router, searchParams]);
 
+  // 在組件掛載時刷新未讀狀態
+  useEffect(() => {
+    if (user) {
+      refreshUnreadStatus();
+    }
+  }, [user, refreshUnreadStatus]);
+
   const handleAddContact = () => {
     setShowAddContact(true);
   };
@@ -243,7 +261,7 @@ export default function ChatInterface() {
     }
   };
 
-  // 選擇對話時，拉取一次歷史訊息
+  // 選擇對話時，拉取一次歷史訊息，並標記為已讀
   useEffect(() => {
     if (!selectedConversation) return;
     const loadMessages = async () => {
@@ -259,13 +277,16 @@ export default function ChatInterface() {
               conv.id === selectedConversation.id ? { ...conv, unreadCount: 0 } : conv
             )
           );
+          
+          // 更新完當前聊天室狀態後，刷新全部未讀狀態
+          await refreshUnreadStatus();
         }
       } catch (error) {
         console.error("加载消息失败:", error);
       }
     };
     loadMessages();
-  }, [selectedConversation]);
+  }, [selectedConversation, refreshUnreadStatus]);
 
   const handleSendMessage = async (content: string) => {
     if (!selectedConversation || !content.trim() || !currentUser) return;

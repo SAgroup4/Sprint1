@@ -13,6 +13,7 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import { useRouter } from "next/navigation";
 import { db } from "../../../../firebase"; // 匯入 Firebase Firestore 實例
 import { collection, onSnapshot } from "firebase/firestore";
+import { useChatNotifications } from '@/context/ChatNotificationProvider';
 
 interface Notification {
   notification_id: string;
@@ -35,6 +36,8 @@ const Header: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const userId = user ? user.id : "";
+  const { hasUnreadMessages } = useChatNotifications();
+
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const searchInput = (e.target as HTMLFormElement).elements.namedItem("search") as HTMLInputElement;
@@ -279,8 +282,23 @@ const Header: React.FC = () => {
             <div
               className="userbutton"
               onClick={() => (window.location.href = "/chat")}
+              style={{ position: "relative" }}
             >
               <IoIosText />
+              {hasUnreadMessages && (
+                <span
+                  style={{
+                    position: "absolute",
+                    bottom: "0",
+                    right: "0",
+                    width: "10px",
+                    height: "10px",
+                    backgroundColor: "red",
+                    borderRadius: "50%",
+                    border: "2px solid white",
+                  }}
+                ></span>
+              )}
             </div>
 
             {/* Avatar + Dropdown */}

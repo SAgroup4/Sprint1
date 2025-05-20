@@ -2,14 +2,17 @@
 
 import { createContext, useState, useEffect, useContext, useCallback, ReactNode } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Box, Typography, Avatar } from '@mui/material';
 import { useAuth } from '@/context/AuthProvider';
 import { useChatWebSocket, ChatSocketEvent } from '@/lib/useChatWebSocket';
+import * as api from '@/lib/api';
 
 // 管理通知的 Context 類型
 interface ChatNotificationContextType {
   notifyNewMessage: (senderId: string, senderName: string, senderAvatar: string, content: string, conversationId: string) => void;
+  hasUnreadMessages: boolean;
+  refreshUnreadStatus: () => Promise<void>;
 }
 
 // 建立 Context
@@ -18,36 +21,70 @@ const ChatNotificationContext = createContext<ChatNotificationContextType | unde
 // 通知提供器組件
 export const ChatNotificationProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const { user } = useAuth();
+  const [hasUnreadMessages, setHasUnreadMessages] = useState<boolean>(false);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
+
+  // 檢查當前路徑是否為聊天頁面
+  const isChatPage = pathname?.startsWith('/chat');
+
+  // 初始化：獲取未讀消息狀態
+  useEffect(() => {
+    if (user) {
+      refreshUnreadStatus();
+    }
+  }, [user]);
 
   // 處理 WebSocket 事件
   const handleSocketEvent = useCallback((event: ChatSocketEvent) => {
     if (!event) return;
     
     if (event.type === "new_message") {
-      // 如果是收到新訊息且不是自己發的
+      // 如果是收到新訊息且不是自己發的，並且不在聊天頁面
       if (event.message.senderId !== user?.id) {
-        // 顯示通知
-        // 实际情况中，需要通过 API 获取发送者信息
-        fetchUserDetails(event.message.senderId)
-          .then(sender => {
-            notifyNewMessage(
-              event.message.senderId,
-              sender?.name || `用戶 ${event.message.senderId}`,
-              sender?.avatar || '/placeholder.svg',
-              event.message.content,
-              event.conversationId
-            );
-          });
+        // 更新未讀消息狀態
+        setHasUnreadMessages(true);
+        
+        // 如果不在聊天頁面，顯示通知
+        if (!isChatPage) {
+          // 顯示通知
+          fetchUserDetails(event.message.senderId)
+            .then(sender => {
+              notifyNewMessage(
+                event.message.senderId,
+                sender?.name || `用戶 ${event.message.senderId}`,
+                sender?.avatar || '/placeholder.svg',
+                event.message.content,
+                event.conversationId
+              );
+            });
+        }
       }
+    } else if (event.type === "new_conversation") {
+      // 新對話也應該觸發未讀狀態更新
+      refreshUnreadStatus();
     }
-  }, [user]);
+  }, [user, isChatPage]);
 
   // WebSocket 連線
   useChatWebSocket({
     enabled: !!user,
     onEvent: handleSocketEvent,
   });
+
+  // 獲取未讀消息狀態
+  const refreshUnreadStatus = async () => {
+    try {
+      const conversations = await api.getConversations();
+      const hasUnread = conversations.some(conv => conv.unreadCount > 0);
+      setHasUnreadMessages(hasUnread);
+      setIsInitialized(true);
+    } catch (error) {
+      console.error('獲取未讀消息狀態失敗:', error);
+      setHasUnreadMessages(false);
+    }
+  };
 
   // 獲取用戶詳細資訊
   const fetchUserDetails = async (userId: string) => {
@@ -157,12 +194,16 @@ export const ChatNotificationProvider = ({ children }: { children: ReactNode }) 
       </Box>
     ), {
       duration: 5000,
-      position: 'top-right',
+      position: 'bottom-right',
     });
   };
 
   return (
-    <ChatNotificationContext.Provider value={{ notifyNewMessage }}>
+    <ChatNotificationContext.Provider value={{ 
+      notifyNewMessage, 
+      hasUnreadMessages,
+      refreshUnreadStatus
+    }}>
       <Toaster 
         toastOptions={{
           className: '',
