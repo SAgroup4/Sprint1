@@ -27,6 +27,7 @@ interface Post {
   languagetags: Map<string, boolean>;
   leisuretags: Map<string, boolean>;
   comments_count: number;
+  edited?:boolean;
 }
 
 const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
@@ -82,6 +83,8 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
       if (!res.ok) throw new Error("取得貼文失敗");
       const data = await res.json();
 
+      console.log("⚙️ edited from API:", data.edited);
+
       setPost({
         id: data.post_id,
         title: data.title,
@@ -94,6 +97,7 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
         languagetags: new Map(Object.entries(data.languagetags || {})),
         leisuretags: new Map(Object.entries(data.leisuretags || {})),
         comments_count: data.comments_count || 0,
+        edited: data.edited || false,
       });
     } catch (err) {
       console.error("無法取得文章內容", err);
@@ -151,6 +155,7 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
     }
   };
 
+  //刪除貼文
   const handleDelete = async () => {
     const confirm = window.confirm("你確定要刪除這篇貼文嗎？這個動作無法復原！");
     if (!confirm) return;
@@ -286,8 +291,10 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
     <div className={styles.postDetailContainer}>
       <div className={styles.postHeader}>
         <IoIosArrowBack className={styles.backButton} onClick={() => router.back()} />
-        <h5 className={styles.postWord}>內文</h5>
-        <span className={styles.postDate}>{formatTimestamp(post.timestamp)}</span>
+        <span className={styles.postDate}>
+        {formatTimestamp(post.timestamp)}
+        {post.edited && <span className={styles.postEdited}>&nbsp;（已編輯）</span>}
+        </span>
       </div>
 
       <hr className={styles.divider} />
@@ -303,19 +310,19 @@ const PostDetail = ({ params }: { params: Promise<{ postId: string }> }) => {
         </div>
 
         {post.user_id === currentUserId && (
-          <div className={styles.moreMenuContainer}>
-            <button className={styles.moreOptionsButton} onClick={() => setShowMenu(!showMenu)}>
-              <BsThreeDotsVertical />
-            </button>
-            {showMenu && (
-              <div className={styles.menu}>
-                <button className={styles.menuItem} onClick={() => router.push(`/edit?postId=${post.id}`)}>
-                  編輯
-                </button>
-                <button className={styles.menuItem} onClick={handleDelete}>刪除</button>
-              </div>
-            )}
-          </div>
+            <div className={styles.moreMenuContainer}>
+              <button className={styles.moreOptionsButton} onClick={() => setShowMenu(!showMenu)}>
+                <BsThreeDotsVertical />
+              </button>
+              {showMenu && (
+                <div className={styles.menu}>
+                  <button className={styles.menuItem} onClick={() => router.push(`/edit?postId=${post.id}`)}>
+                    編輯
+                  </button>
+                  <button className={styles.menuItem} onClick={handleDelete}>刪除</button>
+                </div>
+              )}
+            </div>  
         )}
       </div>
 

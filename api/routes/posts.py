@@ -32,7 +32,8 @@ async def create_post(post: Post):
             "languagetags": post.languagetags,
             "leisuretags": post.leisuretags,
             "timestamp": firestore.firestore.SERVER_TIMESTAMP,  # 自動生成時間戳
-            "comments_count": 0  # 預設為 0
+            "comments_count": 0,  # 預設為 0
+            "edited": False,  # 新增 edited 欄位，預設為 False
         })
         post_ref = result[0]
         print(f"文章創建成功, post_id: {post_ref.id}")
@@ -70,6 +71,7 @@ async def get_posts(request: Request):
                 "languagetags": data.get("languagetags", {}),
                 "leisuretags": data.get("leisuretags", {}),
                 "trans": data.get("trans", False),
+                "edited": data.get("edited", False),
             })
 
         print(f"成功取得 {len(posts)} 篇文章，排序：{order}")
@@ -105,6 +107,7 @@ async def get_post(post_id: str):
             "languagetags": data.get("languagetags", {}),
             "leisuretags": data.get("leisuretags", {}),
             "trans": data.get("trans", False),  # 新增 trans 欄位，預設為 False
+            "edited": data.get("edited", False),
         }
     except Exception as e:
         print(f"獲取單一貼文時出錯: {e}")
@@ -181,6 +184,7 @@ async def update_post(post_id: str, post: Post):
             "skilltags": post.skilltags,
             "languagetags": post.languagetags,
             "leisuretags": post.leisuretags,
+            "edited":True,
         })
 
         return {"message": "貼文已更新成功"}
@@ -202,4 +206,3 @@ async def delete_post(post_id: str):
     except Exception as e:
         print(f"刪除貼文失敗: {e}")
         raise HTTPException(status_code=500, detail=f"刪除失敗: {e}")
-

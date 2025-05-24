@@ -39,8 +39,14 @@
   margin-left: auto;
   font-size: 0.9rem;
   color: #888;
-  display: flex;
+  /*display: flex;*/
   align-items: center;
+}
+
+.postEdited {
+  font-size: 0.85rem;
+  color: #888;
+  margin-left: 2px;
 }
 
 .postTitle {
@@ -60,7 +66,7 @@
   margin-bottom: 16px;
 }
 
-.authorLeft {
+.authorleft {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -81,13 +87,18 @@
   object-fit: cover;
 }
 
-.postAuthor{
+
+.postAuthor {
   font-weight: bold;
   color: #003366;
-  font-size: 12x; /* 確保文字大小適中 */
+  font-size: 16px;  
+  line-height: 1;  /* 避免上下偏移 */
+  padding: 0;
+  margin: 0;
   vertical-align: middle; /* 垂直對齊圖片 */
-  
 }
+
+
 
 .messageButton {
   background-color: transparent;
@@ -99,6 +110,8 @@
   font-size: 0.8rem;
   transition: color 0.3s ease;
 }
+
+
 
 .messageButton:hover {
   background-color: #357abd;
@@ -432,4 +445,6 @@
 .editCommentSubmit:hover {
   background-color: #2868a3;
 }
+
+
 
