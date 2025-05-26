@@ -72,10 +72,31 @@ export default function UserProfileForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form Data:", formData);
-
+    
+    // 清晰記錄提交前的資料狀態
+    console.log("提交前的表單資料:", JSON.stringify(formData, null, 2));
+    
     try {
-      const response = await fetch(
+      // 使用專門的標籤更新端點
+      const tagsResponse = await fetch(
+        `http://localhost:8000/users/${userId}/tags-only`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            skills: formData.skills,
+            languages: formData.languages
+          }),
+        }
+      );
+      
+      if (!tagsResponse.ok) {
+        const errorData = await tagsResponse.json();
+        throw new Error(`標籤更新失敗：${errorData.detail}`);
+      }
+      
+      // 更新其他資料
+      const profileResponse = await fetch(
         `http://localhost:8000/users/${userId}/profile`,
         {
           method: "PUT",
@@ -84,11 +105,11 @@ export default function UserProfileForm({
         }
       );
 
-      if (response.ok) {
+      if (profileResponse.ok) {
         alert("資料更新成功！");
-        router.push(`/profile/${userId}`); // 導向到使用者的個人資料頁
+        router.push(`/profile/${userId}`);
       } else {
-        const errorData = await response.json();
+        const errorData = await profileResponse.json();
         alert(`更新失敗：${errorData.detail}`);
       }
     } catch (error) {
