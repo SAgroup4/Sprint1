@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "學生討論區",
+  title: "輔學同行｜轉學生學習交流平台",
   description: "一個專門為學生提供交流和討論的平台",
 };
 

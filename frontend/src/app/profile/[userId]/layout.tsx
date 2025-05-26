@@ -7,6 +7,7 @@ import Header from '@/components/layout/Header';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+
 const inter = Inter({ subsets: ['latin'] });
 
 function ClientWrapper({ children }: { children: React.ReactNode }) {

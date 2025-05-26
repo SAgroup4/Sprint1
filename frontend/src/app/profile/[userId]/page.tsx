@@ -303,7 +303,8 @@ interface UserInfo {
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { userId } = useParams();
+  const params = useParams();
+  const userId = Array.isArray(params?.userId) ? params.userId[0] : params?.userId;
   const { user } = useAuth();
   const isCurrentUser = user?.id === userId;
 
