@@ -58,13 +58,6 @@ async def verify_email(token: str):
             "韓文": False,
             "其他語言": False
         },
-        "leasuretags": {                 # 休閒標籤
-            "跑步": False,
-            "桌球": False,
-            "閒聊": False,
-            "吃飯": False,
-            "其他": False
-        }
     })
 
     # 刪除pending_users中的暫存資料

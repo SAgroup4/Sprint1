@@ -41,21 +41,39 @@ async def add_comment(post_id: str, comment: Comment):
         # 為貼文作者新增通知
         post_data = post_ref.get().to_dict()
         author_id = post_data.get("user_id")
+
+        print(f"文章作者ID: {author_id}")
+        print(f"評論者ID: {comment.user_id}")
+
         if not author_id:
             raise HTTPException(status_code=400, detail="無法找到貼文作者")
 
-        notification_data = {
-            "post_id": post_id,
-            "post_title": post_data.get("title", "未知標題"),
-            "comment_content": comment.content,
-            "comment_user_id": comment.user_id,
-            "comment_user_name": comment.name,
-            "timestamp": firestore.SERVER_TIMESTAMP,
-            "is_read": False
-        }
-        db.collection("users").document(author_id).collection("notifications").add(notification_data)
+        # 為author_id添加郵箱後綴進行比較
+        author_email = f"{author_id}@m365.fju.edu.tw"
+        print(f"比較用的作者郵箱: {author_email}")
+        
+        # 檢查是否為作者自己留言
+        # 從 comment.user_id 中提取用戶 ID（假設格式為 xxx@m365.fju.edu.tw）
+        comment_id_parts = comment.user_id.split('@')
+        comment_author_id = comment_id_parts[0] if len(comment_id_parts) > 1 else comment.user_id
 
-        return {"message": "留言新增成功，通知已發送"}
+        print(f"提取的評論者ID: {comment_author_id}")
+        print(f"比較: author_id={author_id}, comment_author_id={comment_author_id}")
+
+        if author_id != comment_author_id:  # 使用提取的 ID 部分進行比較
+            notification_data = {
+                "post_id": post_id,
+                "post_title": post_data.get("title", "未知標題"),
+                "comment_content": comment.content,
+                "comment_user_id": comment.user_id,
+                "comment_user_name": comment.name,
+                "timestamp": firestore.SERVER_TIMESTAMP,
+                "is_read": False
+            }
+            db.collection("users").document(author_id).collection("notifications").add(notification_data)
+            return {"message": "留言新增成功，通知已發送"}
+        
+        return {"message": "留言新增成功"}
     except Exception as e:
         print(f"留言錯誤: {str(e)}")
         raise HTTPException(status_code=500, detail=f"留言失敗: {str(e)}")

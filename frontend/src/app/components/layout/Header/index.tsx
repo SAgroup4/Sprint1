@@ -189,8 +189,8 @@ const Header: React.FC = () => {
                 <span
                   style={{
                     position: "absolute",
-                    top: "-5px",
-                    right: "-5px",
+                    bottom: "0",
+                    right: "0",
                     width: "10px",
                     height: "10px",
                     backgroundColor: "red",
